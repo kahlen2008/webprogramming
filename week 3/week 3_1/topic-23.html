@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+    /* which wins? match the selector and count the score. */
+
+    p {
+        color: gray /* score: 0, 0, 0, 1 - type */;
+    }
+
+    .highlight {
+        color: blue /* score: 0, 0, 1, 0 - class */;
+    }
+
+    p.highlight {
+        color: purple /* score: 0, 0, 1, 1 - type + class */;
+    }
+
+    #note {
+        color: green /* score: 0, 1, 0, 0 - ID */; 
+    }
+
+    /* combinators add up */
+    div p {
+        font-style: italic /* 0, 0, 0, 2 */;
+    }
+
+    div .highlight {
+        font-weight: bold /* 0, 0, 1, 1 */;
+    }
+  </style>
+</head>
+<body>
+    <!-- gray is matched by p(0,0,0,1) only -->
+    <p>Plain paragraph - gray</p>
+
+    <!-- for purple, p.highlight(0,0,1,1) beats p (0,0,0,1) and .highlight (0,0,1,0) -->
+    <p class="highlight">P with class - purple (p.highlight wins)</p>
+
+    <!-- green: #note (0,1,0,0) beats everything above -->
+    <p class="highlight" id="note">P with class AND id - green (#note wins)</p>
+</body>
+</html>

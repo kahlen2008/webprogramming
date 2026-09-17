@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <style>
+            /* TODO: write all CSS here */
+            /* Hint: start with body, then .card, then .avatar, .name, .role, hr, .skills, .badge */
+            body {
+                background-color: #f1f5f9;
+                font-family: sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+            }
+
+            .card {
+                background-color: white;
+                border-radius: 16px;
+                padding: 2.5rem;
+                box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+                text-align: center;
+                max-width: 350px;
+                width: 100%;
+            }
+
+            .avatar {
+                width: 80px;
+                height: 80px;
+                background-color: #22c55e;
+                color: white;
+                font-size: 2.5rem;
+                font-weight: bold;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto 1.5rem auto;
+            }
+
+            .name {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: #0f172a;
+                margin: 0 0 0.5rem 0;
+            }
+
+            .role {
+                color: #64748b;
+                margin: 0 0 1.5rem 0;
+                font-size: 0.95rem;
+            }
+
+            hr {
+                border: 0;
+                border-top: 1px solid #e2e8f0;
+                margin: 1.5rem 0;
+            }
+
+            .skills {
+                display: flex;
+                gap: 0.5rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .badge {
+                background-color: #22c55e;
+                color: white;
+                padding: 0.35rem 1rem;
+                border-radius: 9999px;
+                font-size: 0.85rem;
+                font-weight: 500;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <div class="avatar">K</div>
+            <h2 class="name">Kim Jisoo</h2>
+            <p class="role">Web Programming Student</p>
+            <hr />
+            <div class="skills">
+                <span class="badge">HTML5</span>
+                <span class="badge">CSS3</span>
+                <span class="badge">Flexbox</span>
+            </div>
+        </div>
+    </body>
+</html>

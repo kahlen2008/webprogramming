@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* keep browser default (usually 16px) */
+        html {
+            font-size: 100%;
+        }
+
+        /* px = fixed, does not scale with user preferences */
+        .px-example {
+            font-size: 18px;
+        }
+
+        /* rem is relative to root html (1rem = 16px by default) */
+        .rem-example {
+            font-size: 1.5rem; /* 24px */
+        }
+
+        /* em - relative to PARENT element */
+        .parent {
+            font-size: 20px;
+        }
+
+        .child-em {
+            font-size: 1.5em; /* 30px (1.5 × 20px from the parent) */
+        }
+
+        /* type scale using rem */
+        .scale-sm {
+            font-size: 0.875rem /* 14px */;
+        } 
+
+        .scale-base {
+            font-size: 1rem /* 16px */;
+        }
+
+        .scale-lg {
+            font-size: 1.25rem /* 20px */;
+        }
+        
+        .scale-xl {
+            font-size: 1.5rem /* 24px */;
+        }
+        
+        .scale-2xl {
+            font-size: 2rem /* 32px */;
+        }
+    </style>
+</head>
+<body>
+    <p class="scale-sm">0.875rem is small text</p>
+    <p class="scale-base">1rem is base body text</p>
+    <p class="scale-lg">1.25rem is large text</p>
+    <p class="scale-xl">1.5rem is extra large</p>
+    <p class="scale-2xl">2rem is heading size</p>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* #RRGGBB - R/G/B, each 00-FF */
+        /* pure RED (FF, 00, 00) */
+        .red {
+            background-color: #FF0000;
+        }
+
+        /* pure GREEN (00, FF, 00) */
+        .green {
+            background-color: #00FF00;
+        }
+
+        /* pure BLUE (00, 00, FF) */
+        .blue {
+            background-color: #0000FF;
+        }
+
+        .white {
+            background-color: #FFFFFF;
+            border: 1px solid #ccc;
+        }
+
+        .black {
+            background-color: #000000;
+            color: white;
+        }
+
+        /* emerald */
+        .custom {
+            background-color: #10B981;
+            color: white
+        }
+
+        /* shorthand only for when each pair repeats */
+        .short-red {
+            background-color: #F00;
+        } /* same as FF0000 */
+
+        div {
+            padding: 8px 16px;
+            margin: 4px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="red">#FF0000 is Red.</div>
+    <div class="green">#00FF00 is Green.</div>
+    <div class="blue">#0000FF is Blue.</div>
+    <div class="white">#FFFFFF is White.</div>
+    <div class="black">#000000 is Black.</div>
+    <div class="custom">#10B981 is Emerald.</div>
+    <div class="short-red">#F00 (shorthand)</div>
+</body>
+</html>
