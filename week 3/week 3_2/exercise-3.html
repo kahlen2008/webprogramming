@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-GB">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Exercise 3</title>
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 200px;
+                background: #f0fdfa;
+            }
+
+            /* define @keyframes spin (from 0deg to 360deg) */
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .spinner {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                border: 4px solid #ccfbf1; /* light teal ring */
+                border-top-color: #0f766e; /* dark teal arc */
+                /* apply animation: spin 0.8s linear infinite */
+                animation: spin 0.8s linear infinite;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="spinner"></div>
+    </body>
+</html>

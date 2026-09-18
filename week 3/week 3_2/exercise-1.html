@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-GB">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Exercise 1</title>
+        <style>
+            .card {
+                /* 280px wide, 180px tall, white background, 2px teal border, 12px radius */
+                width: 280px;
+                height: 180px;
+                background: white;
+                border: 2px solid #14b8a6;
+                border-radius: 12px;
+                /* position relative */
+                position: relative;
+                margin: 40px;
+            }
+            .badge {
+                /* position absolute, top-right corner */
+                position: absolute;
+                top: -12px;
+                right: -12px;
+                /* teal background, white text, pill shape, bold */
+                background: #0f766e;
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+                padding: 4px 12px;
+                border-radius: 9999px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <span class="badge">SALE</span>
+            <p style="padding: 16px">Card content here!</p>
+        </div>
+    </body>
+</html>
