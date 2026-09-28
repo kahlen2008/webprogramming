@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Programming Coursework</title>
+    <style>
+        :root {
+            --bg-color: #f4f1ea;
+            --text-color: #333333;
+            --link-color: #2c7a7b;
+            --border-color: #d8d0c0;
+            --hover-bg: #eae3d3;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 60px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 50px;
+            font-size: 1.1rem;
+        }
+
+        .week-group {
+            margin-bottom: 40px;
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .week-group:nth-child(3) { animation-delay: 0.1s; }
+        .week-group:nth-child(4) { animation-delay: 0.2s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .week-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            color: #4a5568;
+        }
+
+        .link-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            backdrop-filter: blur(10px);
+        }
+
+        .link-item {
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .link-item:last-child {
+            border-bottom: none;
+        }
+
+        .link-item:hover {
+            background-color: rgba(255,255,255, 0.8);
+            transform: scale(1.005);
+        }
+
+        .link-item a {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 24px;
+            text-decoration: none;
+            color: var(--link-color);
+            font-size: 1.1rem;
+            font-weight: 500;
+            font-family: monospace;
+        }
+        
+        .link-name::before {
+            content: '/';
+            margin-right: 4px;
+            color: #8da4a5;
+        }
+
+        .description {
+            color: #718096;
+            font-size: 0.95rem;
+            font-weight: 400;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Web Programming Coursework</h1>
+        <p class="subtitle">Kahlen Ong (202699471)</p>
+
+        <div class="week-group">
+            <h2 class="week-title">Week 2</h2>
+            <ul class="link-list">
+                <li class="link-item">
+                    <a href="week 2/week 2_1/">
+                        <span class="link-name">week 2_1</span>
+                        <span class="description">Week 2 (Monday)</span>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="week 2/week 2_2/">
+                        <span class="link-name">week 2_2</span>
+                        <span class="description">Week 2 (Friday)</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="week-group">
+            <h2 class="week-title">Week 3</h2>
+            <ul class="link-list">
+                <li class="link-item">
+                    <a href="week 3/week 3_1/">
+                        <span class="link-name">week 3_1</span>
+                        <span class="description">Week 3 (Monday)</span>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="week 3/week 3_2/">
+                        <span class="link-name">week 3_2</span>
+                        <span class="description">Week 3 (Friday)</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+</html>
