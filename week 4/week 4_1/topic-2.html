@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 2: Selecting Elements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --bg-color: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 60px 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .container { max-width: 800px; width: 100%; }
+        .header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+        .topic-number {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: #fff; font-weight: 700; font-size: 1.2rem;
+            padding: 6px 12px; border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+        }
+        h1 { font-size: 2rem; margin: 0; font-weight: 700; color: #0f172a; }
+        .badge {
+            background: #dcfce7; color: #166534; padding: 4px 12px;
+            border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 24px; }
+        .code-container {
+            background: #0f172a; border-radius: 12px; padding: 24px;
+            margin-bottom: 32px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow-x: auto;
+        }
+        .code-header {
+            display: flex; justify-content: space-between; color: #94a3b8;
+            font-size: 0.85rem; margin-bottom: 12px; border-bottom: 1px solid #1e293b; padding-bottom: 8px;
+        }
+        code { font-family: 'Fira Code', monospace; color: #e2e8f0; font-size: 0.95rem; line-height: 1.5; white-space: pre; }
+        .comment { color: #64748b; font-style: italic; }
+        .keyword { color: #c678dd; }
+        .function { color: #61afef; }
+        .string { color: #98c379; }
+        
+        .demo-section {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .demo-title {
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+            color: #64748b; font-weight: 700; margin-bottom: 24px; display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <a href="index.html" style="position: absolute; top: 20px; left: 20px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; transition: color 0.2s; z-index: 9999; background: rgba(255,255,255,0.8); padding: 8px 12px; border-radius: 8px; backdrop-filter: blur(4px);" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Week
+        </a>
+
+
+
+
+
+        <div class="demo-section">
+            <span class="demo-title">Interactive Demo</span>
+            <h2 id="greeting" style="text-align: center; margin-bottom: 30px; font-weight: 500; transition: color 0.3s;">I am the element with id="greeting"</h2>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button id="btn-text" style="padding: 10px 20px; border-radius: 8px; border: none; background: #3b82f6; color: white; cursor: pointer; font-weight: 600; transition: background 0.2s;">Change Text</button>
+                <button id="btn-color" style="padding: 10px 20px; border-radius: 8px; border: none; background: #10b981; color: white; cursor: pointer; font-weight: 600; transition: background 0.2s;">Change Color</button>
+                <button id="btn-reset" style="padding: 10px 20px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; color: #475569; cursor: pointer; font-weight: 600; transition: background 0.2s;">Reset</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const heading = document.getElementById('greeting');
+        const originalText = heading.textContent;
+
+        document.getElementById('btn-text').addEventListener('click', () => {
+            heading.textContent = 'Hello, class! (Text Changed)';
+        });
+
+        document.getElementById('btn-color').addEventListener('click', () => {
+            heading.style.color = '#8b5cf6';
+        });
+
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            heading.textContent = originalText;
+            heading.style.color = '';
+        });
+    </script>
+</body>
+</html>

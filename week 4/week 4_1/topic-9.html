@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 9: e.preventDefault()</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #f8fafc; --text-main: #1e293b; --text-muted: #475569; --surface: #ffffff; --border: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding: 60px 20px; margin: 0; display: flex; justify-content: center; }
+        .container { max-width: 800px; width: 100%; }
+        .header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+        .topic-number { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #fff; font-weight: 700; font-size: 1.2rem; padding: 6px 12px; border-radius: 8px; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
+        h1 { font-size: 2rem; margin: 0; font-weight: 700; color: #0f172a; }
+        .badge { background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 32px; }
+        
+        .demo-section { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <a href="index.html" style="position: absolute; top: 20px; left: 20px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; transition: color 0.2s; z-index: 9999; background: rgba(255,255,255,0.8); padding: 8px 12px; border-radius: 8px; backdrop-filter: blur(4px);" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Week
+        </a>
+
+
+
+        <div class="demo-section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div style="background: #fff1f2; border: 2px solid #fecdd3; border-radius: 12px; padding: 24px;">
+                <h3 style="color: #e11d48; margin-top: 0; font-size: 1.1rem;">Without preventDefault</h3>
+                <form id="form-bad">
+                    <input type="text" placeholder="Type anything..." required style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 16px; border: 1px solid #fecdd3; border-radius: 8px; outline: none;">
+                    <button type="submit" style="width: 100%; padding: 12px; border: none; background: #e11d48; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Submit (page reloads!)</button>
+                </form>
+            </div>
+
+            <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 12px; padding: 24px;">
+                <h3 style="color: #16a34a; margin-top: 0; font-size: 1.1rem;">With preventDefault</h3>
+                <form id="form-good">
+                    <input type="text" id="good-input" placeholder="Type anything..." required style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 16px; border: 1px solid #bbf7d0; border-radius: 8px; outline: none;">
+                    <button type="submit" style="width: 100%; padding: 12px; border: none; background: #16a34a; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Submit (no reload!)</button>
+                </form>
+                <div id="good-msg" style="margin-top: 16px; color: #16a34a; font-weight: 500; min-height: 24px;"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('form-good').addEventListener('submit', (e) => {
+            e.preventDefault(); // stops the page reload
+            
+            const msgBox = document.getElementById('good-msg');
+            msgBox.textContent = 'Form intercepted! Data: ' + document.getElementById('good-input').value;
+            setTimeout(() => msgBox.textContent = '', 3000);
+            e.target.reset();
+        });
+    </script>
+</body>
+</html>

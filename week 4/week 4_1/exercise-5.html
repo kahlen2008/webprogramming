@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 5: Interactive Color Palette</title>
+    <!-- Include html2canvas for the PNG export bonus -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 40px;
+            background-color: #f0f4f8;
+            color: #1e293b;
+        }
+        h1 {
+            color: #0f172a;
+            margin-bottom: 30px;
+        }
+        .controls {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        input[type="text"] {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #3b82f6;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #2563eb;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        #export-btn {
+            background-color: #10b981;
+        }
+        #export-btn:hover {
+            background-color: #059669;
+        }
+        
+        #palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            min-height: 200px;
+        }
+        
+        .color-box {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+            font-weight: 600;
+            font-size: 18px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            user-select: none;
+        }
+        
+        .color-box.expanded {
+            width: 160px;
+            height: 160px;
+            color: white; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .instructions {
+            margin-top: 40px;
+            background: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+
+        <a href="index.html" style="position: absolute; top: 20px; left: 20px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; transition: color 0.2s; z-index: 9999; background: rgba(255,255,255,0.8); padding: 8px 12px; border-radius: 8px; backdrop-filter: blur(4px);" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Week
+        </a>
+
+
+    <h1>Interactive Color Palette</h1>
+    
+    <div class="controls">
+        <input type="text" id="color-input" placeholder="#hexcolor (e.g. #ff5733)">
+        <button id="add-btn">Add Color</button>
+        <button id="export-btn">Export PNG</button>
+    </div>
+
+    <div id="palette"></div>
+
+    <div class="instructions">
+        <p><strong>interactions:</strong></p>
+        <ul>
+            <li>click a color box to expand it and reveal its hex code.</li>
+            <li>double-click a color box to remove it from the palette.</li>
+            <li>colors are automatically saved and will restore when you refresh the page.</li>
+        </ul>
+    </div>
+
+    <script>
+        const palette = document.getElementById('palette');
+        const colorInput = document.getElementById('color-input');
+        const addBtn = document.getElementById('add-btn');
+        const exportBtn = document.getElementById('export-btn');
+
+        // default 6 colors for the required grade
+        const defaultColors = ['#ff5733', '#33ff57', '#3b82f6', '#f43f5e', '#14b8a6', '#eab308'];
+        
+        // load colors from localstorage safely
+        let colors = [];
+        let storedColors = null;
+        
+        try {
+            storedColors = localStorage.getItem('paletteColors');
+        } catch (e) {
+            console.warn("localStorage access blocked by browser", e);
+        }
+        
+        if (storedColors !== null) {
+            try {
+                const parsed = JSON.parse(storedColors);
+                if (Array.isArray(parsed)) {
+                    colors = parsed;
+                } else {
+                    colors = [...defaultColors];
+                }
+            } catch (e) {
+                colors = [...defaultColors];
+            }
+        } else {
+            // first time loading or localstorage blocked
+            colors = [...defaultColors];
+        }
+
+        // save to localstorage safely
+        function saveColors() {
+            try {
+                localStorage.setItem('paletteColors', JSON.stringify(colors));
+            } catch (e) {
+                console.warn("Could not save to localStorage", e);
+            }
+        }
+
+        // rebuild state from dom to prevent issues with duplicates
+        function updateColorsFromDOM() {
+            colors = Array.from(palette.children).map(box => box.textContent);
+            saveColors();
+        }
+
+        // create a color box element
+        function createColorBox(hex) {
+            const box = document.createElement('div');
+            box.className = 'color-box';
+            box.style.backgroundColor = hex;
+            box.textContent = hex;
+
+            // click to expand (classlist.toggle + css transition)
+            box.addEventListener('click', () => {
+                box.classList.toggle('expanded');
+            });
+
+            // double click to remove (dblclick event)
+            box.addEventListener('dblclick', () => {
+                box.remove();
+                updateColorsFromDOM();
+            });
+
+            return box;
+        }
+
+        // render all colors on page load
+        function renderPalette() {
+            palette.innerHTML = '';
+            colors.forEach(hex => {
+                palette.appendChild(createColorBox(hex));
+            });
+            saveColors();
+        }
+
+        // add new color (challenge grade)
+        addBtn.addEventListener('click', () => {
+            const hex = colorInput.value.trim();
+            // basic hex validation
+            if (/^#[0-9A-F]{6}$/i.test(hex) || /^#[0-9A-F]{3}$/i.test(hex)) {
+                palette.appendChild(createColorBox(hex));
+                updateColorsFromDOM();
+                colorInput.value = '';
+            } else {
+                alert('please enter a valid hex color code starting with #');
+            }
+        });
+
+        colorInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                addBtn.click();
+            }
+        });
+
+        // export png bonus using html2canvas
+        exportBtn.addEventListener('click', () => {
+            // temporarily remove box shadows for a cleaner export if desired
+            html2canvas(palette, {
+                backgroundColor: '#ffffff',
+                scale: 2 // higher resolution
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'palette.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        });
+
+        // initial render
+        renderPalette();
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 3: querySelector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #f1f5f9; --text-main: #1e293b; --surface: #ffffff; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding: 60px 20px; margin: 0; display: flex; justify-content: center; }
+        .container { max-width: 800px; width: 100%; }
+        
+        .demo-section { background: var(--surface); border-radius: 16px; padding: 40px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .demo-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 700; margin-bottom: 24px; display: block; }
+        
+        .playground { padding: 20px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; margin-bottom: 24px; }
+        .target-el { padding: 12px; margin: 8px 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; transition: all 0.3s; font-family: monospace; color: #475569; }
+        .highlighted { border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; transform: translateX(10px); box-shadow: 0 4px 6px rgba(59, 130, 246, 0.15); }
+        
+        .controls { display: flex; flex-wrap: wrap; gap: 12px; }
+        input { flex: 1; min-width: 200px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; font-size: 16px; font-family: monospace; }
+        input:focus { border-color: #3b82f6; }
+        button { background: #3b82f6; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: transform 0.1s; }
+        button:active { transform: scale(0.95); }
+        .btn-all { background: #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <a href="index.html" style="position: absolute; top: 20px; left: 20px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; transition: color 0.2s; z-index: 9999; background: rgba(255,255,255,0.8); padding: 8px 12px; border-radius: 8px; backdrop-filter: blur(4px);" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Week
+        </a>
+
+        <div class="demo-section">
+            <span class="demo-title">Interactive Demo — Selector Playground</span>
+            
+            <div class="playground">
+                <div class="target-el" id="main-title">#main-title (div)</div>
+                <div class="target-el card active">.card.active (div)</div>
+                <div class="target-el list-item">.list-item (div)</div>
+                <div class="target-el list-item">.list-item (div)</div>
+                <button class="target-el" style="display: block; width: 100%; text-align: left; background: white; color: #475569; margin: 8px 0;">button</button>
+            </div>
+            
+            <div class="controls">
+                <input type="text" id="selector-input" placeholder=".list-item, #main-title, button...">
+                <button id="btn-single">querySelector()</button>
+                <button id="btn-all" class="btn-all">querySelectorAll()</button>
+            </div>
+            <div id="error-msg" style="color: #ef4444; margin-top: 10px; font-size: 0.9rem; min-height: 20px; font-weight: 500;"></div>
+        </div>
+    </div>
+    
+    <script>
+        const input = document.getElementById('selector-input');
+        const elements = document.querySelectorAll('.target-el');
+        const errorMsg = document.getElementById('error-msg');
+
+        function clearHighlights() {
+            elements.forEach(el => el.classList.remove('highlighted'));
+            errorMsg.textContent = '';
+        }
+
+        document.getElementById('btn-single').addEventListener('click', () => {
+            clearHighlights();
+            if(!input.value.trim()) return;
+            try {
+                const match = document.querySelector('.playground ' + input.value);
+                if (match) match.classList.add('highlighted');
+            } catch (e) {
+                errorMsg.textContent = 'Invalid CSS selector!';
+            }
+        });
+
+        document.getElementById('btn-all').addEventListener('click', () => {
+            clearHighlights();
+            if(!input.value.trim()) return;
+            try {
+                const matches = document.querySelectorAll('.playground ' + input.value);
+                matches.forEach(m => m.classList.add('highlighted'));
+            } catch (e) {
+                errorMsg.textContent = 'Invalid CSS selector!';
+            }
+        });
+    </script>
+</body>
+</html>

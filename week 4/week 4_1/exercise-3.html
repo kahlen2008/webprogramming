@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html><body style="font-family:system-ui;padding:20px;max-width:400px;margin:auto">
+
+        <a href="index.html" style="position: absolute; top: 20px; left: 20px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; transition: color 0.2s; z-index: 9999; background: rgba(255,255,255,0.8); padding: 8px 12px; border-radius: 8px; backdrop-filter: blur(4px);" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Week
+        </a>
+
+  <style>
+    h2 { color: #1a56db; }
+    .add-row { display:flex; gap:8px; margin-bottom:14px; }
+    input { flex:1; padding:8px 12px; border:2px solid #c8d4f0; border-radius:8px; font-size:15px; }
+    button { padding:8px 16px; border:none; border-radius:8px; cursor:pointer; font-size:15px; font-weight:bold; }
+    .add-btn { background:#1a56db; color:white; }
+    #todo-list { list-style:none; padding:0; }
+    .todo-item { display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px; margin-bottom:6px; background:#f0f4ff;
+      border-radius:8px; border:1px solid #c8d4f0; }
+    .del-btn { background:#dc2626; color:white; padding:4px 10px; font-size:12px; border-radius:6px; }
+    #empty-msg { color:#9ca3af; text-align:center; padding:20px; display:none; }
+  </style>
+
+  <h2>My To-Do List</h2>
+  <div class="add-row">
+    <input id="todo-input" type="text" placeholder="Add a task...">
+    <button id="add-btn" class="add-btn">+ Add</button>
+  </div>
+  <ul id="todo-list"></ul>
+  <p id="empty-msg">No tasks yet! Add one above.</p>
+
+  <script>
+    // 1. select input, add-btn, todo-list, empty-msg
+    const input = document.querySelector('#todo-input');
+    const addBtn = document.querySelector('#add-btn');
+    const todoList = document.querySelector('#todo-list');
+    const emptyMsg = document.querySelector('#empty-msg');
+
+    function updateEmptyMsg() {
+      emptyMsg.style.display = todoList.children.length === 0 ? 'block' : 'none';
+    }
+
+    // 2. write function addtask() that:
+    function addTask() {
+      // a. reads input.value (trim it, skip if empty)
+      const text = input.value.trim();
+      if (!text) return;
+
+      // b. creates an <li> with the text and a delete button
+      const li = document.createElement('li');
+      li.classList.add('todo-item');
+      li.textContent = text;
+
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '✕';
+      delBtn.classList.add('del-btn');
+      li.appendChild(delBtn);
+
+      // c. appends to the list
+      todoList.appendChild(li);
+
+      // d. clears the input
+      input.value = '';
+      
+      updateEmptyMsg();
+    }
+
+    // 3. add 'click' listener to add-btn -> call addtask()
+    addBtn.addEventListener('click', addTask);
+
+    // 4. add 'keydown' listener to input -> if e.key === 'enter', call addtask()
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addTask();
+    });
+
+    // 5. add 'click' event delegation on todo-list -> if .del-btn clicked, remove li
+    todoList.addEventListener('click', (e) => {
+      if (e.target.matches('.del-btn')) {
+        e.target.parentElement.remove();
+        updateEmptyMsg();
+      }
+    });
+
+    updateEmptyMsg();
+  </script>
+</body></html>

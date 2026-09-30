@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html><body style="font-family:system-ui;padding:24px;text-align:center">
+
+        <a href="index.html" style="position: absolute; top: 20px; left: 20px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; transition: color 0.2s; z-index: 9999; background: rgba(255,255,255,0.8); padding: 8px 12px; border-radius: 8px; backdrop-filter: blur(4px);" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Week
+        </a>
+
+  <style>
+    .done { background: #16a34a !important; }
+  </style>
+
+  <button id="clicker" style="
+    padding:14px 32px;font-size:18px;border:none;
+    background:#1a56db;color:white;border-radius:10px;
+    cursor:pointer;transition:background .3s">
+    Click me!
+  </button>
+
+  <p id="count" style="font-size:32px;font-weight:bold;margin:16px 0">0</p>
+  <p id="message" style="font-size:16px;color:#666">Keep clicking...</p>
+
+  <script>
+    // 1. select the button, count paragraph, and message paragraph
+    const btn = document.querySelector('#clicker');
+    const countDisplay = document.querySelector('#count');
+    const message = document.querySelector('#message');
+
+    // 2. create a counter variable starting at 0
+    let count = 0;
+
+    // 3. add a click listener to the button
+    btn.addEventListener('click', () => {
+      // 4. inside the listener: increment count, update #count text
+      count++;
+      countDisplay.textContent = count;
+
+      // 5. if count >= 5: add class 'done' to button, update #message
+      if (count >= 5) {
+        btn.classList.add('done');
+        message.textContent = 'Congratulations! You did it!';
+      }
+    });
+  </script>
+</body></html>

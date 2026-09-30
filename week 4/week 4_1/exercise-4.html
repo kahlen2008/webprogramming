@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html><body style="font-family:system-ui;padding:20px;max-width:420px;margin:auto">
+
+        <a href="index.html" style="position: absolute; top: 20px; left: 20px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; transition: color 0.2s; z-index: 9999; background: rgba(255,255,255,0.8); padding: 8px 12px; border-radius: 8px; backdrop-filter: blur(4px);" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Week
+        </a>
+
+  <style>
+    h2 { color: #1a56db; }
+    #search { width:100%; padding:10px 14px; font-size:16px;
+      border:2px solid #1a56db; border-radius:10px; margin-bottom:14px; }
+    .student { padding:10px 14px; margin-bottom:6px; background:#f0f4ff;
+      border-radius:8px; border:1px solid #c8d4f0; font-size:15px; }
+    mark { background: #f7df1e; border-radius: 3px; }
+    #no-results { display:none; color:#9ca3af; text-align:center; padding:20px; }
+  </style>
+
+  <h2>Student Search</h2>
+  <input id="search" type="text" placeholder="Search students...">
+  <div id="student-list">
+    <div class="student" data-name="Alice Carter">Alice Carter — Cyber Security</div>
+    <div class="student" data-name="Brian Miller">Brian Miller — Game Development</div>
+    <div class="student" data-name="Chloe Davis">Chloe Davis — UI/UX Design</div>
+    <div class="student" data-name="David Smith">David Smith — Information Systems</div>
+    <div class="student" data-name="Elena Rossi">Elena Rossi — Machine Learning</div>
+    <div class="student" data-name="Felix Zhang">Felix Zhang — Network Engineering</div>
+  </div>
+  <p id="no-results">No students found.</p>
+
+  <script>
+    // 1. select #search and all .student elements
+    const searchInput = document.querySelector('#search');
+    const students = document.querySelectorAll('.student');
+    const noResults = document.querySelector('#no-results');
+
+    // store original text for highlighting
+    students.forEach(s => s.dataset.original = s.textContent);
+
+    // 2. add 'input' event listener to #search
+    searchInput.addEventListener('input', (e) => {
+      // 3. inside the listener:
+      // a. get the search term: e.target.value.tolowercase()
+      const term = e.target.value.toLowerCase();
+      let visibleCount = 0;
+
+      // b. for each .student: get data-name attribute, compare with term
+      students.forEach(student => {
+        const name = student.getAttribute('data-name').toLowerCase();
+        
+        if (name.includes(term)) {
+          // c. show or hide each student (style.display = '' or 'none')
+          student.style.display = '';
+          visibleCount++;
+          
+          // bonus: wrap matched text in <mark> using innerhtml for highlighting
+          const original = student.dataset.original;
+          if (term) {
+             const regex = new RegExp(`(${term})`, 'gi');
+             student.innerHTML = original.replace(regex, '<mark>$1</mark>');
+          } else {
+             student.innerHTML = original;
+          }
+        } else {
+          student.style.display = 'none';
+        }
+      });
+
+      // 4. show #no-results if all students are hidden
+      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    });
+  </script>
+</body></html>

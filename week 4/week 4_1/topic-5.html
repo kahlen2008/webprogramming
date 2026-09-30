@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 5: innerHTML</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6; --bg-color: #f8fafc; --text-main: #1e293b;
+            --text-muted: #475569; --surface: #ffffff; --border: #e2e8f0;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding: 60px 20px; margin: 0; display: flex; justify-content: center; }
+        .container { max-width: 800px; width: 100%; }
+        .header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+        .topic-number { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #fff; font-weight: 700; font-size: 1.2rem; padding: 6px 12px; border-radius: 8px; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
+        h1 { font-size: 2rem; margin: 0; font-weight: 700; color: #0f172a; }
+        .badge { background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 24px; }
+        .code-container { background: #0f172a; border-radius: 12px; padding: 24px; margin-bottom: 32px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow-x: auto; }
+        .code-header { display: flex; justify-content: space-between; color: #94a3b8; font-size: 0.85rem; margin-bottom: 12px; border-bottom: 1px solid #1e293b; padding-bottom: 8px; }
+        code { font-family: 'Fira Code', monospace; color: #e2e8f0; font-size: 0.95rem; line-height: 1.5; white-space: pre; }
+        .comment { color: #64748b; font-style: italic; } .keyword { color: #c678dd; } .function { color: #61afef; } .string { color: #98c379; }
+        .demo-section { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <a href="index.html" style="position: absolute; top: 20px; left: 20px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; transition: color 0.2s; z-index: 9999; background: rgba(255,255,255,0.8); padding: 8px 12px; border-radius: 8px; backdrop-filter: blur(4px);" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Week
+        </a>
+
+
+
+
+
+        <div class="demo-section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                <h3 style="color: #10b981; margin-top: 0; font-size: 1.1rem;">Safe: textContent</h3>
+                <input type="text" id="safe-input" value="<b>hello</b>" placeholder="Type <b>hello</b>" style="width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
+                <button id="btn-safe" style="padding: 8px 16px; border: none; background: #10b981; color: white; border-radius: 6px; cursor: pointer; font-weight: 600;">Set textContent</button>
+                <div id="safe-box" style="margin-top: 16px; padding: 12px; background: white; border: 1px dashed #cbd5e1; border-radius: 6px; min-height: 40px; color: #475569;"></div>
+            </div>
+
+            <div style="background: #fff1f2; border: 2px solid #fecdd3; border-radius: 12px; padding: 20px;">
+                <h3 style="color: #e11d48; margin-top: 0; font-size: 1.1rem;">Risky: innerHTML</h3>
+                <input type="text" id="risky-input" value="<b>hello</b>" placeholder="Type <b>hello</b>" style="width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 12px; border: 1px solid #fecdd3; border-radius: 6px; outline: none;">
+                <button id="btn-risky" style="padding: 8px 16px; border: none; background: #e11d48; color: white; border-radius: 6px; cursor: pointer; font-weight: 600;">Set innerHTML</button>
+                <div id="risky-box" style="margin-top: 16px; padding: 12px; background: white; border: 1px dashed #fecdd3; border-radius: 6px; min-height: 40px; color: #475569;"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('btn-safe').addEventListener('click', () => {
+            document.getElementById('safe-box').textContent = document.getElementById('safe-input').value;
+        });
+        document.getElementById('btn-risky').addEventListener('click', () => {
+            document.getElementById('risky-box').innerHTML = document.getElementById('risky-input').value;
+        });
+    </script>
+</body>
+</html>
