@@ -6,34 +6,174 @@
     <title>Topic 10: Event Bubbling & Delegation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-color: #f1f5f9; --text-main: #1e293b; --surface: #ffffff; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding: 60px 20px; margin: 0; display: flex; justify-content: center; }
-        .container { max-width: 800px; width: 100%; }
+        :root {
+            --bg-color: #f1f5f9;
+            --text-main: #1e293b;
+            --surface: #ffffff;
+        }
         
-        .demo-section { background: var(--surface); border-radius: 16px; padding: 40px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .demo-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 700; margin-bottom: 24px; display: block; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 60px 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .demo-section {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .demo-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: block;
+        }
 
         /* Bubbling Demo */
-        .bubble-box { padding: 30px; border: 2px solid #cbd5e1; border-radius: 12px; margin-bottom: 16px; transition: all 0.3s; background: white; text-align: center; }
-        .bubble-box.active { background: #dbeafe; border-color: #3b82f6; transform: scale(1.02); }
-        .bubble-btn { background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; transition: all 0.2s; }
-        .bubble-btn.active { background: #1d4ed8; transform: scale(1.1); box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        .bubble-box {
+            padding: 30px;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+            background: white;
+            text-align: center;
+        }
         
-        .log-container { background: #1e293b; color: #4ade80; font-family: monospace; padding: 16px; border-radius: 8px; height: 120px; overflow-y: auto; margin-bottom: 10px; }
-        .log-entry { margin: 4px 0; border-bottom: 1px solid #334155; padding-bottom: 4px; }
-        .log-entry span { color: #94a3b8; }
+        .bubble-box.active {
+            background: #dbeafe;
+            border-color: #3b82f6;
+            transform: scale(1.02);
+        }
+        
+        .bubble-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .bubble-btn.active {
+            background: #1d4ed8;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .log-container {
+            background: #1e293b;
+            color: #4ade80;
+            font-family: monospace;
+            padding: 16px;
+            border-radius: 8px;
+            height: 120px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        
+        .log-entry {
+            margin: 4px 0;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 4px;
+        }
+        
+        .log-entry span {
+            color: #94a3b8;
+        }
 
         /* Delegation Demo */
-        .list-container { border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; }
-        .list-header { background: #f8fafc; padding: 16px; display: flex; gap: 12px; border-bottom: 1px solid #cbd5e1; }
-        .list-header input { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
-        .list-header button { background: #10b981; color: white; border: none; padding: 0 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-        .item-list { list-style: none; margin: 0; padding: 0; }
-        .item-list li { padding: 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: white; transition: all 0.2s; }
-        .item-list li:hover { background: #f8fafc; }
-        .item-list li:last-child { border-bottom: none; }
-        .delete-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; }
-        .delete-btn:hover { background: #dc2626; }
+        .list-container {
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .list-header {
+            background: #f8fafc;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        
+        .list-header input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+        }
+        
+        .list-header button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .item-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .item-list li {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            transition: all 0.2s;
+        }
+        
+        .item-list li:hover {
+            background: #f8fafc;
+        }
+        
+        .item-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+        
     </style>
 </head>
 <body>

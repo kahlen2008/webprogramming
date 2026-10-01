@@ -6,23 +6,113 @@
     <title>Topic 3: querySelector</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-color: #f1f5f9; --text-main: #1e293b; --surface: #ffffff; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding: 60px 20px; margin: 0; display: flex; justify-content: center; }
-        .container { max-width: 800px; width: 100%; }
+        :root {
+            --bg-color: #f1f5f9;
+            --text-main: #1e293b;
+            --surface: #ffffff;
+        }
         
-        .demo-section { background: var(--surface); border-radius: 16px; padding: 40px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .demo-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 700; margin-bottom: 24px; display: block; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 60px 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
         
-        .playground { padding: 20px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; margin-bottom: 24px; }
-        .target-el { padding: 12px; margin: 8px 0; background: white; border: 2px solid #e2e8f0; border-radius: 6px; transition: all 0.3s; font-family: monospace; color: #475569; }
-        .highlighted { border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; transform: translateX(10px); box-shadow: 0 4px 6px rgba(59, 130, 246, 0.15); }
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .demo-section {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
         
-        .controls { display: flex; flex-wrap: wrap; gap: 12px; }
-        input { flex: 1; min-width: 200px; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; outline: none; font-size: 16px; font-family: monospace; }
-        input:focus { border-color: #3b82f6; }
-        button { background: #3b82f6; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: transform 0.1s; }
-        button:active { transform: scale(0.95); }
-        .btn-all { background: #f59e0b; }
+        .demo-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: block;
+        }
+
+        .playground {
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .target-el {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-family: monospace;
+            color: #475569;
+        }
+        
+        .highlighted {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            color: #1d4ed8;
+            transform: translateX(10px);
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.15);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+            font-family: monospace;
+        }
+        
+        input:focus {
+            border-color: #3b82f6;
+        }
+        
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.1s;
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-all {
+            background: #f59e0b;
+        }
+        
     </style>
 </head>
 <body>
