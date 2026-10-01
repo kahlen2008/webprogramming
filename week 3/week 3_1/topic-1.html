@@ -26,7 +26,7 @@
 </head>
 <body>
 
-        <a href="index.html" style="position: absolute; top: 20px; left: 20px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; transition: color 0.2s; z-index: 9999; background: rgba(255,255,255,0.8); padding: 8px 12px; border-radius: 8px; backdrop-filter: blur(4px);" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">
+        <a href="index.html" style="margin: 20px; position: relative; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #64748b; font-weight: 600; transition: color 0.2s; z-index: 9999; background: rgba(255,255,255,0.8); padding: 8px 12px; border-radius: 8px; backdrop-filter: blur(4px);" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#64748b'">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             Back to Week
         </a>
@@ -34,5 +34,38 @@
     <h1>Hello, CSS!</h1>
     <p>This heading is green and the backgroung is light blue -
         all controlled by CSS, not HTML.</p>
+<!-- SOURCE CODE DISPLAY SCRIPT -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('source-code-display')) return;
+        const container = document.createElement('div');
+        container.id = 'source-code-display';
+        container.style.cssText = 'width: 100%; flex: 1 1 100%; order: 9999; margin-top: 60px; background: #0d1117; border-top: 1px solid #30363d; font-family: sans-serif; box-sizing: border-box; clear: both; box-shadow: 0 -4px 15px rgba(0,0,0,0.1);';
+        
+        if (window.getComputedStyle(document.body).display === 'flex') {
+            document.body.style.flexWrap = 'wrap';
+        }
+        if (window.getComputedStyle(document.body).display === 'grid') {
+            container.style.gridColumn = '1 / -1';
+        }
+        
+        const header = document.createElement('div');
+        header.style.cssText = 'background: #161b22; padding: 12px 20px; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 10px;';
+        header.innerHTML = '<div style="display:flex;gap:6px;margin-right:10px;"><div style="width:12px;height:12px;border-radius:50%;background:#ff5f56;"></div><div style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;"></div><div style="width:12px;height:12px;border-radius:50%;background:#27c93f;"></div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg><h3 style="margin:0; color:#c9d1d9; font-size:14px; font-weight:600; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif;">Source Code for this Output</h3><span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: bold; margin-left: auto; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(99,102,241,0.3);">Lecturer View</span>';
+        
+        const pre = document.createElement('pre');
+        pre.style.cssText = 'overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; color: #e6edf3; margin: 0; padding: 20px; background: #0d1117; line-height: 1.6;';
+        
+        let htmlContent = document.documentElement.outerHTML;
+        htmlContent = htmlContent.replace(new RegExp('<!-- SOURCE CODE DISPLAY SCRIPT -->[\\s\\S]*?<\\/script>', 'i'), '');
+        htmlContent = htmlContent.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        
+        pre.innerHTML = '<code>' + htmlContent + '</code>';
+        
+        container.appendChild(header);
+        container.appendChild(pre);
+        document.body.appendChild(container);
+    });
+</script>
 </body>
 </html>
