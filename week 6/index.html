@@ -441,6 +441,99 @@
             color: #fef08a;
         }
 
+        /* Voice Selector Bar */
+        .voice-picker-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+        }
+
+        .voice-label-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            color: var(--cyan);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+        }
+
+        .voice-select-wrap {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .voice-dropdown {
+            width: 100%;
+            background: #111827;
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-btn);
+            padding: 8px 36px 8px 12px;
+            font-size: 0.84rem;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            transition: all 0.2s ease;
+        }
+
+        .voice-dropdown:hover {
+            border-color: var(--cyan);
+            background-color: #162033;
+        }
+
+        .voice-dropdown:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .voice-dropdown optgroup {
+            background: #0c121e;
+            color: var(--cyan);
+            font-weight: 700;
+            padding: 6px 0;
+        }
+
+        .voice-dropdown option {
+            background: #111827;
+            color: #f1f5f9;
+            padding: 8px;
+            font-weight: 500;
+        }
+
+        .voice-test-btn {
+            background: rgba(56, 189, 248, 0.08);
+            color: var(--cyan);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: var(--radius-btn);
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .voice-test-btn:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: var(--cyan);
+            transform: translateY(-1px);
+        }
+
         /* Favourites Column */
         .fav-card {
             background: var(--card-bg);
@@ -773,6 +866,17 @@
                 </div>
             </div>
 
+            <!-- Choose Any Voice Selector -->
+            <div class="voice-picker-bar">
+                <span class="voice-label-badge">🎙️ Voice:</span>
+                <div class="voice-select-wrap">
+                    <select id="voice-select" onchange="onVoiceChanged()" class="voice-dropdown" aria-label="Select Voice">
+                        <option value="">⭐ Auto (Best Natural Voice)</option>
+                    </select>
+                </div>
+                <button class="voice-test-btn" onclick="testSelectedVoice()" title="Test chosen voice">▶ Test</button>
+            </div>
+
         </section>
 
         <!-- 2. Right Column: Saved Favourites (Side-by-Side) -->
@@ -807,16 +911,108 @@
 
         let currentJoke = null;
         let speechVoices = [];
+        const VOICE_STORAGE_KEY = 'selected_voice_uri';
 
         function initVoices() {
             if ('speechSynthesis' in window) {
                 speechVoices = window.speechSynthesis.getVoices();
+                populateVoiceDropdown();
             }
         }
 
         if ('speechSynthesis' in window) {
             initVoices();
             window.speechSynthesis.onvoiceschanged = initVoices;
+        }
+
+        /**
+         * Clean & format a voice name into human-readable label
+         */
+        function formatVoiceName(voice) {
+            let name = voice.name
+                .replace(/Microsoft|Google|Apple|Desktop|Online/gi, '')
+                .replace(/\(Natural\)/gi, '✨ Natural')
+                .replace(/\(United States\)|\(United Kingdom\)/gi, '')
+                .replace(/[-_]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            const lang = voice.lang || '';
+            const region = lang.includes('US') ? 'US' : (lang.includes('GB') ? 'UK' : (lang.includes('AU') ? 'AU' : ''));
+            return region ? `${name} [${region}]` : `${name} (${lang})`;
+        }
+
+        /**
+         * Populate the voice selector with structured optgroups and clean names
+         */
+        function populateVoiceDropdown() {
+            const select = document.getElementById('voice-select');
+            if (!select || speechVoices.length === 0) return;
+
+            const savedVoiceURI = localStorage.getItem(VOICE_STORAGE_KEY);
+            select.innerHTML = '<option value="">⭐ Auto-Detect (Best Natural Voice)</option>';
+
+            const naturalGroup = document.createElement('optgroup');
+            naturalGroup.label = '✨ Recommended Natural Voices';
+
+            const standardGroup = document.createElement('optgroup');
+            standardGroup.label = '🌐 Other Installed Voices';
+
+            // Filter and sort English voices first
+            const enVoices = speechVoices.filter(v => v.lang.startsWith('en'));
+            const otherVoices = speechVoices.filter(v => !v.lang.startsWith('en'));
+
+            [...enVoices, ...otherVoices].forEach(voice => {
+                const opt = document.createElement('option');
+                opt.value = voice.voiceURI || voice.name;
+                opt.textContent = formatVoiceName(voice);
+
+                if (savedVoiceURI && (voice.voiceURI === savedVoiceURI || voice.name === savedVoiceURI)) {
+                    opt.selected = true;
+                }
+
+                const isNatural = voice.name.includes('Natural') || voice.name.includes('Neural') || voice.name.includes('Online') || voice.name.includes('Google');
+                if (isNatural) {
+                    naturalGroup.appendChild(opt);
+                } else {
+                    standardGroup.appendChild(opt);
+                }
+            });
+
+            if (naturalGroup.children.length > 0) select.appendChild(naturalGroup);
+            if (standardGroup.children.length > 0) select.appendChild(standardGroup);
+        }
+
+        function onVoiceChanged() {
+            const select = document.getElementById('voice-select');
+            if (!select) return;
+            const chosen = select.value;
+            if (chosen) {
+                localStorage.setItem(VOICE_STORAGE_KEY, chosen);
+                showToast(`Voice changed: ${select.options[select.selectedIndex].text}`, '🎙️');
+            } else {
+                localStorage.removeItem(VOICE_STORAGE_KEY);
+                showToast('Voice set to Auto-Detect', '🎙️');
+            }
+        }
+
+        /**
+         * Get the user's selected voice or fallback to highest-fidelity natural voice
+         */
+        function getSelectedOrBestVoice() {
+            if (!speechVoices || speechVoices.length === 0) {
+                initVoices();
+            }
+
+            const select = document.getElementById('voice-select');
+            const chosenURI = select ? select.value : localStorage.getItem(VOICE_STORAGE_KEY);
+
+            if (chosenURI) {
+                const found = speechVoices.find(v => (v.voiceURI && v.voiceURI === chosenURI) || v.name === chosenURI);
+                if (found) return found;
+            }
+
+            return getBestNaturalVoice();
         }
 
         /**
@@ -827,7 +1023,7 @@
                 initVoices();
             }
 
-            // 1. Natural / Neural Online voices (Edge, Chrome, Windows 11) - sound like real human actors
+            // 1. Natural / Neural Online voices (Edge, Chrome, Windows 11)
             const naturalVoice = speechVoices.find(v => 
                 v.lang.startsWith('en') && 
                 (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Online'))
@@ -847,15 +1043,29 @@
             );
             if (appleVoice) return appleVoice;
 
-            // 4. Modern desktop voices excluding legacy robotic synths
+            // 4. Modern desktop voices
             const modernVoice = speechVoices.find(v => 
                 v.lang.startsWith('en') && 
                 (v.name.includes('Zira') || v.name.includes('Mark') || v.name.includes('David'))
             );
             if (modernVoice) return modernVoice;
 
-            // 5. Fallback to any English voice
             return speechVoices.find(v => v.lang.startsWith('en')) || speechVoices[0] || null;
+        }
+
+        /**
+         * Preview/test the chosen voice with sample dialogue
+         */
+        function testSelectedVoice() {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+
+            const voice = getSelectedOrBestVoice();
+            const utt = new SpeechSynthesisUtterance("Here's how I sound telling your jokes!");
+            if (voice) utt.voice = voice;
+            utt.rate = 0.98;
+            window.speechSynthesis.speak(utt);
+            showToast(`Testing: ${voice ? voice.name.replace(/Microsoft|Google/g, '').trim() : 'Default'}`, '🔊');
         }
 
         // DOM Elements
@@ -1134,7 +1344,7 @@
                 return;
             }
 
-            const voice = getBestNaturalVoice();
+            const voice = getSelectedOrBestVoice();
             const voiceDisplayName = voice 
                 ? voice.name.replace(/Online|\(Natural\)|\(United States\)|\(United Kingdom\)|Microsoft|Google/gi, '').trim()
                 : 'Natural Voice';
@@ -1160,7 +1370,7 @@
             punchlineUtterance.onerror = () => setSpeakingButtonState(false);
             setupUtterance.onerror = () => setSpeakingButtonState(false);
 
-            // Dramatic comedic pause between setup and punchline
+            // Quick natural pause between setup and punchline (snappy 240ms)
             setupUtterance.onend = () => {
                 setTimeout(() => {
                     // Check if speech was cancelled in the interim
@@ -1169,7 +1379,7 @@
                     } else {
                         setSpeakingButtonState(false);
                     }
-                }, 750); // 750ms suspense pause
+                }, 240); // Snappy 240ms natural breath pause
             };
 
             window.speechSynthesis.speak(setupUtterance);

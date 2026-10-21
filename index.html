@@ -152,7 +152,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 20px;
+            gap: 12px;
+            padding: 14px 18px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
@@ -166,7 +167,7 @@
         .link-item a::after {
             content: '→';
             position: absolute;
-            right: 20px;
+            right: 18px;
             opacity: 0;
             transform: translateX(-10px);
             transition: all 0.3s ease;
@@ -176,7 +177,7 @@
         .link-item a:hover {
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.15);
-            padding-right: 40px;
+            padding-right: 36px;
         }
 
         .link-item a:hover::after {
@@ -186,12 +187,16 @@
 
         .link-name {
             font-weight: 500;
-            font-size: 1.1rem;
+            font-size: 0.98rem;
+            white-space: nowrap;
         }
 
         .description {
             color: #94a3b8;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
+            white-space: nowrap;
+            text-align: right;
+            flex-shrink: 0;
             transition: color 0.3s ease;
         }
 
@@ -287,14 +292,14 @@
                 <ul class="link-list">
                     <li class="link-item">
                         <a href="week 5/interactive colour palette.html">
-                            <span class="link-name">Interactive Colour Palette</span>
-                            <span class="description">Colour Generator</span>
+                            <span class="link-name">Colour Palette</span>
+                            <span class="description">Generator</span>
                         </a>
                     </li>
                     <li class="link-item">
                         <a href="week 5/interactive-class-notes.html">
-                            <span class="link-name">Interactive Class Notes</span>
-                            <span class="description">HTML · CSS · JS Fundamentals</span>
+                            <span class="link-name">Class Notes</span>
+                            <span class="description">HTML · CSS · JS</span>
                         </a>
                     </li>
                 </ul>
@@ -308,8 +313,8 @@
                 <ul class="link-list">
                     <li class="link-item">
                         <a href="week 6/random-joke-fetcher.html">
-                            <span class="link-name">Random Joke Fetcher</span>
-                            <span class="description">API Fetch &amp; LocalStorage</span>
+                            <span class="link-name">Joke Fetcher</span>
+                            <span class="description">API &amp; Storage</span>
                         </a>
                     </li>
                 </ul>
