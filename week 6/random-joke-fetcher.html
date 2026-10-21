@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Random Joke Fetcher — Week 6</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.3);
+            --cyan: #38bdf8;
+            --cyan-glow: rgba(56, 189, 248, 0.25);
+            --indigo: #818cf8;
+            --amber: #fbbf24;
+            --amber-glow: rgba(251, 191, 36, 0.2);
+            --rose: #f43f5e;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: var(--bg-body) !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body) !important;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(129, 140, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(251, 191, 36, 0.06) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 60px 20px;
+        }
+
+        /* Top Bar */
+        .topbar {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--cyan);
+            transform: translateX(-2px);
+        }
+
+        .page-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--cyan);
+            border-radius: 999px;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Header */
+        .header-title {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.3rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 40%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .header-title p {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+
+        /* 2-Column Side-by-Side Grid */
+        .workspace-grid {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 900px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Joke Card Container */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 28px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), var(--indigo));
+        }
+
+        .card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .tag-pill {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--cyan);
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 4px 10px;
+            border-radius: 999px;
+            text-transform: capitalize;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .joke-id {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            letter-spacing: 0.3px;
+        }
+
+        /* Dialogue Box / Joke View */
+        .joke-stage {
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .joke-dialogue {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeIn 0.35s ease;
+        }
+
+        /* Setup Quote Card */
+        .speech-card {
+            padding: 18px 20px;
+            border-radius: var(--radius-sub);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .speech-setup {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+        }
+
+        .speech-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .speech-setup .speech-label {
+            color: var(--cyan);
+        }
+
+        .setup-content {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.32rem;
+            font-weight: 600;
+            line-height: 1.45;
+            color: var(--text-main);
+        }
+
+        /* Punchline Card */
+        .speech-punchline {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(129, 140, 248, 0.1) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            box-shadow: 0 4px 20px var(--cyan-glow);
+        }
+
+        .speech-punchline .speech-label {
+            color: #67e8f9;
+        }
+
+        .punchline-content {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.38rem;
+            font-weight: 700;
+            line-height: 1.4;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+        }
+
+        /* Loading Spinner View */
+        .loading-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+            gap: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .spinner-ring {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(56, 189, 248, 0.15);
+            border-top: 3px solid var(--cyan);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            filter: drop-shadow(0 0 10px var(--cyan-glow));
+        }
+
+        .loading-text {
+            color: var(--text-sub);
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+
+        /* Error View */
+        .error-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+            padding: 24px;
+            background: rgba(244, 63, 94, 0.08);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+            border-radius: var(--radius-sub);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .error-state h3 {
+            color: var(--rose);
+            font-size: 1.05rem;
+        }
+
+        .error-state p {
+            color: #fca5a5;
+            font-size: 0.88rem;
+            line-height: 1.4;
+        }
+
+        .btn-retry {
+            background: rgba(244, 63, 94, 0.2);
+            color: #ffffff;
+            border: 1px solid rgba(244, 63, 94, 0.4);
+            padding: 8px 16px;
+            border-radius: var(--radius-btn);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-retry:hover {
+            background: rgba(244, 63, 94, 0.35);
+        }
+
+        /* Bottom Action Toolbar: Clean unified row */
+        .action-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .btn-main {
+            flex: 1.5;
+            background: linear-gradient(135deg, var(--cyan), var(--indigo));
+            color: #040812;
+            border: none;
+            padding: 12px 18px;
+            border-radius: var(--radius-btn);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.98rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px var(--cyan-glow);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-main:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 6px 22px rgba(56, 189, 248, 0.45);
+        }
+
+        .btn-main:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-group-tools {
+            display: flex;
+            gap: 8px;
+            flex: 1.8;
+        }
+
+        .btn-icon {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 12px 10px;
+            border-radius: var(--radius-btn);
+            font-size: 0.86rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-icon:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-icon:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-icon.speaking {
+            background: rgba(56, 189, 248, 0.2) !important;
+            border-color: var(--cyan) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 14px var(--cyan-glow);
+            animation: pulseSpeech 1.2s infinite ease-in-out;
+        }
+
+        @keyframes pulseSpeech {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .btn-fav {
+            color: var(--amber);
+            border-color: rgba(251, 191, 36, 0.25);
+            background: rgba(251, 191, 36, 0.06);
+        }
+
+        .btn-fav:hover:not(:disabled) {
+            background: rgba(251, 191, 36, 0.16);
+            border-color: var(--amber);
+        }
+
+        .btn-fav.saved {
+            background: rgba(251, 191, 36, 0.2);
+            border-color: var(--amber);
+            color: #fef08a;
+        }
+
+        /* Favourites Column */
+        .fav-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 28px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            min-height: 420px;
+        }
+
+        .fav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--amber), var(--rose));
+        }
+
+        .fav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .fav-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fav-badge {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--amber);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        .fav-clear-btn {
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .fav-clear-btn:hover {
+            color: var(--rose);
+            border-color: rgba(244, 63, 94, 0.35);
+            background: rgba(244, 63, 94, 0.08);
+        }
+
+        /* Favourites Scroll List */
+        .fav-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            max-height: 360px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .fav-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .fav-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+        }
+
+        .fav-item {
+            background: var(--card-sub);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .fav-item:hover {
+            border-color: rgba(251, 191, 36, 0.3);
+            background: rgba(32, 42, 66, 0.75);
+            transform: translateY(-1px);
+        }
+
+        .fav-item-body {
+            flex: 1;
+        }
+
+        .fav-item-setup {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .fav-item-punchline {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--cyan);
+            line-height: 1.4;
+        }
+
+        .fav-item-meta {
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        .fav-item-delete {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .fav-item-delete:hover {
+            color: var(--rose);
+            background: rgba(244, 63, 94, 0.15);
+        }
+
+        .fav-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex: 1;
+            padding: 30px 10px;
+            color: var(--text-dim);
+            gap: 8px;
+        }
+
+        .fav-empty-icon {
+            font-size: 2.2rem;
+            opacity: 0.5;
+        }
+
+        .fav-empty-state p {
+            font-size: 0.88rem;
+            line-height: 1.4;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            color: #ffffff;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 10px 18px;
+            border-radius: var(--radius-btn);
+            font-size: 0.86rem;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .header-title h1 {
+                font-size: 1.8rem;
+            }
+            .card, .fav-card {
+                padding: 20px;
+            }
+            .setup-content, .punchline-content {
+                font-size: 1.15rem;
+            }
+            .action-bar {
+                flex-direction: column;
+            }
+            .btn-main, .btn-group-tools {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="topbar">
+        <a href="../index.html" class="back-link">
+            <span>←</span> Coursework Hub
+        </a>
+        <span class="page-badge">Week 6 · Random Joke Fetcher</span>
+    </header>
+
+    <!-- Page Title -->
+    <div class="header-title">
+        <h1>Random Joke Fetcher</h1>
+        <p>Live API fetching, separated setup &amp; punchline, spinner animation, and localStorage favourites.</p>
+    </div>
+
+    <!-- Main Workspace Grid: Jokes on Left, Favourites on Right -->
+    <main class="workspace-grid">
+
+        <!-- 1. Left Column: Joke Display & Fetcher -->
+        <section class="card" aria-live="polite">
+            
+            <!-- Meta Info: Type & Joke ID -->
+            <div class="card-top">
+                <span class="tag-pill" id="category-badge">
+                    <span>🏷️</span> <span id="category-text">General</span>
+                </span>
+                <span class="joke-id" id="joke-id-display">Joke #---</span>
+            </div>
+
+            <!-- Dialogue Stage -->
+            <div class="joke-stage">
+                
+                <!-- Loading State with Challenge Spinner -->
+                <div class="loading-state" id="loading-view">
+                    <div class="spinner-ring" aria-label="Loading joke"></div>
+                    <div class="loading-text">Loading fresh joke…</div>
+                </div>
+
+                <!-- Friendly Error State -->
+                <div class="error-state" id="error-view">
+                    <h3>Connection Issue</h3>
+                    <p id="error-message-text">Could not load joke from the server. Check your internet connection and try again.</p>
+                    <button class="btn-retry" onclick="fetchRandomJoke()">Try Again</button>
+                </div>
+
+                <!-- Joke Content View: Setup & Punchline Separated -->
+                <div class="joke-dialogue" id="joke-content-view">
+                    
+                    <!-- Setup -->
+                    <div class="speech-card speech-setup">
+                        <div class="speech-label">
+                            <span>💬 The Setup</span>
+                        </div>
+                        <div class="setup-content" id="setup-text">
+                            Click "Load Joke" to fetch a joke!
+                        </div>
+                    </div>
+
+                    <!-- Punchline -->
+                    <div class="speech-card speech-punchline">
+                        <div class="speech-label">
+                            <span>✨ The Punchline</span>
+                        </div>
+                        <div class="punchline-content" id="punchline-text">
+                            The punchline will be revealed here.
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Unified Single-Row Action Bar -->
+            <div class="action-bar">
+                <!-- Primary Action -->
+                <button class="btn-main" id="load-joke-btn" onclick="fetchRandomJoke()">
+                    <span>🎲</span>
+                    <span id="load-btn-label">Load Joke</span>
+                </button>
+
+                <!-- Tool Group -->
+                <div class="btn-group-tools">
+                    <button class="btn-icon btn-fav" id="save-fav-btn" onclick="saveCurrentJokeToFavourites()" title="Save to favourites" disabled>
+                        <span id="fav-icon">⭐</span>
+                        <span id="fav-label">Favourite</span>
+                    </button>
+
+                    <button class="btn-icon" id="copy-btn" onclick="copyCurrentJoke()" title="Copy setup & punchline to clipboard" disabled>
+                        <span>📋</span>
+                        <span>Copy</span>
+                    </button>
+
+                    <button class="btn-icon" id="speak-btn" onclick="speakCurrentJoke()" title="Read joke aloud" disabled>
+                        <span>🔊</span>
+                        <span>Listen</span>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 2. Right Column: Saved Favourites (Side-by-Side) -->
+        <aside class="fav-card">
+            
+            <div class="fav-header">
+                <div class="fav-title">
+                    <span>⭐ Favourites</span>
+                    <span class="fav-badge" id="fav-badge-count">0</span>
+                </div>
+                <button class="fav-clear-btn" onclick="clearAllFavourites()" title="Clear all saved favourites">Clear All</button>
+            </div>
+
+            <div class="fav-list" id="fav-list">
+                <!-- Populated dynamically via localStorage -->
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- Floating Toast Notification -->
+    <div class="toast" id="toast" role="status">
+        <span id="toast-icon">✓</span>
+        <span id="toast-msg">Notification</span>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const API_URL = 'https://official-joke-api.appspot.com/random_joke';
+        const STORAGE_KEY = 'favourite_jokes';
+
+        let currentJoke = null;
+        let speechVoices = [];
+
+        function initVoices() {
+            if ('speechSynthesis' in window) {
+                speechVoices = window.speechSynthesis.getVoices();
+            }
+        }
+
+        if ('speechSynthesis' in window) {
+            initVoices();
+            window.speechSynthesis.onvoiceschanged = initVoices;
+        }
+
+        /**
+         * Select the highest-fidelity natural neural voice available
+         */
+        function getBestNaturalVoice() {
+            if (!speechVoices || speechVoices.length === 0) {
+                initVoices();
+            }
+
+            // 1. Natural / Neural Online voices (Edge, Chrome, Windows 11) - sound like real human actors
+            const naturalVoice = speechVoices.find(v => 
+                v.lang.startsWith('en') && 
+                (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Online'))
+            );
+            if (naturalVoice) return naturalVoice;
+
+            // 2. Google High-Quality English voices (Chrome)
+            const googleVoice = speechVoices.find(v => 
+                v.lang.startsWith('en') && v.name.includes('Google')
+            );
+            if (googleVoice) return googleVoice;
+
+            // 3. Apple premium voices (Samantha, Siri, Daniel)
+            const appleVoice = speechVoices.find(v => 
+                v.lang.startsWith('en') && 
+                (v.name.includes('Samantha') || v.name.includes('Siri') || v.name.includes('Karen') || v.name.includes('Daniel'))
+            );
+            if (appleVoice) return appleVoice;
+
+            // 4. Modern desktop voices excluding legacy robotic synths
+            const modernVoice = speechVoices.find(v => 
+                v.lang.startsWith('en') && 
+                (v.name.includes('Zira') || v.name.includes('Mark') || v.name.includes('David'))
+            );
+            if (modernVoice) return modernVoice;
+
+            // 5. Fallback to any English voice
+            return speechVoices.find(v => v.lang.startsWith('en')) || speechVoices[0] || null;
+        }
+
+        // DOM Elements
+        const loadingView = document.getElementById('loading-view');
+        const errorView = document.getElementById('error-view');
+        const jokeContentView = document.getElementById('joke-content-view');
+        
+        const setupText = document.getElementById('setup-text');
+        const punchlineText = document.getElementById('punchline-text');
+        const categoryText = document.getElementById('category-text');
+        const jokeIdDisplay = document.getElementById('joke-id-display');
+        
+        const loadJokeBtn = document.getElementById('load-joke-btn');
+        const loadBtnLabel = document.getElementById('load-btn-label');
+        const saveFavBtn = document.getElementById('save-fav-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const speakBtn = document.getElementById('speak-btn');
+        
+        const favListContainer = document.getElementById('fav-list');
+        const favBadgeCount = document.getElementById('fav-badge-count');
+        const errorMessageText = document.getElementById('error-message-text');
+
+        /**
+         * Fetch joke from the official-joke-api
+         */
+        async function fetchRandomJoke() {
+            setLoadingState(true);
+            errorView.style.display = 'none';
+
+            try {
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error(`Server returned status code: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data || !data.setup || !data.punchline) {
+                    throw new Error('Incomplete joke data received.');
+                }
+
+                currentJoke = data;
+                renderJoke(data);
+
+            } catch (err) {
+                console.error('Error fetching joke:', err);
+                showFriendlyError(err.message);
+            } finally {
+                setLoadingState(false);
+            }
+        }
+
+        /**
+         * Update loading indicator & button states
+         */
+        function setLoadingState(isLoading) {
+            if (isLoading) {
+                loadingView.style.display = 'flex';
+                jokeContentView.style.display = 'none';
+                errorView.style.display = 'none';
+
+                loadJokeBtn.disabled = true;
+                loadBtnLabel.textContent = 'Loading…';
+                saveFavBtn.disabled = true;
+                copyBtn.disabled = true;
+                speakBtn.disabled = true;
+            } else {
+                loadingView.style.display = 'none';
+                loadJokeBtn.disabled = false;
+                loadBtnLabel.textContent = 'Load Joke';
+            }
+        }
+
+        /**
+         * Display friendly error message
+         */
+        function showFriendlyError(msg) {
+            loadingView.style.display = 'none';
+            jokeContentView.style.display = 'none';
+            errorView.style.display = 'flex';
+
+            errorMessageText.textContent = `Couldn't load joke (${msg || 'Network error'}). Please try again!`;
+
+            saveFavBtn.disabled = true;
+            copyBtn.disabled = true;
+            speakBtn.disabled = true;
+        }
+
+        /**
+         * Render joke setup and punchline separately
+         */
+        function renderJoke(joke) {
+            errorView.style.display = 'none';
+            jokeContentView.style.display = 'flex';
+
+            // Displays setup text and punchline separately
+            setupText.textContent = joke.setup;
+            punchlineText.textContent = joke.punchline;
+
+            categoryText.textContent = joke.type || 'General';
+            jokeIdDisplay.textContent = joke.id ? `Joke #${joke.id}` : 'Joke #API';
+
+            saveFavBtn.disabled = false;
+            copyBtn.disabled = false;
+            speakBtn.disabled = false;
+
+            updateFavButtonState();
+        }
+
+        /**
+         * Save or remove current joke from localStorage favourites
+         */
+        function saveCurrentJokeToFavourites() {
+            if (!currentJoke) return;
+
+            let favourites = getSavedFavourites();
+
+            const existingIdx = favourites.findIndex(item => 
+                (item.id && item.id === currentJoke.id) || 
+                (item.setup === currentJoke.setup && item.punchline === currentJoke.punchline)
+            );
+
+            if (existingIdx > -1) {
+                favourites.splice(existingIdx, 1);
+                saveFavouritesToStorage(favourites);
+                updateFavButtonState();
+                renderFavouritesList();
+                showToast('Removed from favourites', '🗑️');
+                return;
+            }
+
+            const newFav = {
+                id: currentJoke.id || Date.now(),
+                type: currentJoke.type || 'general',
+                setup: currentJoke.setup,
+                punchline: currentJoke.punchline,
+                savedAt: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+            };
+
+            favourites.unshift(newFav);
+            saveFavouritesToStorage(favourites);
+            updateFavButtonState();
+            renderFavouritesList();
+            showToast('Saved to favourites!', '⭐');
+        }
+
+        function getSavedFavourites() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                return stored ? JSON.parse(stored) : [];
+            } catch (err) {
+                return [];
+            }
+        }
+
+        function saveFavouritesToStorage(list) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+                updateFavCountBadge();
+            } catch (err) {
+                showToast('Storage full or unavailable', '⚠️');
+            }
+        }
+
+        function updateFavCountBadge() {
+            const list = getSavedFavourites();
+            favBadgeCount.textContent = list.length;
+        }
+
+        function updateFavButtonState() {
+            if (!currentJoke) {
+                saveFavBtn.disabled = true;
+                return;
+            }
+
+            const favourites = getSavedFavourites();
+            const isSaved = favourites.some(item => 
+                (item.id && item.id === currentJoke.id) || 
+                (item.setup === currentJoke.setup && item.punchline === currentJoke.punchline)
+            );
+
+            const icon = document.getElementById('fav-icon');
+            const label = document.getElementById('fav-label');
+
+            if (isSaved) {
+                saveFavBtn.classList.add('saved');
+                icon.textContent = '★';
+                label.textContent = 'Saved';
+            } else {
+                saveFavBtn.classList.remove('saved');
+                icon.textContent = '⭐';
+                label.textContent = 'Favourite';
+            }
+        }
+
+        function renderFavouritesList() {
+            const list = getSavedFavourites();
+            favListContainer.innerHTML = '';
+
+            if (list.length === 0) {
+                favListContainer.innerHTML = `
+                    <div class="fav-empty-state">
+                        <div class="fav-empty-icon">⭐</div>
+                        <p>No favourites saved yet.<br>Click "Favourite" on jokes you like!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.forEach(fav => {
+                const item = document.createElement('div');
+                item.className = 'fav-item';
+                item.innerHTML = `
+                    <div class="fav-item-body">
+                        <div class="fav-item-setup">${escapeHtml(fav.setup)}</div>
+                        <div class="fav-item-punchline">${escapeHtml(fav.punchline)}</div>
+                        <div class="fav-item-meta">${escapeHtml(fav.type || 'general')} · ${fav.savedAt || 'Saved'}</div>
+                    </div>
+                    <button class="fav-item-delete" title="Remove favourite" onclick="removeFavouriteById(${fav.id})">✕</button>
+                `;
+                favListContainer.appendChild(item);
+            });
+        }
+
+        function removeFavouriteById(id) {
+            let favourites = getSavedFavourites();
+            favourites = favourites.filter(item => item.id !== id);
+            saveFavouritesToStorage(favourites);
+            renderFavouritesList();
+            updateFavButtonState();
+            showToast('Joke removed', '🗑️');
+        }
+
+        function clearAllFavourites() {
+            const list = getSavedFavourites();
+            if (list.length === 0) {
+                showToast('Favourites list is already empty.', 'ℹ️');
+                return;
+            }
+
+            if (confirm('Delete all saved favourites?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                updateFavCountBadge();
+                renderFavouritesList();
+                updateFavButtonState();
+                showToast('All favourites cleared.', '🗑️');
+            }
+        }
+
+        async function copyCurrentJoke() {
+            if (!currentJoke) return;
+            const text = `${currentJoke.setup}\n${currentJoke.punchline}`;
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('Joke copied to clipboard!', '📋');
+            } catch (err) {
+                showToast('Could not copy to clipboard', '⚠️');
+            }
+        }
+
+        /**
+         * Speak joke aloud with natural pacing, dramatic comedic pause, and human-like neural voice
+         */
+        function speakCurrentJoke() {
+            if (!currentJoke || !('speechSynthesis' in window)) {
+                showToast('Speech not supported in browser', '⚠️');
+                return;
+            }
+
+            // Toggle stop if already speaking
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                setSpeakingButtonState(false);
+                showToast('Speech stopped', '⏹️');
+                return;
+            }
+
+            const voice = getBestNaturalVoice();
+            const voiceDisplayName = voice 
+                ? voice.name.replace(/Online|\(Natural\)|\(United States\)|\(United Kingdom\)|Microsoft|Google/gi, '').trim()
+                : 'Natural Voice';
+
+            setSpeakingButtonState(true);
+
+            // Clean text for speech
+            const cleanSetup = currentJoke.setup.trim();
+            const cleanPunchline = currentJoke.punchline.trim();
+
+            const setupUtterance = new SpeechSynthesisUtterance(cleanSetup);
+            if (voice) setupUtterance.voice = voice;
+            setupUtterance.rate = 0.96;   // Relaxed, natural conversational speed
+            setupUtterance.pitch = 1.0;   // Inquisitive, human pitch
+
+            const punchlineUtterance = new SpeechSynthesisUtterance(cleanPunchline);
+            if (voice) punchlineUtterance.voice = voice;
+            punchlineUtterance.rate = 0.94;   // Measured comedic timing
+            punchlineUtterance.pitch = 1.04;  // Slightly lively delivery
+
+            // Event handlers
+            punchlineUtterance.onend = () => setSpeakingButtonState(false);
+            punchlineUtterance.onerror = () => setSpeakingButtonState(false);
+            setupUtterance.onerror = () => setSpeakingButtonState(false);
+
+            // Dramatic comedic pause between setup and punchline
+            setupUtterance.onend = () => {
+                setTimeout(() => {
+                    // Check if speech was cancelled in the interim
+                    if (window.speechSynthesis.speaking || !window.speechSynthesis.paused) {
+                        window.speechSynthesis.speak(punchlineUtterance);
+                    } else {
+                        setSpeakingButtonState(false);
+                    }
+                }, 750); // 750ms suspense pause
+            };
+
+            window.speechSynthesis.speak(setupUtterance);
+            showToast(`Voice: ${voiceDisplayName}`, '🎙️');
+        }
+
+        function setSpeakingButtonState(isSpeaking) {
+            if (!speakBtn) return;
+            if (isSpeaking) {
+                speakBtn.classList.add('speaking');
+                speakBtn.innerHTML = '<span>⏹️</span><span>Stop</span>';
+            } else {
+                speakBtn.classList.remove('speaking');
+                speakBtn.innerHTML = '<span>🔊</span><span>Listen</span>';
+            }
+        }
+
+        let toastTimer;
+        function showToast(message, icon = '✓') {
+            const toastEl = document.getElementById('toast');
+            const iconEl = document.getElementById('toast-icon');
+            const msgEl = document.getElementById('toast-msg');
+
+            iconEl.textContent = icon;
+            msgEl.textContent = message;
+
+            toastEl.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toastEl.classList.remove('show');
+            }, 2400);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateFavCountBadge();
+            renderFavouritesList();
+            fetchRandomJoke();
+        });
+    </script>
+</body>
+</html>
