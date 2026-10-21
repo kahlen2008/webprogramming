@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Web Programming: HTML · CSS · JS Interactive Class Notes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-card-hover: rgba(28, 38, 62, 0.98);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-cyan: #38bdf8;
+            --accent-indigo: #818cf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.2);
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: #090d16 !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #090d16 !important;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(129, 140, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(192, 132, 252, 0.12) 0%, transparent 60%);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(9, 13, 22, 0.82);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-brand-badge {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+            color: #040812;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-cyan);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+        }
+
+        /* Hero Banner */
+        .hero {
+            max-width: 1200px;
+            margin: 40px auto 30px auto;
+            padding: 0 24px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--accent-cyan);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #38bdf8 15%, #818cf8 50%, #c084fc 85%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.15rem;
+            max-width: 750px;
+            margin: 0 auto 28px auto;
+        }
+
+        /* Category Filter Tabs */
+        .filter-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 36px;
+        }
+
+        .filter-tab {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 10px 20px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .filter-tab.active {
+            color: #040812;
+            background: linear-gradient(135deg, var(--accent-cyan), #7dd3fc);
+            border-color: transparent;
+            box-shadow: 0 4px 18px rgba(56, 189, 248, 0.35);
+        }
+
+        .filter-tab.active.tab-css {
+            background: linear-gradient(135deg, var(--accent-indigo), #a5b4fc);
+            box-shadow: 0 4px 18px rgba(129, 140, 248, 0.35);
+        }
+
+        .filter-tab.active.tab-js {
+            background: linear-gradient(135deg, var(--accent-purple), #e9d5ff);
+            box-shadow: 0 4px 18px rgba(192, 132, 252, 0.35);
+        }
+
+        .filter-tab.active.tab-sandbox {
+            background: linear-gradient(135deg, var(--accent-emerald), #6ee7b7);
+            box-shadow: 0 4px 18px rgba(52, 211, 153, 0.35);
+        }
+
+        /* Container Layout */
+        .main-layout {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Section Headings */
+        .section-header {
+            margin: 50px 0 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 16px;
+        }
+
+        .section-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .section-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+        }
+
+        .badge-html { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); }
+        .badge-css { background: rgba(129, 140, 248, 0.15); color: var(--accent-indigo); border: 1px solid rgba(129, 140, 248, 0.3); }
+        .badge-js { background: rgba(192, 132, 252, 0.15); color: var(--accent-purple); border: 1px solid rgba(192, 132, 252, 0.3); }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .page-citation {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Interactive Topic Cards */
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 26px;
+            margin-bottom: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .topic-card:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            gap: 16px;
+        }
+
+        .topic-title-group h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.82rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(251, 191, 36, 0.12);
+            color: var(--accent-amber);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            font-weight: 500;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.96rem;
+            margin-bottom: 20px;
+        }
+
+        /* Split Grid: Code on left, Interactive Demo on right */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.05fr;
+            gap: 22px;
+        }
+
+        @media (max-width: 900px) {
+            .split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Code Block Styling */
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 9px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-html { background: #38bdf8; }
+        .dot-css { background: #818cf8; }
+        .dot-js { background: #c084fc; }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .copy-btn:hover {
+            color: var(--text-primary);
+        }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            color: #e2e8f0;
+            padding: 16px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.6;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(56, 189, 248, 0.3) transparent;
+        }
+
+        pre code::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        pre code::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        pre code::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.35);
+            border-radius: 4px;
+        }
+
+        pre code::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        /* Syntax colors */
+        .token-tag { color: #f43f5e; }
+        .token-attr { color: #38bdf8; }
+        .token-val { color: #34d399; }
+        .token-prop { color: #818cf8; }
+        .token-comment { color: #64748b; font-style: italic; }
+        .token-kw { color: #c084fc; font-weight: 600; }
+        .token-fn { color: #38bdf8; }
+        .token-str { color: #34d399; }
+        .token-num { color: #fbbf24; }
+
+        /* Interactive Canvas / Playground Box */
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+        }
+
+        .interactive-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent-cyan);
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .interactive-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* Buttons & Inputs inside demos */
+        .ui-btn {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ui-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .ui-btn-primary {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .ui-btn-primary:hover {
+            background: linear-gradient(135deg, #0369a1, #1d4ed8);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+        }
+
+        .ui-btn-danger {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fda4af;
+            border-color: rgba(244, 63, 94, 0.3);
+        }
+
+        .ui-btn-danger:hover {
+            background: rgba(244, 63, 94, 0.3);
+            color: #fff;
+        }
+
+        .ui-input {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            color: #fff;
+            padding: 8px 12px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .ui-input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .ui-slider-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .ui-slider-group input[type="range"] {
+            accent-color: var(--accent-cyan);
+            cursor: pointer;
+        }
+
+        /* Demo Canvas Area */
+        .demo-canvas {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Specific interactive styles */
+        /* 1. Box Model Visualizer */
+        .box-model-outer {
+            background: rgba(251, 146, 60, 0.18);
+            border: 2px dashed #fb923c;
+            border-radius: 8px;
+            padding: 18px;
+            position: relative;
+            text-align: center;
+            font-size: 0.78rem;
+            color: #fdba74;
+            transition: all 0.2s ease;
+        }
+
+        .box-model-border {
+            background: rgba(250, 204, 21, 0.2);
+            border: 2px solid #facc15;
+            border-radius: 6px;
+            padding: 14px;
+            color: #fef08a;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .box-model-padding {
+            background: rgba(74, 222, 128, 0.2);
+            border: 2px dashed #4ade80;
+            border-radius: 4px;
+            padding: 14px;
+            color: #bbf7d0;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .box-model-content {
+            background: rgba(56, 189, 248, 0.25);
+            border: 1px solid #38bdf8;
+            border-radius: 4px;
+            padding: 12px;
+            color: #e0f2fe;
+            font-weight: 600;
+        }
+
+        .box-tag {
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 2. Flexbox Container */
+        .flexbox-sandbox {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px dashed rgba(129, 140, 248, 0.4);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            min-height: 140px;
+            transition: all 0.3s ease;
+        }
+
+        .flex-card-item {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 16px 20px;
+            text-align: center;
+            color: #fff;
+            font-weight: 600;
+            flex: 1;
+            min-width: 140px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        /* 3. Interactive Table */
+        .notes-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .notes-table th {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--accent-cyan);
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notes-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #e2e8f0;
+        }
+
+        .notes-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* 4. Counter Badge */
+        .counter-display {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            line-height: 1;
+            margin: 10px 0;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* 5. Mini Console Output */
+        .virtual-console {
+            background: #050811;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            color: #38bdf8;
+            max-height: 120px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .console-entry {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .console-entry::before {
+            content: '>';
+            color: var(--text-muted);
+        }
+
+        /* Fruit Array Visualizer Stage */
+        .fruit-array-stage {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 16px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: var(--radius-sm);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .fruit-slot {
+            background: rgba(30, 41, 59, 0.85);
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 12px 18px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            min-width: 90px;
+        }
+
+        .fruit-slot.active {
+            border-color: var(--accent-cyan);
+            background: rgba(56, 189, 248, 0.25);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.45);
+            transform: translateY(-5px) scale(1.08);
+        }
+
+        .fruit-slot .fruit-icon {
+            font-size: 2.2rem;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .fruit-slot .fruit-name {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .fruit-slot .fruit-index {
+            position: absolute;
+            top: -8px;
+            right: -6px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--accent-cyan);
+            font-size: 0.7rem;
+            font-family: monospace;
+            padding: 1px 6px;
+            border-radius: 999px;
+            font-weight: 700;
+        }
+
+        .fruit-tracker-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+        }
+
+        /* 6. Live Sandbox Playground */
+        .live-sandbox-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 850px) {
+            .live-sandbox-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sandbox-editor-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sandbox-textarea {
+            width: 100%;
+            height: 280px;
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            color: #f1f5f9;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            resize: vertical;
+            outline: none;
+            line-height: 1.6;
+        }
+
+        .sandbox-textarea:focus {
+            border-color: var(--accent-emerald);
+        }
+
+        .sandbox-preview-frame {
+            width: 100%;
+            height: 280px;
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: auto;
+        }
+
+        /* Helper Toast */
+        .toast-popup {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--accent-cyan);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .toast-popup.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Viewport Preview */
+        .device-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .device-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .device-btn.active {
+            background: var(--accent-indigo);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .device-frame-wrapper {
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+        .device-preview-box {
+            transition: width 0.3s ease;
+            width: 100%;
+            background: #0f172a;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation -->
+    <nav class="navbar">
+        <a href="../index.html" class="nav-brand">
+            <span class="nav-brand-badge">WEEK 5</span>
+            <span>Web Programming Class Notes</span>
+        </a>
+        <a href="../index.html" class="back-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Coursework
+        </a>
+    </nav>
+
+    <!-- Hero Header -->
+    <header class="hero">
+        <div class="hero-badge">Interactive Learning Playground · Pages 4–12</div>
+        <h1>HTML · CSS · JavaScript Notes</h1>
+        <p>Explore the core fundamentals from the course manual with real-time live code previews, interactive controls, and hands-on experiments.</p>
+
+        <!-- Category Filters -->
+        <div class="filter-nav">
+            <button class="filter-tab active" onclick="filterCategory('all', this)">✨ All Topics</button>
+            <button class="filter-tab" onclick="filterCategory('html', this)">🌐 Part 2: HTML</button>
+            <button class="filter-tab tab-css" onclick="filterCategory('css', this)">🎨 Part 3: CSS</button>
+            <button class="filter-tab tab-js" onclick="filterCategory('js', this)">⚡ Part 4: JavaScript</button>
+            <button class="filter-tab tab-sandbox" onclick="filterCategory('sandbox', this)">🧪 Live Sandbox</button>
+        </div>
+    </header>
+
+    <main class="main-layout">
+
+        <!-- ========================================== -->
+        <!-- PART 2: HTML FUNDAMENTALS (Pages 4–6) -->
+        <!-- ========================================== -->
+        <div class="topic-section" data-category="html">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-badge badge-html">PART 2</span>
+                    <h2 class="section-title">HTML Fundamentals</h2>
+                </div>
+                <span class="page-citation">Pages 4 of 19 · Web Programming Class Notes</span>
+            </div>
+
+            <!-- Topic 1: Page Skeleton -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>1. The Page Skeleton</h3>
+                        <p class="topic-desc">HTML defines the structure of a page. Every element is a tag. Always start every HTML document with this standard skeleton:</p>
+                    </div>
+                    <span class="topic-rule-badge">Skeleton standard</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-html"></span> HTML Skeleton</span>
+                            <button class="copy-btn" onclick="copySnippet('code-skeleton')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-skeleton"><span class="token-comment">&lt;!-- The page skeleton (always start here) --&gt;</span>
+<span class="token-kw">&lt;!DOCTYPE html&gt;</span>
+<span class="token-tag">&lt;html</span> <span class="token-attr">lang</span>=<span class="token-val">"en"</span><span class="token-tag">&gt;</span>
+  <span class="token-tag">&lt;head&gt;</span>
+    <span class="token-tag">&lt;title&gt;</span><span id="skeleton-title-code">Page Title</span><span class="token-tag">&lt;/title&gt;</span>
+  <span class="token-tag">&lt;/head&gt;</span>
+  <span class="token-tag">&lt;body&gt;</span>
+    <span id="skeleton-body-code">content</span>
+  <span class="token-tag">&lt;/body&gt;</span>
+<span class="token-tag">&lt;/html&gt;</span></code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Interactive Skeleton Inspector</span>
+                            <span>Live Render</span>
+                        </div>
+                        <div class="interactive-controls">
+                            <input type="text" id="skeleton-title-input" class="ui-input" value="My Awesome Page" placeholder="Enter Page Title" oninput="updateSkeletonDemo()">
+                            <input type="text" id="skeleton-body-input" class="ui-input" value="Welcome to my first web page!" placeholder="Enter Body Content" oninput="updateSkeletonDemo()">
+                        </div>
+                        <div class="demo-canvas" style="background: rgba(255,255,255,0.03); border: 1px dashed rgba(56, 189, 248, 0.4);">
+                            <div style="font-size: 0.78rem; color: var(--accent-cyan); font-family: 'Fira Code', monospace; margin-bottom: 8px;">
+                                Browser Tab Preview: 📑 <span id="skeleton-tab-preview" style="color:#fff; font-weight:600;">My Awesome Page</span>
+                            </div>
+                            <div style="background: #ffffff; color: #111; padding: 14px; border-radius: 6px; font-family: sans-serif;">
+                                <div id="skeleton-rendered-content">Welcome to my first web page!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 2: Headings and Paragraphs -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>2. Headings and Paragraphs</h3>
+                        <p class="topic-desc">Use headings for structure from <code>&lt;h1&gt;</code> (main title) down to <code>&lt;h3&gt;</code>. Paragraphs group sentence content. Note: <em>HTML ignores extra spaces and line breaks.</em></p>
+                    </div>
+                    <span class="topic-rule-badge">Whitespace collapse rule</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-html"></span> HTML</span>
+                            <button class="copy-btn" onclick="copySnippet('code-headings')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-headings"><span class="token-tag">&lt;h1&gt;</span>Main Title<span class="token-tag">&lt;/h1&gt;</span>
+<span class="token-tag">&lt;h2&gt;</span>Section Title<span class="token-tag">&lt;/h2&gt;</span>
+<span class="token-tag">&lt;h3&gt;</span>Sub-section<span class="token-tag">&lt;/h3&gt;</span>
+<span class="token-tag">&lt;p&gt;</span>This is a paragraph. HTML ignores     extra 
+
+spaces and line breaks.<span class="token-tag">&lt;/p&gt;</span></code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Interactive Whitespace Collapser</span>
+                            <span>Try adding tabs/enters</span>
+                        </div>
+                        <textarea id="whitespace-input" class="ui-input" style="height: 70px; resize: none; font-family: monospace;" oninput="updateWhitespaceDemo()">This    word    has    lots    of 
+
+spaces &amp; enters in source code!</textarea>
+                        <div class="demo-canvas" style="background: rgba(255,255,255,0.03);">
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px;">How the browser actually renders it:</div>
+                            <p id="whitespace-rendered" style="color: #f8fafc; font-size: 0.95rem; margin: 0;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 3: Links, Images & Lists -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>3. Links, Images & Lists</h3>
+                        <p class="topic-desc">Links connect resources (e.g. <code>[Visit Google]</code> or Week 2 Calculator). Lists organize items into unordered (<code>&lt;ul&gt;</code>) or ordered sequences (<code>&lt;ol&gt;</code>).</p>
+                    </div>
+                    <span class="topic-rule-badge">Links · Lists · Media</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-html"></span> Links & Lists</span>
+                            <button class="copy-btn" onclick="copySnippet('code-lists')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-lists"><span class="token-comment">&lt;!-- Links and Images --&gt;</span>
+<span class="token-tag">&lt;a</span> <span class="token-attr">href</span>=<span class="token-val">"https://google.com"</span> <span class="token-attr">target</span>=<span class="token-val">"_blank"</span><span class="token-tag">&gt;</span>Visit Google<span class="token-tag">&lt;/a&gt;</span>
+<span class="token-tag">&lt;a</span> <span class="token-attr">href</span>=<span class="token-val">"../week 2/week 2_1/"</span><span class="token-tag">&gt;</span>Week 2: Calculator<span class="token-tag">&lt;/a&gt;</span>
+
+<span class="token-comment">&lt;!-- Unordered List --&gt;</span>
+<span class="token-tag">&lt;ul&gt;</span>
+  <span class="token-tag">&lt;li&gt;</span>HTML<span class="token-tag">&lt;/li&gt;</span>
+  <span class="token-tag">&lt;li&gt;</span>CSS<span class="token-tag">&lt;/li&gt;</span>
+  <span class="token-tag">&lt;li&gt;</span>JavaScript<span class="token-tag">&lt;/li&gt;</span>
+<span class="token-tag">&lt;/ul&gt;</span>
+
+<span class="token-comment">&lt;!-- Ordered List --&gt;</span>
+<span class="token-tag">&lt;ol&gt;</span>
+  <span class="token-tag">&lt;li&gt;</span>Create repo<span class="token-tag">&lt;/li&gt;</span>
+  <span class="token-tag">&lt;li&gt;</span>Write code<span class="token-tag">&lt;/li&gt;</span>
+  <span class="token-tag">&lt;li&gt;</span>Push to GitHub<span class="token-tag">&lt;/li&gt;</span>
+<span class="token-tag">&lt;/ol&gt;</span></code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Interactive List & Link Manager</span>
+                            <span>Live preview</span>
+                        </div>
+                        <div class="interactive-controls">
+                            <input type="text" id="new-list-item-input" class="ui-input" placeholder="Add custom item (e.g. Git Branch)...">
+                            <button class="ui-btn ui-btn-primary" onclick="addCustomListItem()">+ Add to List</button>
+                            <button class="ui-btn" onclick="toggleListType()" id="toggle-list-btn">Switch to &lt;ol&gt;</button>
+                        </div>
+                        <div class="demo-canvas" style="background: rgba(255,255,255,0.02);">
+                            <div style="display: flex; gap: 14px; margin-bottom: 12px;">
+                                <a href="https://google.com" target="_blank" style="color: var(--accent-cyan); text-decoration: underline;">🔗 Visit Google</a>
+                                <a href="../week 2/week 2_1/" style="color: var(--accent-emerald); text-decoration: underline;">🧮 Week 2: Calculator</a>
+                            </div>
+                            <div id="dynamic-list-container" style="padding-left: 20px; color: #f1f5f9;">
+                                <ul>
+                                    <li>HTML</li>
+                                    <li>CSS</li>
+                                    <li>JavaScript</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 4: Tables and Forms -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>4. Tables & Forms (User Input)</h3>
+                        <p class="topic-desc">Page 5 & 6: Tables organize tabular data with <code>&lt;tr&gt;</code> and <code>&lt;td&gt;</code>. Forms accept user inputs (name, email) and submit them.</p>
+                    </div>
+                    <span class="topic-rule-badge">Page 5 & 6</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-html"></span> Table & Form</span>
+                            <button class="copy-btn" onclick="copySnippet('code-table-form')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-table-form"><span class="token-comment">&lt;!-- Table --&gt;</span>
+<span class="token-tag">&lt;table&gt;</span>
+  <span class="token-tag">&lt;tr&gt;&lt;th&gt;</span>Name<span class="token-tag">&lt;/th&gt;&lt;th&gt;</span>Score<span class="token-tag">&lt;/th&gt;&lt;/tr&gt;</span>
+  <span class="token-tag">&lt;tr&gt;&lt;td&gt;</span>Alice<span class="token-tag">&lt;/td&gt;&lt;td&gt;</span>95<span class="token-tag">&lt;/td&gt;&lt;/tr&gt;</span>
+  <span class="token-tag">&lt;tr&gt;&lt;td&gt;</span>Bob<span class="token-tag">&lt;/td&gt;&lt;td&gt;</span>88<span class="token-tag">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="token-tag">&lt;/table&gt;</span>
+
+<span class="token-comment">&lt;!-- Form (user input) --&gt;</span>
+<span class="token-tag">&lt;form&gt;</span>
+  <span class="token-tag">&lt;label&gt;</span>Your name: <span class="token-tag">&lt;input</span> <span class="token-attr">type</span>=<span class="token-val">"text"</span><span class="token-tag">&gt;&lt;/label&gt;</span>
+  <span class="token-tag">&lt;label&gt;</span>Email: <span class="token-tag">&lt;input</span> <span class="token-attr">type</span>=<span class="token-val">"email"</span><span class="token-tag">&gt;&lt;/label&gt;</span>
+  <span class="token-tag">&lt;button</span> <span class="token-attr">type</span>=<span class="token-val">"submit"</span><span class="token-tag">&gt;</span>Submit<span class="token-tag">&lt;/button&gt;</span>
+<span class="token-tag">&lt;/form&gt;</span></code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Live Table & Form Simulator</span>
+                            <span>Interactive</span>
+                        </div>
+                        <!-- Table Section -->
+                        <table class="notes-table" id="interactive-student-table">
+                            <thead>
+                                <tr><th>Name</th><th>Score</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Alice</td><td>95</td><td><span style="color:var(--accent-emerald);">Passed</span></td></tr>
+                                <tr><td>Bob</td><td>88</td><td><span style="color:var(--accent-emerald);">Passed</span></td></tr>
+                            </tbody>
+                        </table>
+                        <!-- Form Section -->
+                        <form onsubmit="handleDemoFormSubmit(event)" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+                            <input type="text" id="form-name" class="ui-input" placeholder="Your name (e.g. Charlie)" required>
+                            <input type="number" id="form-score" class="ui-input" placeholder="Score (0-100)" min="0" max="100" required style="max-width: 120px;">
+                            <button type="submit" class="ui-btn ui-btn-primary">Submit to Table</button>
+                        </form>
+                        <div id="form-feedback" style="font-size: 0.8rem; color: var(--accent-cyan); display: none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 5: Grouping Elements (div vs span) -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>5. Grouping Elements: &lt;div&gt; vs &lt;span&gt;</h3>
+                        <p class="topic-desc">Page 6: <strong>Golden Rule to remember:</strong> If it's a structure or layout block &rarr; use <code>&lt;div&gt;</code>. If it's part of a sentence or inline text &rarr; use <code>&lt;span&gt;</code>.</p>
+                    </div>
+                    <span class="topic-rule-badge">Layout Block vs Inline</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-html"></span> HTML</span>
+                            <button class="copy-btn" onclick="copySnippet('code-grouping')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-grouping"><span class="token-comment">&lt;!-- Rule: Block vs Inline --&gt;</span>
+<span class="token-tag">&lt;div&gt;</span>Inside a div (takes full width as a block)<span class="token-tag">&lt;/div&gt;</span>
+
+<span class="token-tag">&lt;p&gt;</span>
+  This word is <span class="token-tag">&lt;span</span> <span class="token-attr">style</span>=<span class="token-val">"color: red;"</span><span class="token-tag">&gt;</span>red<span class="token-tag">&lt;/span&gt;</span>.
+<span class="token-tag">&lt;/p&gt;</span></code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Visual Block vs Inline Inspector</span>
+                            <span>Toggle Highlights</span>
+                        </div>
+                        <div class="interactive-controls">
+                            <button class="ui-btn" onclick="toggleBlockOutlines(this)">Highlight Bounding Boxes</button>
+                            <button class="ui-btn" onclick="changeRedWordColor()">Pick &lt;span&gt; Color</button>
+                        </div>
+                        <div class="demo-canvas" id="grouping-canvas" style="background: rgba(255,255,255,0.03);">
+                            <div class="demo-block-element" style="background: rgba(56, 189, 248, 0.15); border: 1px dashed #38bdf8; padding: 10px; margin-bottom: 12px; border-radius: 6px;">
+                                <strong>&lt;div&gt;:</strong> Inside a div (fills 100% available horizontal space)
+                            </div>
+                            <p style="margin: 0; font-size: 1rem;">
+                                This word is <span id="interactive-span-word" style="color: #f43f5e; font-weight: 700; background: rgba(244, 63, 94, 0.15); padding: 2px 6px; border-radius: 4px;">red</span> inside an inline flow.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- PART 3: CSS STYLING (Pages 7–9) -->
+        <!-- ========================================== -->
+        <div class="topic-section" data-category="css">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-badge badge-css">PART 3</span>
+                    <h2 class="section-title">CSS Styling</h2>
+                </div>
+                <span class="page-citation">Pages 7–9 of 19 · Web Programming Class Notes</span>
+            </div>
+
+            <!-- Topic 6: Selectors & Colors/Fonts -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>6. CSS Selectors, Colors & Typography</h3>
+                        <p class="topic-desc">CSS controls element color, size, spacing, fonts, and layout. Target elements via element tag (<code>p</code>), class (<code>.card</code>), or unique ID (<code>#header</code>).</p>
+                    </div>
+                    <span class="topic-rule-badge">Page 7 Selectors</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-css"></span> CSS</span>
+                            <button class="copy-btn" onclick="copySnippet('code-css-selectors')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-css-selectors"><span class="token-comment">/* Element selector — affects ALL tags */</span>
+<span class="token-tag">p</span> { <span class="token-prop">color</span>: <span class="token-val">navy</span>; }
+
+<span class="token-comment">/* Class selector — use class="card" in HTML */</span>
+<span class="token-tag">.card</span> {
+  <span class="token-prop">background</span>: <span class="token-val">#f0f0f0</span>;
+  <span class="token-prop">border-radius</span>: <span class="token-val">8px</span>;
+}
+
+<span class="token-comment">/* ID selector — use id="header" in HTML (only one element) */</span>
+<span class="token-tag">#header</span> { <span class="token-prop">font-size</span>: <span class="token-val">32px</span>; }
+
+<span class="token-comment">/* Colors and fonts */</span>
+<span class="token-tag">body</span> {
+  <span class="token-prop">background-color</span>: <span class="token-val">#ffffff</span>;
+  <span class="token-prop">color</span>: <span class="token-val">#1a1a1a</span>;
+  <span class="token-prop">font-family</span>: <span class="token-val">'Segoe UI', Arial, sans-serif</span>;
+  <span class="token-prop">font-size</span>: <span class="token-val">16px</span>;
+  <span class="token-prop">line-height</span>: <span class="token-val">1.6</span>;
+}
+<span class="token-tag">h1</span> { <span class="token-prop">color</span>: <span class="token-val">#1a56db</span>; } <span class="token-comment">/* blue heading */</span>
+<span class="token-tag">a</span> { <span class="token-prop">color</span>: <span class="token-val">#16a34a</span>; }  <span class="token-comment">/* green links */</span></code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Live Style & Selector Sandbox</span>
+                            <span>Interactive controls</span>
+                        </div>
+                        <div class="interactive-controls">
+                            <button class="ui-btn" onclick="highlightSelector('p')">Target &lt;p&gt;</button>
+                            <button class="ui-btn" onclick="highlightSelector('.card')">Target .card</button>
+                            <button class="ui-btn" onclick="highlightSelector('#header')">Target #header</button>
+                            <button class="ui-btn" onclick="resetSelectors()">Reset</button>
+                        </div>
+                        <div class="demo-canvas" id="selector-demo-canvas" style="background: #ffffff; color: #1a1a1a; padding: 20px; border-radius: 8px;">
+                            <div id="demo-header" style="font-size: 26px; font-weight: 700; color: #1a56db; margin-bottom: 8px; transition: all 0.3s;">
+                                #header Element
+                            </div>
+                            <div class="demo-card-item" id="demo-card-1" style="background: #f0f0f0; border-radius: 8px; padding: 12px; margin-bottom: 10px; transition: all 0.3s;">
+                                <span style="font-weight:600; color:#333;">Class: .card (Element 1)</span>
+                                <p id="demo-p-1" style="color: navy; margin: 4px 0; transition: all 0.3s;">This paragraph inherits navy color.</p>
+                                <a href="#" style="color: #16a34a; font-weight: 500;">Green link</a>
+                            </div>
+                            <div class="demo-card-item" id="demo-card-2" style="background: #f0f0f0; border-radius: 8px; padding: 12px; transition: all 0.3s;">
+                                <span style="font-weight:600; color:#333;">Class: .card (Element 2)</span>
+                                <p id="demo-p-2" style="color: navy; margin: 4px 0; transition: all 0.3s;">Another paragraph inside a card.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 7: Box Model: Margin & Padding -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>7. Spacing: Margin and Padding (The Box Model)</h3>
+                        <p class="topic-desc">Page 8: <strong>Margin</strong> is outside the border. <strong>Padding</strong> is inside between the border and content. <strong>Border</strong> separates them.</p>
+                    </div>
+                    <span class="topic-rule-badge">Page 8 Diagram</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-css"></span> Box Model CSS</span>
+                            <button class="copy-btn" onclick="copySnippet('code-boxmodel')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-boxmodel"><span class="token-tag">.card</span> {
+  <span class="token-prop">margin</span>: <span class="token-val" id="bm-code-margin">20px</span>;        <span class="token-comment">/* space OUTSIDE the element */</span>
+  <span class="token-prop">padding</span>: <span class="token-val" id="bm-code-padding">16px</span>;       <span class="token-comment">/* space INSIDE the element */</span>
+  <span class="token-prop">border</span>: <span class="token-val" id="bm-code-border">1px solid #ccc</span>;
+  <span class="token-prop">border-radius</span>: <span class="token-val" id="bm-code-radius">8px</span>; <span class="token-comment">/* rounded corners */</span>
+  <span class="token-prop">box-shadow</span>: <span class="token-val">0 2px 8px rgba(0,0,0,0.1)</span>;
+}</code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Interactive Box Model Playground</span>
+                            <span>Adjust Sliders</span>
+                        </div>
+                        <div class="interactive-controls">
+                            <div class="ui-slider-group">
+                                <label>Margin: <b id="lbl-margin">20px</b></label>
+                                <input type="range" min="0" max="40" value="20" id="slider-margin" oninput="updateBoxModel()">
+                            </div>
+                            <div class="ui-slider-group">
+                                <label>Padding: <b id="lbl-padding">16px</b></label>
+                                <input type="range" min="0" max="40" value="16" id="slider-padding" oninput="updateBoxModel()">
+                            </div>
+                            <div class="ui-slider-group">
+                                <label>Radius: <b id="lbl-radius">8px</b></label>
+                                <input type="range" min="0" max="30" value="8" id="slider-radius" oninput="updateBoxModel()">
+                            </div>
+                        </div>
+
+                        <!-- Visual Diagram matching class notes -->
+                        <div class="box-model-outer" id="bm-outer">
+                            <span class="box-tag">margin (outside)</span>
+                            <div class="box-model-border" id="bm-border">
+                                <span class="box-tag">border</span>
+                                <div class="box-model-padding" id="bm-padding">
+                                    <span class="box-tag">padding (inside)</span>
+                                    <div class="box-model-content">
+                                        content (text, image, children)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 8: Flexbox Layout & Responsive Design -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>8. Flexbox Layout & Responsive Design</h3>
+                        <p class="topic-desc">Page 8–9: Flexbox is the most useful modern layout tool. The parent controls arrangement, while children control space allocation.</p>
+                    </div>
+                    <span class="topic-rule-badge">Flexbox + Media Queries</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-css"></span> Flexbox CSS</span>
+                            <button class="copy-btn" onclick="copySnippet('code-flexbox')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-flexbox"><span class="token-comment">/* Parent: controls HOW children are arranged */</span>
+<span class="token-tag">.container</span> {
+  <span class="token-prop">display</span>: <span class="token-val">flex</span>;
+  <span class="token-prop">gap</span>: <span class="token-val" id="fb-code-gap">16px</span>;
+  <span class="token-prop">flex-wrap</span>: <span class="token-val" id="fb-code-wrap">wrap</span>;
+  <span class="token-prop">justify-content</span>: <span class="token-val" id="fb-code-justify">center</span>;
+  <span class="token-prop">align-items</span>: <span class="token-val">center</span>;
+}
+
+<span class="token-comment">/* Child: controls HOW MUCH space each child takes */</span>
+<span class="token-tag">.card</span> {
+  <span class="token-prop">flex</span>: <span class="token-val">1</span>;
+  <span class="token-prop">min-width</span>: <span class="token-val">200px</span>;
+}
+
+<span class="token-comment">/* Responsive design (mobile-friendly) */</span>
+<span class="token-kw">@media</span> (<span class="token-prop">max-width</span>: <span class="token-val">600px</span>) {
+  <span class="token-tag">.container</span> { <span class="token-prop">flex-direction</span>: <span class="token-val">column</span>; }
+}</code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Interactive Flexbox Controls</span>
+                            <span>Live preview</span>
+                        </div>
+                        <div class="interactive-controls">
+                            <div class="ui-slider-group">
+                                <label>Justify:</label>
+                                <select id="flex-justify-select" class="ui-input" style="padding:4px 8px; max-width:130px;" onchange="updateFlexSandbox()">
+                                    <option value="center">center</option>
+                                    <option value="flex-start">flex-start</option>
+                                    <option value="flex-end">flex-end</option>
+                                    <option value="space-between">space-between</option>
+                                    <option value="space-around">space-around</option>
+                                </select>
+                            </div>
+                            <div class="ui-slider-group">
+                                <label>Gap: <b id="lbl-flex-gap">16px</b></label>
+                                <input type="range" min="0" max="40" value="16" id="slider-flex-gap" oninput="updateFlexSandbox()">
+                            </div>
+                            <button class="ui-btn" onclick="addFlexChild()">+ Card</button>
+                            <button class="ui-btn ui-btn-danger" onclick="removeFlexChild()">- Card</button>
+                        </div>
+
+                        <!-- Flexbox Preview Container -->
+                        <div class="flexbox-sandbox" id="flex-playground">
+                            <div class="flex-card-item">Week 1</div>
+                            <div class="flex-card-item">Week 2</div>
+                            <div class="flex-card-item">Week 3</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- PART 4: JAVASCRIPT BASICS (Pages 10–12) -->
+        <!-- ========================================== -->
+        <div class="topic-section" data-category="js">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-badge badge-js">PART 4</span>
+                    <h2 class="section-title">JavaScript Basics</h2>
+                </div>
+                <span class="page-citation">Pages 10–12 of 19 · Web Programming Class Notes</span>
+            </div>
+
+            <!-- JavaScript Introduction Banner -->
+            <div style="background: rgba(192, 132, 252, 0.08); border: 1px solid rgba(192, 132, 252, 0.25); border-radius: var(--radius-md); padding: 18px 22px; margin-bottom: 26px; color: #e9d5ff; font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                <div>
+                    <strong style="color: #fff; font-size: 1.05rem;">JavaScript makes pages interactive:</strong> respond to clicks, update content, and store data.<br>
+                    Add it inside <code>&lt;script&gt;</code> at the bottom of <code>&lt;body&gt;</code>, or in a separate <code>script.js</code> file.
+                </div>
+                <div style="background: rgba(0, 0, 0, 0.4); padding: 8px 14px; border-radius: var(--radius-sm); font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.1); color: var(--accent-amber);">
+                    💡 <b>Debug tip:</b> Press <b>F12</b> to open DevTools &rarr; Console tab!
+                </div>
+            </div>
+
+            <!-- Topic 9: Variables and Output -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>9. Variables and Output</h3>
+                        <p class="topic-desc">Page 10: JavaScript makes pages interactive: respond to clicks, update content, and store data. Modern variables use <code>let</code> (reassignable) and <code>const</code> (constant).</p>
+                    </div>
+                    <span class="topic-rule-badge">let vs const · console & alert</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-js"></span> JavaScript</span>
+                            <button class="copy-btn" onclick="copySnippet('code-vars')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-vars"><span class="token-comment">// Two modern ways to declare variables</span>
+<span class="token-kw">let</span> name = <span class="token-str">'Alice'</span>;  <span class="token-comment">// can be reassigned</span>
+<span class="token-kw">const</span> MAX = <span class="token-num">100</span>;     <span class="token-comment">// cannot be reassigned (constant)</span>
+
+<span class="token-fn">console.log</span>(name);   <span class="token-comment">// prints to browser DevTools (F12)</span>
+<span class="token-fn">alert</span>(<span class="token-str">'Hello, '</span> + name); <span class="token-comment">// popup dialog</span></code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Interactive Console & Variable Runner</span>
+                            <span>Virtual Terminal</span>
+                        </div>
+                        <div class="interactive-controls">
+                            <input type="text" id="custom-name-var" class="ui-input" value="Alice" placeholder="Variable 'name' value">
+                            <button class="ui-btn ui-btn-primary" onclick="runVariableCode()">Execute console.log</button>
+                            <button class="ui-btn" onclick="triggerAlertDemo()">Trigger alert()</button>
+                            <button class="ui-btn ui-btn-danger" onclick="testConstReassign()">Test Reassign const</button>
+                        </div>
+                        <div class="virtual-console" id="virtual-console-box">
+                            <div class="console-entry">DevTools Console initialized...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 10: Getting and Changing Elements (DOM) & Reading User Input -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>10. DOM Manipulation & Reading User Input</h3>
+                        <p class="topic-desc">Page 10–11: Use <code>document.getElementById()</code> to select elements, change <code>.textContent</code> or <code>.style</code>, and read <code>.value</code> from inputs.</p>
+                    </div>
+                    <span class="topic-rule-badge">getElementById · textContent · style</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-js"></span> JavaScript DOM</span>
+                            <button class="copy-btn" onclick="copySnippet('code-dom-greet')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-dom-greet"><span class="token-comment">// Getting and changing elements on the page</span>
+<span class="token-kw">function</span> <span class="token-fn">changeText</span>() {
+  <span class="token-kw">let</span> el = document.<span class="token-fn">getElementById</span>(<span class="token-str">'message'</span>);
+  el.textContent = <span class="token-str">'Text was changed!'</span>;
+  el.style.color = <span class="token-str">'red'</span>;
+}
+
+<span class="token-comment">// Reading user input</span>
+<span class="token-kw">function</span> <span class="token-fn">greet</span>() {
+  <span class="token-kw">let</span> name = document.<span class="token-fn">getElementById</span>(<span class="token-str">'nameInput'</span>).value;
+  document.<span class="token-fn">getElementById</span>(<span class="token-str">'output'</span>).textContent = <span class="token-str">'Hello, '</span> + name + <span class="token-str">'!'</span>;
+}</code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Live DOM Playground</span>
+                            <span>Interactive</span>
+                        </div>
+                        <!-- Demo 1: changeText -->
+                        <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px;">
+                            <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px;">1. Change Text & Style:</div>
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                                <p id="message" style="font-size: 1.1rem; font-weight: 600; color: #f8fafc; margin: 0;">Original text</p>
+                                <div>
+                                    <button class="ui-btn ui-btn-primary" onclick="demoChangeText()">Click me</button>
+                                    <button class="ui-btn" onclick="resetDemoChangeText()">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Demo 2: greet() -->
+                        <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px;">
+                            <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px;">2. Greet Function:</div>
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" id="nameInput" class="ui-input" placeholder="Enter your name (e.g. Alice)">
+                                <button class="ui-btn ui-btn-primary" onclick="demoGreet()">Greet</button>
+                            </div>
+                            <p id="output" style="font-size: 1.05rem; font-weight: 700; color: var(--accent-emerald); margin: 0; min-height: 24px;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 11: Conditions (if/else) -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>11. Conditions (if / else)</h3>
+                        <p class="topic-desc">Page 11: Branch execution based on comparisons using <code>if</code>, <code>else if</code>, and <code>else</code>.</p>
+                    </div>
+                    <span class="topic-rule-badge">Branching Logic</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-js"></span> JavaScript Conditions</span>
+                            <button class="copy-btn" onclick="copySnippet('code-conditions-only')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-conditions-only"><span class="token-kw">let</span> score = <span class="token-num" id="code-score-display">75</span>;
+
+<span class="token-kw">if</span> (score &gt;= <span class="token-num">90</span>) {
+  <span class="token-fn">console.log</span>(<span class="token-str">'A'</span>);
+} <span class="token-kw">else if</span> (score &gt;= <span class="token-num">80</span>) {
+  <span class="token-fn">console.log</span>(<span class="token-str">'B'</span>);
+} <span class="token-kw">else if</span> (score &gt;= <span class="token-num">70</span>) {
+  <span class="token-fn">console.log</span>(<span class="token-str">'C'</span>);
+} <span class="token-kw">else</span> {
+  <span class="token-fn">console.log</span>(<span class="token-str">'F'</span>);
+}</code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Interactive Grade Evaluator</span>
+                            <span>Live Slider</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 18px; border-radius: 8px;">
+                            <div class="ui-slider-group" style="justify-content: space-between; margin-bottom: 12px;">
+                                <label>Slide Score: <b id="score-slider-val" style="color:var(--accent-cyan); font-size:1.2rem;">75</b></label>
+                                <span id="grade-badge" style="background: var(--accent-amber); color:#000; font-weight:800; padding: 4px 14px; border-radius: 8px; font-size: 0.95rem;">Grade: C</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="75" id="score-range" style="width: 100%; accent-color: var(--accent-cyan);" oninput="evaluateScoreDemo()">
+                            <div style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted); font-family: monospace;" id="branch-reason">
+                                &gt; Evaluated: (75 &gt;= 70) is true &rarr; 'C'
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 12: Counting Step Loop -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>12. Loops: Repeating Code (The Step Loop)</h3>
+                        <p class="topic-desc">Page 11: Repeat code a specific number of times using a standard <code>for</code> loop with a counter variable (<code>let i = 1; i &lt;= 5; i++</code>).</p>
+                    </div>
+                    <span class="topic-rule-badge">Numeric Loop · i++</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-js"></span> Counting Loop</span>
+                            <button class="copy-btn" onclick="copySnippet('code-step-loop')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-step-loop"><span class="token-comment">// Repeat 5 times</span>
+<span class="token-kw">for</span> (<span class="token-kw">let</span> i = <span class="token-num">1</span>; i &lt;= <span class="token-num" id="code-loop-max">5</span>; i++) {
+  <span class="token-fn">console.log</span>(<span class="token-str">'Step '</span> + i);
+}</code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Interactive Step Loop Visualizer</span>
+                            <span>Loop Counter</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 14px; border-radius: 8px;">
+                            <div class="ui-slider-group" style="justify-content: space-between; margin-bottom: 12px;">
+                                <label>Repeat Times (N): <b id="lbl-step-count" style="color:var(--accent-cyan); font-size:1.1rem;">5</b></label>
+                                <input type="range" min="1" max="8" value="5" id="slider-step-count" oninput="updateStepLoopLimit()" style="accent-color: var(--accent-cyan); width: 140px;">
+                            </div>
+                            <div class="interactive-controls">
+                                <button class="ui-btn ui-btn-primary" onclick="runNumericStepLoop()">▶ Run Step Loop</button>
+                                <button class="ui-btn" onclick="clearStepLoop()">Clear</button>
+                            </div>
+                        </div>
+
+                        <!-- Animated Step Output Track -->
+                        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Generated Iterations:</div>
+                        <div id="step-loop-output" style="display: flex; gap: 8px; flex-wrap: wrap; min-height: 38px; align-items: center; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 6px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">Click 'Run Step Loop' to watch steps execute.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 13: The Fruit Array Loop -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>13. Loops: Iterating Through an Array (The Fruit Loop)</h3>
+                        <p class="topic-desc">Page 11: Iterate directly through every element of a collection using the clean <code>for (let fruit of fruits)</code> syntax.</p>
+                    </div>
+                    <span class="topic-rule-badge">Array Loop · for...of</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-js"></span> Fruit Array Loop</span>
+                            <button class="copy-btn" onclick="copySnippet('code-fruit-only')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-fruit-only"><span class="token-comment">// Loop through an array</span>
+<span class="token-kw">let</span> fruits = [<span class="token-str">'apple'</span>, <span class="token-str">'banana'</span>, <span class="token-str">'cherry'</span>];
+
+<span class="token-kw">for</span> (<span class="token-kw">let</span> fruit <span class="token-kw">of</span> fruits) {
+  <span class="token-fn">console.log</span>(fruit);
+}</code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Fruit Array Memory & Loop Visualizer</span>
+                            <span>Interactive</span>
+                        </div>
+
+                        <!-- Visual Array Slots in Memory -->
+                        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+                            Array in Memory: <code>fruits</code> (length: <span id="fruit-count-label">3</span>)
+                        </div>
+                        <div class="fruit-array-stage" id="fruit-array-stage">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+
+                        <!-- Pointer / State Tracker -->
+                        <div class="fruit-tracker-box">
+                            <div>
+                                <span style="color:var(--text-muted);">Current variable:</span>
+                                <span style="color:var(--accent-cyan); font-weight:700;" id="fruit-tracker-var">fruit = (waiting)</span>
+                            </div>
+                            <div>
+                                <span style="color:var(--text-muted);">Console:</span>
+                                <span style="color:var(--accent-emerald);" id="fruit-tracker-out">&gt; console.log()</span>
+                            </div>
+                        </div>
+
+                        <!-- Loop Controls -->
+                        <div class="interactive-controls" style="margin-top: 10px;">
+                            <button class="ui-btn ui-btn-primary" onclick="playFruitLoopAuto()">▶ Run Fruit Loop</button>
+                            <button class="ui-btn" onclick="stepFruitLoop()">⏭ Next Step</button>
+                            <button class="ui-btn" onclick="resetFruitLoop()">🔄 Reset</button>
+                        </div>
+
+                        <!-- Custom Fruit Adder -->
+                        <div style="display: flex; gap: 8px; margin-top: 6px;">
+                            <input type="text" id="custom-fruit-input" class="ui-input" placeholder="Add fruit (e.g. mango, grape)...">
+                            <button class="ui-btn" onclick="addCustomFruit()">+ Add to Array</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 14: A complete mini-app: counter -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>14. A Complete Mini-App: Counter</h3>
+                        <p class="topic-desc">Page 11–12: A complete interactive application putting HTML structure, CSS styling, and JavaScript logic together.</p>
+                    </div>
+                    <span class="topic-rule-badge">Page 11–12 Mini-App</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-html"></span> Complete Counter HTML + JS</span>
+                            <button class="copy-btn" onclick="copySnippet('code-counter-miniapp')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-counter-miniapp"><span class="token-kw">&lt;!DOCTYPE html&gt;</span>
+<span class="token-tag">&lt;html</span> <span class="token-attr">lang</span>=<span class="token-val">"en"</span><span class="token-tag">&gt;</span>
+<span class="token-tag">&lt;head&gt;</span>
+  <span class="token-tag">&lt;meta</span> <span class="token-attr">charset</span>=<span class="token-val">"UTF-8"</span><span class="token-tag">&gt;</span>
+  <span class="token-tag">&lt;title&gt;</span>Counter<span class="token-tag">&lt;/title&gt;</span>
+<span class="token-tag">&lt;/head&gt;</span>
+<span class="token-tag">&lt;body&gt;</span>
+  <span class="token-tag">&lt;h2&gt;</span>Counter: <span class="token-tag">&lt;span</span> <span class="token-attr">id</span>=<span class="token-val">"count"</span><span class="token-tag">&gt;</span>0<span class="token-tag">&lt;/span&gt;&lt;/h2&gt;</span>
+  <span class="token-tag">&lt;button</span> <span class="token-attr">onclick</span>=<span class="token-val">"change(1)"</span><span class="token-tag">&gt;</span>+ Add<span class="token-tag">&lt;/button&gt;</span>
+  <span class="token-tag">&lt;button</span> <span class="token-attr">onclick</span>=<span class="token-val">"change(-1)"</span><span class="token-tag">&gt;</span>- Subtract<span class="token-tag">&lt;/button&gt;</span>
+  <span class="token-tag">&lt;button</span> <span class="token-attr">onclick</span>=<span class="token-val">"reset()"</span><span class="token-tag">&gt;</span>Reset<span class="token-tag">&lt;/button&gt;</span>
+
+  <span class="token-tag">&lt;script&gt;</span>
+    <span class="token-kw">let</span> count = <span class="token-num">0</span>;
+    <span class="token-kw">function</span> <span class="token-fn">change</span>(amount) {
+      count = count + amount;
+      document.<span class="token-fn">getElementById</span>(<span class="token-str">'count'</span>).textContent = count;
+    }
+    <span class="token-kw">function</span> <span class="token-fn">reset</span>() {
+      count = <span class="token-num">0</span>;
+      document.<span class="token-fn">getElementById</span>(<span class="token-str">'count'</span>).textContent = <span class="token-num">0</span>;
+    }
+  <span class="token-tag">&lt;/script&gt;</span>
+<span class="token-tag">&lt;/body&gt;</span>
+<span class="token-tag">&lt;/html&gt;</span></code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Live Working Counter App</span>
+                            <span>Interactive</span>
+                        </div>
+                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 24px; border-radius: 8px;">
+                            <h2 style="font-size: 1.5rem; color: #f8fafc; margin-bottom: 8px;">
+                                Counter: <span id="count" style="color: var(--accent-cyan); font-weight: 800; font-size: 2.4rem;">0</span>
+                            </h2>
+                            <div class="interactive-controls" style="justify-content: center; margin-top: 16px;">
+                                <button class="ui-btn ui-btn-primary" onclick="changeCounter(1)">+ Add</button>
+                                <button class="ui-btn" onclick="changeCounter(-1)">- Subtract</button>
+                                <button class="ui-btn ui-btn-danger" onclick="resetCounter()">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic 15: Saving data with localStorage -->
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>15. Saving Data with localStorage</h3>
+                        <p class="topic-desc">Page 12: Persist state and user data across browser refreshes using the Web Storage API.</p>
+                    </div>
+                    <span class="topic-rule-badge">setItem · getItem · removeItem</span>
+                </div>
+                <div class="split-grid">
+                    <div class="code-box">
+                        <div class="code-box-header">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-js"></span> LocalStorage API</span>
+                            <button class="copy-btn" onclick="copySnippet('code-localstorage-only')">📋 Copy</button>
+                        </div>
+                        <pre><code id="code-localstorage-only"><span class="token-comment">// Save (data persists even when page refreshes)</span>
+localStorage.<span class="token-fn">setItem</span>(<span class="token-str">'username'</span>, <span class="token-str">'Alice'</span>);
+
+<span class="token-comment">// Load</span>
+<span class="token-kw">let</span> saved = localStorage.<span class="token-fn">getItem</span>(<span class="token-str">'username'</span>);  <span class="token-comment">// 'Alice'</span>
+
+<span class="token-comment">// Delete</span>
+localStorage.<span class="token-fn">removeItem</span>(<span class="token-str">'username'</span>);</code></pre>
+                    </div>
+                    <div class="interactive-box">
+                        <div class="interactive-label">
+                            <span>Live LocalStorage Inspector</span>
+                            <span>Browser Storage</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 18px; border-radius: 8px;">
+                            <div style="font-size: 0.82rem; color: var(--accent-indigo); font-weight: 600; margin-bottom: 8px;">Try storing your username:</div>
+                            <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                                <input type="text" id="storage-input" class="ui-input" placeholder="Type username..." value="Alice">
+                                <button class="ui-btn ui-btn-primary" onclick="saveStorageDemo()">Save</button>
+                                <button class="ui-btn" onclick="loadStorageDemo()">Load</button>
+                                <button class="ui-btn ui-btn-danger" onclick="deleteStorageDemo()">Delete</button>
+                            </div>
+                            <div id="storage-readout" style="font-size: 0.88rem; font-family: monospace; color: var(--text-secondary); background: rgba(0,0,0,0.25); padding: 10px; border-radius: 6px;">
+                                Current saved value: <span style="color:var(--accent-emerald); font-weight:600;" id="storage-val-display">(none)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- LIVE CODE SANDBOX SECTION -->
+        <!-- ========================================== -->
+        <div class="topic-section" data-category="sandbox">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-badge badge-html" style="background: rgba(52, 211, 153, 0.15); color: var(--accent-emerald); border-color: rgba(52, 211, 153, 0.3);">PLAYGROUND</span>
+                    <h2 class="section-title">Live Code Sandbox</h2>
+                </div>
+                <span class="page-citation">Practice inline HTML · CSS · JS</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-header">
+                    <div class="topic-title-group">
+                        <h3>Interactive Web Sandbox</h3>
+                        <p class="topic-desc">Write your own custom HTML, CSS, and JavaScript. Click "Run Code" or type directly to see instant changes rendered in the preview frame below.</p>
+                    </div>
+                    <div class="interactive-controls">
+                        <button class="ui-btn ui-btn-primary" onclick="runSandboxCode()">▶ Run Code</button>
+                        <button class="ui-btn" onclick="loadSandboxTemplate('counter')">Load Counter</button>
+                        <button class="ui-btn" onclick="loadSandboxTemplate('card')">Load Card</button>
+                        <button class="ui-btn" onclick="loadSandboxTemplate('reset')">Clear</button>
+                    </div>
+                </div>
+
+                <div class="live-sandbox-container">
+                    <div class="sandbox-editor-wrapper">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-html"></span> Source Code (HTML + CSS + JS)</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Auto-executes on Run</span>
+                        </div>
+                        <textarea id="sandbox-code-editor" class="sandbox-textarea" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    body { font-family: 'Segoe UI', sans-serif; background: #f0fdf4; padding: 20px; color: #166534; text-align: center; }
+    h1 { color: #15803d; }
+    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); max-width: 320px; margin: 0 auto; }
+    button { background: #22c55e; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; }
+    button:hover { background: #16a34a; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="card"&gt;
+    &lt;h1&gt;Interactive Sandbox&lt;/h1&gt;
+    &lt;p id="status"&gt;Try editing this HTML & CSS!&lt;/p&gt;
+    &lt;button onclick="document.getElementById('status').textContent = 'You clicked the button!' &amp;&amp; (this.style.background='#15803d')"&gt;Click Me&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+                    </div>
+
+                    <div class="sandbox-editor-wrapper">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="code-lang-label"><span class="code-lang-dot dot-css"></span> Rendered Live Preview</span>
+                            <span style="font-size: 0.75rem; color: var(--accent-emerald);">● Live Active</span>
+                        </div>
+                        <iframe id="sandbox-iframe" class="sandbox-preview-frame"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Floating Feedback Toast -->
+    <div id="toast" class="toast-popup">
+        <span>✨ Action executed successfully</span>
+    </div>
+
+    <script>
+        // ===================================================
+        // 1. Toast Notification Helper
+        // ===================================================
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `<span>${message}</span>`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // ===================================================
+        // 2. Category Tab Filter
+        // ===================================================
+        function filterCategory(category, tabBtn) {
+            document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+            tabBtn.classList.add('active');
+
+            const sections = document.querySelectorAll('.topic-section');
+            sections.forEach(sec => {
+                if (category === 'all' || sec.getAttribute('data-category') === category) {
+                    sec.style.display = 'block';
+                } else {
+                    sec.style.display = 'none';
+                }
+            });
+        }
+
+        // ===================================================
+        // 3. Copy Code Snippet
+        // ===================================================
+        function copySnippet(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            const text = el.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 Code copied to clipboard!');
+            }).catch(() => {
+                showToast('Copied text!');
+            });
+        }
+
+        // ===================================================
+        // 4. Topic 1: Page Skeleton Live Demo
+        // ===================================================
+        function updateSkeletonDemo() {
+            const titleVal = document.getElementById('skeleton-title-input').value || 'Page Title';
+            const bodyVal = document.getElementById('skeleton-body-input').value || 'content';
+
+            document.getElementById('skeleton-title-code').textContent = titleVal;
+            document.getElementById('skeleton-body-code').textContent = bodyVal;
+            document.getElementById('skeleton-tab-preview').textContent = titleVal;
+            document.getElementById('skeleton-rendered-content').textContent = bodyVal;
+        }
+
+        // ===================================================
+        // 5. Topic 2: Headings & Paragraph Whitespace Collapser
+        // ===================================================
+        function updateWhitespaceDemo() {
+            const input = document.getElementById('whitespace-input').value;
+            document.getElementById('whitespace-rendered').textContent = input;
+        }
+
+        // ===================================================
+        // 6. Topic 3: Dynamic List & Links Demo
+        // ===================================================
+        let isOrderedList = false;
+        let listItems = ['HTML', 'CSS', 'JavaScript'];
+
+        function renderDynamicList() {
+            const container = document.getElementById('dynamic-list-container');
+            const tag = isOrderedList ? 'ol' : 'ul';
+            let html = `<${tag}>`;
+            listItems.forEach(item => {
+                html += `<li>${item}</li>`;
+            });
+            html += `</${tag}>`;
+            container.innerHTML = html;
+        }
+
+        function addCustomListItem() {
+            const input = document.getElementById('new-list-item-input');
+            const val = input.value.trim();
+            if (val) {
+                listItems.push(val);
+                input.value = '';
+                renderDynamicList();
+                showToast(`Added "${val}" to list!`);
+            }
+        }
+
+        function toggleListType() {
+            isOrderedList = !isOrderedList;
+            const btn = document.getElementById('toggle-list-btn');
+            btn.textContent = isOrderedList ? 'Switch to <ul>' : 'Switch to <ol>';
+            renderDynamicList();
+            showToast(`Switched list to <${isOrderedList ? 'ol' : 'ul'}>!`);
+        }
+
+        // ===================================================
+        // 7. Topic 4: Table & Form Handling
+        // ===================================================
+        function handleDemoFormSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('form-name').value.trim();
+            const score = parseInt(document.getElementById('form-score').value, 10);
+
+            if (!name || isNaN(score)) return;
+
+            const tbody = document.querySelector('#interactive-student-table tbody');
+            const tr = document.createElement('tr');
+            const passed = score >= 50;
+            tr.innerHTML = `
+                <td>${name}</td>
+                <td>${score}</td>
+                <td><span style="color: ${passed ? 'var(--accent-emerald)' : 'var(--accent-rose)'};">${passed ? 'Passed' : 'Failed'}</span></td>
+            `;
+            tbody.appendChild(tr);
+
+            const feedback = document.getElementById('form-feedback');
+            feedback.style.display = 'block';
+            feedback.textContent = `Added ${name} (Score: ${score}) to table!`;
+
+            document.getElementById('form-name').value = '';
+            document.getElementById('form-score').value = '';
+            showToast(`Student ${name} added!`);
+        }
+
+        // ===================================================
+        // 8. Topic 5: Block vs Inline Element Inspector
+        // ===================================================
+        let outlinesActive = false;
+        function toggleBlockOutlines(btn) {
+            outlinesActive = !outlinesActive;
+            const block = document.querySelector('.demo-block-element');
+            const inlineSpan = document.getElementById('interactive-span-word');
+
+            if (outlinesActive) {
+                block.style.boxShadow = '0 0 0 2px #38bdf8';
+                inlineSpan.style.boxShadow = '0 0 0 2px #f43f5e';
+                btn.textContent = 'Remove Outlines';
+                showToast('Bounding boxes highlighted: <div> is 100% width, <span> hugs text.');
+            } else {
+                block.style.boxShadow = 'none';
+                inlineSpan.style.boxShadow = 'none';
+                btn.textContent = 'Highlight Bounding Boxes';
+            }
+        }
+
+        const spanColors = ['#f43f5e', '#38bdf8', '#34d399', '#fbbf24', '#c084fc'];
+        let colorIdx = 0;
+        function changeRedWordColor() {
+            colorIdx = (colorIdx + 1) % spanColors.length;
+            const chosen = spanColors[colorIdx];
+            const span = document.getElementById('interactive-span-word');
+            span.style.color = chosen;
+            span.style.background = chosen + '25';
+            showToast(`Changed <span> color to ${chosen}`);
+        }
+
+        // ===================================================
+        // 9. Topic 6: CSS Selector Highlighting
+        // ===================================================
+        function resetSelectors() {
+            document.querySelectorAll('#demo-header, .demo-card-item, #demo-p-1, #demo-p-2').forEach(el => {
+                el.style.outline = 'none';
+                el.style.transform = 'none';
+            });
+        }
+
+        function highlightSelector(selector) {
+            resetSelectors();
+            if (selector === 'p') {
+                document.querySelectorAll('#demo-p-1, #demo-p-2').forEach(el => {
+                    el.style.outline = '3px solid #38bdf8';
+                    el.style.transform = 'scale(1.02)';
+                });
+                showToast('Selected all <p> element tags!');
+            } else if (selector === '.card') {
+                document.querySelectorAll('.demo-card-item').forEach(el => {
+                    el.style.outline = '3px solid #818cf8';
+                    el.style.transform = 'scale(1.02)';
+                });
+                showToast('Selected elements with class="card"!');
+            } else if (selector === '#header') {
+                const header = document.getElementById('demo-header');
+                header.style.outline = '3px solid #f43f5e';
+                header.style.transform = 'scale(1.04)';
+                showToast('Selected unique element with id="header"!');
+            }
+        }
+
+        // ===================================================
+        // 10. Topic 7: Box Model Interactive Visualizer
+        // ===================================================
+        function updateBoxModel() {
+            const m = document.getElementById('slider-margin').value;
+            const p = document.getElementById('slider-padding').value;
+            const r = document.getElementById('slider-radius').value;
+
+            document.getElementById('lbl-margin').textContent = m + 'px';
+            document.getElementById('lbl-padding').textContent = p + 'px';
+            document.getElementById('lbl-radius').textContent = r + 'px';
+
+            document.getElementById('bm-code-margin').textContent = m + 'px';
+            document.getElementById('bm-code-padding').textContent = p + 'px';
+            document.getElementById('bm-code-radius').textContent = r + 'px';
+
+            const outer = document.getElementById('bm-outer');
+            const paddingBox = document.getElementById('bm-padding');
+            const borderBox = document.getElementById('bm-border');
+
+            outer.style.padding = m + 'px';
+            paddingBox.style.padding = p + 'px';
+            borderBox.style.borderRadius = r + 'px';
+        }
+
+        // ===================================================
+        // 11. Topic 8: Flexbox Layout Playground
+        // ===================================================
+        function updateFlexSandbox() {
+            const justify = document.getElementById('flex-justify-select').value;
+            const gap = document.getElementById('slider-flex-gap').value;
+
+            document.getElementById('lbl-flex-gap').textContent = gap + 'px';
+            document.getElementById('fb-code-gap').textContent = gap + 'px';
+            document.getElementById('fb-code-justify').textContent = justify;
+
+            const box = document.getElementById('flex-playground');
+            box.style.justifyContent = justify;
+            box.style.gap = gap + 'px';
+        }
+
+        let flexItemCount = 3;
+        function addFlexChild() {
+            flexItemCount++;
+            const box = document.getElementById('flex-playground');
+            const div = document.createElement('div');
+            div.className = 'flex-card-item';
+            div.textContent = 'Week ' + flexItemCount;
+            box.appendChild(div);
+            showToast(`Added Week ${flexItemCount} child card!`);
+        }
+
+        function removeFlexChild() {
+            const box = document.getElementById('flex-playground');
+            if (box.children.length > 1) {
+                box.removeChild(box.lastElementChild);
+                flexItemCount--;
+                showToast('Removed child card.');
+            }
+        }
+
+        // ===================================================
+        // 12. Topic 9: Virtual Console & Variables
+        // ===================================================
+        function printToVirtualConsole(text, isError = false) {
+            const c = document.getElementById('virtual-console-box');
+            const entry = document.createElement('div');
+            entry.className = 'console-entry';
+            if (isError) entry.style.color = '#f43f5e';
+            entry.textContent = text;
+            c.appendChild(entry);
+            c.scrollTop = c.scrollHeight;
+        }
+
+        function runVariableCode() {
+            const nameVal = document.getElementById('custom-name-var').value || 'Alice';
+            printToVirtualConsole(`let name = '${nameVal}'; console.log(name); -> "${nameVal}"`);
+            showToast(`Output printed to virtual console!`);
+        }
+
+        function triggerAlertDemo() {
+            const nameVal = document.getElementById('custom-name-var').value || 'Alice';
+            alert('Hello, ' + nameVal + '!');
+        }
+
+        function testConstReassign() {
+            printToVirtualConsole(`const MAX = 100;`);
+            printToVirtualConsole(`MAX = 200; -> TypeError: Assignment to constant variable.`, true);
+            showToast('TypeError demonstrated: const cannot be reassigned!');
+        }
+
+        // ===================================================
+        // 13. Topic 10: DOM Change Text & Greet
+        // ===================================================
+        function demoChangeText() {
+            const el = document.getElementById('message');
+            el.textContent = 'Text was changed!';
+            el.style.color = '#f43f5e';
+            showToast('Element textContent and style changed!');
+        }
+
+        function resetDemoChangeText() {
+            const el = document.getElementById('message');
+            el.textContent = 'Original text';
+            el.style.color = '#f8fafc';
+        }
+
+        function demoGreet() {
+            const val = document.getElementById('nameInput').value.trim() || 'World';
+            const output = document.getElementById('output');
+            output.textContent = 'Hello, ' + val + '!';
+            showToast(`Greeted ${val}!`);
+        }
+
+        // ===================================================
+        // 14. Topic 11: Conditions & Loops Visualizer
+        // ===================================================
+        function evaluateScoreDemo() {
+            const score = parseInt(document.getElementById('score-range').value, 10);
+            document.getElementById('score-slider-val').textContent = score;
+            document.getElementById('code-score-display').textContent = score;
+
+            const badge = document.getElementById('grade-badge');
+            let grade = 'F';
+            let color = 'var(--accent-rose)';
+
+            if (score >= 90) {
+                grade = 'A';
+                color = 'var(--accent-emerald)';
+            } else if (score >= 80) {
+                grade = 'B';
+                color = 'var(--accent-cyan)';
+            } else if (score >= 70) {
+                grade = 'C';
+                color = 'var(--accent-amber)';
+            } else {
+                grade = 'F';
+                color = 'var(--accent-rose)';
+            }
+
+            badge.textContent = 'Grade: ' + grade;
+            badge.style.background = color;
+            const reason = document.getElementById('branch-reason');
+            if (reason) reason.textContent = explanation;
+        }
+
+        // ===================================================
+        // 14. Topic 12: Fruit Array Loop Visualizer & Step Loops
+        // ===================================================
+        let fruitArray = ['apple', 'banana', 'cherry'];
+        let fruitIndex = -1;
+        let isLoopRunning = false;
+
+        const fruitEmojiMap = {
+            'apple': '🍎',
+            'banana': '🍌',
+            'cherry': '🍒',
+            'orange': '🍊',
+            'strawberry': '🍓',
+            'grape': '🍇',
+            'grapes': '🍇',
+            'watermelon': '🍉',
+            'pineapple': '🍍',
+            'mango': '🥭',
+            'peach': '🍑',
+            'kiwi': '🥝'
+        };
+
+        function getFruitEmoji(name) {
+            const clean = name.toLowerCase().trim();
+            return fruitEmojiMap[clean] || '🍏';
+        }
+
+        function renderFruitStage() {
+            const container = document.getElementById('fruit-array-stage');
+            if (!container) return;
+            container.innerHTML = '';
+            const countLabel = document.getElementById('fruit-count-label');
+            if (countLabel) countLabel.textContent = fruitArray.length;
+
+            fruitArray.forEach((fruit, idx) => {
+                const slot = document.createElement('div');
+                slot.className = 'fruit-slot' + (idx === fruitIndex ? ' active' : '');
+                slot.id = 'fruit-slot-' + idx;
+                slot.innerHTML = `
+                    <div class="fruit-index">[${idx}]</div>
+                    <div class="fruit-icon">${getFruitEmoji(fruit)}</div>
+                    <div class="fruit-name">${fruit}</div>
+                `;
+                container.appendChild(slot);
+            });
+        }
+
+        function playFruitLoopAuto() {
+            if (isLoopRunning) return;
+            isLoopRunning = true;
+            resetFruitLoop();
+            printToVirtualConsole('// Running: for (let fruit of fruits)');
+
+            let idx = 0;
+            const timer = setInterval(() => {
+                if (idx < fruitArray.length) {
+                    highlightFruitStep(idx);
+                    idx++;
+                } else {
+                    clearInterval(timer);
+                    isLoopRunning = false;
+                    showToast('🎉 Fruit loop completed all iterations!');
+                }
+            }, 800);
+        }
+
+        function highlightFruitStep(idx) {
+            fruitIndex = idx;
+            renderFruitStage();
+
+            const currentFruit = fruitArray[idx];
+            document.getElementById('fruit-tracker-var').textContent = `fruit = "${currentFruit}"`;
+            document.getElementById('fruit-tracker-out').textContent = `> ${currentFruit}`;
+
+            printToVirtualConsole(`Iteration ${idx + 1}/${fruitArray.length}: console.log('${currentFruit}') -> ${currentFruit}`);
+        }
+
+        function stepFruitLoop() {
+            if (fruitArray.length === 0) return;
+            let nextIndex = fruitIndex + 1;
+            if (nextIndex >= fruitArray.length) {
+                showToast('Reached end of fruits array. Resetting...');
+                resetFruitLoop();
+                return;
+            }
+            highlightFruitStep(nextIndex);
+        }
+
+        function resetFruitLoop() {
+            fruitIndex = -1;
+            renderFruitStage();
+            const trackerVar = document.getElementById('fruit-tracker-var');
+            const trackerOut = document.getElementById('fruit-tracker-out');
+            if (trackerVar) trackerVar.textContent = 'fruit = (waiting)';
+            if (trackerOut) trackerOut.textContent = '> (idle)';
+        }
+
+        function addCustomFruit() {
+            const input = document.getElementById('custom-fruit-input');
+            const val = input.value.trim().toLowerCase();
+            if (!val) return;
+            fruitArray.push(val);
+            input.value = '';
+            renderFruitStage();
+            showToast(`Added "${val}" to fruits array! Total: ${fruitArray.length}`);
+        }
+
+        let stepLoopLimit = 5;
+
+        function updateStepLoopLimit() {
+            const val = document.getElementById('slider-step-count').value;
+            stepLoopLimit = parseInt(val, 10);
+            document.getElementById('lbl-step-count').textContent = stepLoopLimit;
+            document.getElementById('code-loop-max').textContent = stepLoopLimit;
+        }
+
+        function clearStepLoop() {
+            const out = document.getElementById('step-loop-output');
+            if (out) out.innerHTML = '<span style="font-size: 0.8rem; color: var(--text-muted);">Click \'Run Step Loop\' to watch steps execute.</span>';
+        }
+
+        function runNumericStepLoop() {
+            const out = document.getElementById('step-loop-output');
+            if (!out) return;
+            out.innerHTML = '';
+            printToVirtualConsole(`// Running: for (let i = 1; i <= ${stepLoopLimit}; i++)`);
+            for (let i = 1; i <= stepLoopLimit; i++) {
+                setTimeout(() => {
+                    const chip = document.createElement('span');
+                    chip.style.cssText = 'background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #fff; padding: 6px 12px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; animation: fadeIn 0.3s ease; font-weight: 600;';
+                    chip.textContent = `Step ${i}`;
+                    out.appendChild(chip);
+                    printToVirtualConsole(`Step ${i}`);
+                    if (i === stepLoopLimit) showToast(`Step loop finished (1 to ${stepLoopLimit})!`);
+                }, i * 200);
+            }
+        }
+
+        // ===================================================
+        // 15. Topic 12: Counter & LocalStorage
+        // ===================================================
+        let count = 0;
+
+        function changeCounter(amount) {
+            count = count + amount;
+            const el = document.getElementById('count');
+            el.textContent = count;
+            el.style.transform = 'scale(1.2)';
+            setTimeout(() => { el.style.transform = 'scale(1)'; }, 150);
+        }
+
+        function resetCounter() {
+            count = 0;
+            document.getElementById('count').textContent = 0;
+            showToast('Counter reset to 0');
+        }
+
+        function saveStorageDemo() {
+            const val = document.getElementById('storage-input').value.trim() || 'Alice';
+            localStorage.setItem('username', val);
+            document.getElementById('storage-val-display').textContent = `"${val}"`;
+            showToast(`localStorage.setItem('username', '${val}') saved!`);
+        }
+
+        function loadStorageDemo() {
+            const saved = localStorage.getItem('username');
+            document.getElementById('storage-val-display').textContent = saved !== null ? `"${saved}"` : '(null / not found)';
+            showToast(`localStorage.getItem('username') loaded: ${saved}`);
+        }
+
+        function deleteStorageDemo() {
+            localStorage.removeItem('username');
+            document.getElementById('storage-val-display').textContent = '(deleted)';
+            showToast(`localStorage.removeItem('username') cleared!`);
+        }
+
+        // ===================================================
+        // 16. Live Sandbox Execution
+        // ===================================================
+        function runSandboxCode() {
+            const code = document.getElementById('sandbox-code-editor').value;
+            const iframe = document.getElementById('sandbox-iframe');
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            doc.open();
+            doc.write(code);
+            doc.close();
+            showToast('Sandbox refreshed!');
+        }
+
+        function loadSandboxTemplate(type) {
+            const editor = document.getElementById('sandbox-code-editor');
+            if (type === 'counter') {
+                editor.value = '<!DOCTYPE html>\n' +
+                    '<html>\n' +
+                    '<head>\n' +
+                    '  <style>\n' +
+                    '    body { font-family: sans-serif; text-align: center; padding: 30px; background: #0f172a; color: white; }\n' +
+                    '    h2 { color: #38bdf8; font-size: 2rem; margin: 10px 0; }\n' +
+                    '    button { background: #38bdf8; color: #0f172a; border: none; font-weight: bold; padding: 10px 18px; border-radius: 8px; cursor: pointer; margin: 5px; }\n' +
+                    '  </style>\n' +
+                    '</head>\n' +
+                    '<body>\n' +
+                    '  <h3>Counter Widget</h3>\n' +
+                    '  <h2 id="num">0</h2>\n' +
+                    '  <button onclick="add(1)">+ Add</button>\n' +
+                    '  <button onclick="add(-1)">- Subtract</button>\n' +
+                    '  <button onclick="document.getElementById(\'num\').innerText = 0" style="background:#f43f5e; color:white;">Reset</button>\n\n' +
+                    '  <' + 'script>\n' +
+                    '    let n = 0;\n' +
+                    '    function add(x) {\n' +
+                    '      n += x;\n' +
+                    '      document.getElementById(\'num\').innerText = n;\n' +
+                    '    }\n' +
+                    '  <' + '/script>\n' +
+                    '<' + '/body>\n' +
+                    '<' + '/html>';
+            } else if (type === 'card') {
+                editor.value = '<!DOCTYPE html>\n' +
+                    '<html>\n' +
+                    '<head>\n' +
+                    '  <style>\n' +
+                    '    body { display: flex; justify-content: center; align-items: center; min-height: 80vh; font-family: "Segoe UI", sans-serif; background: #f8fafc; }\n' +
+                    '    .card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; text-align: center; max-width: 300px; }\n' +
+                    '    h2 { color: #1e293b; margin-top: 0; }\n' +
+                    '    p { color: #64748b; font-size: 14px; }\n' +
+                    '    .badge { background: #dbeafe; color: #1e40af; font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 20px; }\n' +
+                    '  </style>\n' +
+                    '</head>\n' +
+                    '<body>\n' +
+                    '  <div class="card">\n' +
+                    '    <span class="badge">Week 5 Exercise</span>\n' +
+                    '    <h2>Interactive Card</h2>\n' +
+                    '    <p>Demonstrating modern CSS shadows, rounded corners and typography.</p>\n' +
+                    '  </div>\n' +
+                    '<' + '/body>\n' +
+                    '<' + '/html>';
+            } else {
+                editor.value = '';
+            }
+            runSandboxCode();
+        }
+
+        // Initialize state on load
+        window.addEventListener('DOMContentLoaded', () => {
+            updateWhitespaceDemo();
+            renderDynamicList();
+            updateBoxModel();
+            evaluateScoreDemo();
+            renderFruitStage();
+            runSandboxCode();
+
+            // Load existing storage if available
+            const existingUser = localStorage.getItem('username');
+            if (existingUser) {
+                document.getElementById('storage-val-display').textContent = `"${existingUser}"`;
+            }
+        });
+    </script>
+</body>
+</html>
