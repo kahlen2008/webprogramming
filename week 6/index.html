@@ -62,7 +62,7 @@
         /* Top Bar */
         .topbar {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -103,10 +103,34 @@
             text-transform: uppercase;
         }
 
+        .page-badge-assignment {
+            background: rgba(251, 191, 36, 0.15) !important;
+            color: #fbbf24 !important;
+            border-color: rgba(251, 191, 36, 0.4) !important;
+            font-weight: 700 !important;
+        }
+
         /* Header */
         .header-title {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
+        }
+
+        .assignment-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.08));
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            color: #fde047;
+            padding: 5px 14px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            box-shadow: 0 0 16px rgba(251, 191, 36, 0.15);
         }
 
         .header-title h1 {
@@ -123,14 +147,29 @@
         .header-title p {
             color: var(--text-sub);
             font-size: 0.95rem;
+            max-width: 750px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .notes-guide-ref {
+            margin-top: 10px;
+            font-size: 0.84rem;
+            color: var(--text-dim);
+        }
+
+        .notes-guide-ref a {
+            color: var(--cyan);
+            font-weight: 600;
+            text-decoration: underline;
         }
 
         /* 2-Column Side-by-Side Grid */
         .workspace-grid {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
             display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
+            grid-template-columns: 1.2fr 0.8fr;
             gap: 24px;
             align-items: stretch;
         }
@@ -171,7 +210,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .tag-pill {
@@ -197,23 +236,23 @@
 
         /* Dialogue Box / Joke View */
         .joke-stage {
-            min-height: 220px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            flex: 1;
         }
 
         .joke-dialogue {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
             animation: fadeIn 0.35s ease;
         }
 
         /* Setup Quote Card */
         .speech-card {
-            padding: 18px 20px;
+            padding: 20px 22px;
             border-radius: var(--radius-sub);
             transition: all 0.25s ease;
             position: relative;
@@ -241,7 +280,7 @@
 
         .setup-content {
             font-family: 'Outfit', sans-serif;
-            font-size: 1.32rem;
+            font-size: 1.35rem;
             font-weight: 600;
             line-height: 1.45;
             color: var(--text-main);
@@ -260,7 +299,7 @@
 
         .punchline-content {
             font-family: 'Outfit', sans-serif;
-            font-size: 1.38rem;
+            font-size: 1.4rem;
             font-weight: 700;
             line-height: 1.4;
             color: #ffffff;
@@ -335,29 +374,28 @@
             background: rgba(244, 63, 94, 0.35);
         }
 
-        /* Bottom Action Toolbar: Clean unified row */
+        /* Bottom Action Toolbar: Clean unified 4-column grid */
         .action-bar {
-            display: flex;
-            align-items: center;
+            display: grid;
+            grid-template-columns: 1.35fr 1fr 0.9fr 0.95fr;
             gap: 10px;
             padding-top: 18px;
             border-top: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .btn-main {
-            flex: 1.5;
             background: linear-gradient(135deg, var(--cyan), var(--indigo));
             color: #040812;
             border: none;
-            padding: 12px 18px;
+            padding: 12px 14px;
             border-radius: var(--radius-btn);
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
-            font-size: 0.98rem;
+            font-size: 0.95rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 7px;
             cursor: pointer;
             box-shadow: 0 4px 16px var(--cyan-glow);
             transition: all 0.2s ease;
@@ -376,25 +414,18 @@
             transform: none;
         }
 
-        .btn-group-tools {
-            display: flex;
-            gap: 8px;
-            flex: 1.8;
-        }
-
         .btn-icon {
-            flex: 1;
             background: rgba(255, 255, 255, 0.04);
             color: var(--text-main);
             border: 1px solid var(--border);
-            padding: 12px 10px;
+            padding: 12px 8px;
             border-radius: var(--radius-btn);
-            font-size: 0.86rem;
+            font-size: 0.85rem;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             cursor: pointer;
             transition: all 0.2s ease;
             white-space: nowrap;
@@ -770,16 +801,27 @@
 
     <!-- Top Navigation Bar -->
     <header class="topbar">
-        <a href="../index.html" class="back-link">
-            <span>←</span> Coursework Hub
-        </a>
-        <span class="page-badge">Week 6 · Random Joke Fetcher</span>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <a href="../index.html" class="back-link">
+                <span>←</span> Coursework Hub
+            </a>
+            <a href="interactive-fetch-guide.html" class="back-link" title="Lecture notes on how fetch() works">
+                <span>📖</span> Lecture Notes (Fetch Guide)
+            </a>
+        </div>
+        <span class="page-badge page-badge-assignment">★ Week 6 Official Assignment Submission</span>
     </header>
 
     <!-- Page Title -->
     <div class="header-title">
+        <div class="assignment-pill">
+            <span>📝</span> Official Coursework Assignment Submission
+        </div>
         <h1>Random Joke Fetcher</h1>
-        <p>Live API fetching, separated setup &amp; punchline, spinner animation, and localStorage favourites.</p>
+        <p>This is the required <strong>Week 6 Assignment</strong>: Live API fetch from <code>official-joke-api</code>, separated setup &amp; punchline, spinner animation, custom voice synthesizer, and localStorage favourites.</p>
+        <div class="notes-guide-ref">
+            Looking for the study notes &amp; concept breakdowns? Open the <a href="interactive-fetch-guide.html">Interactive Fetch &amp; Async Guide →</a>
+        </div>
     </div>
 
     <!-- Main Workspace Grid: Jokes on Left, Favourites on Right -->
@@ -839,31 +881,24 @@
 
             </div>
 
-            <!-- Unified Single-Row Action Bar -->
+            <!-- Unified 4-Action Grid Bar -->
             <div class="action-bar">
-                <!-- Primary Action -->
                 <button class="btn-main" id="load-joke-btn" onclick="fetchRandomJoke()">
                     <span>🎲</span>
                     <span id="load-btn-label">Load Joke</span>
                 </button>
-
-                <!-- Tool Group -->
-                <div class="btn-group-tools">
-                    <button class="btn-icon btn-fav" id="save-fav-btn" onclick="saveCurrentJokeToFavourites()" title="Save to favourites" disabled>
-                        <span id="fav-icon">⭐</span>
-                        <span id="fav-label">Favourite</span>
-                    </button>
-
-                    <button class="btn-icon" id="copy-btn" onclick="copyCurrentJoke()" title="Copy setup & punchline to clipboard" disabled>
-                        <span>📋</span>
-                        <span>Copy</span>
-                    </button>
-
-                    <button class="btn-icon" id="speak-btn" onclick="speakCurrentJoke()" title="Read joke aloud" disabled>
-                        <span>🔊</span>
-                        <span>Listen</span>
-                    </button>
-                </div>
+                <button class="btn-icon btn-fav" id="save-fav-btn" onclick="saveCurrentJokeToFavourites()" title="Save to favourites" disabled>
+                    <span id="fav-icon">⭐</span>
+                    <span id="fav-label">Favourite</span>
+                </button>
+                <button class="btn-icon" id="copy-btn" onclick="copyCurrentJoke()" title="Copy setup & punchline to clipboard" disabled>
+                    <span>📋</span>
+                    <span>Copy</span>
+                </button>
+                <button class="btn-icon" id="speak-btn" onclick="speakCurrentJoke()" title="Read joke aloud" disabled>
+                    <span>🔊</span>
+                    <span>Listen</span>
+                </button>
             </div>
 
             <!-- Choose Any Voice Selector -->
@@ -1269,8 +1304,11 @@
             if (list.length === 0) {
                 favListContainer.innerHTML = `
                     <div class="fav-empty-state">
-                        <div class="fav-empty-icon">⭐</div>
-                        <p>No favourites saved yet.<br>Click "Favourite" on jokes you like!</p>
+                        <div class="fav-empty-icon" style="font-size:2.4rem; margin-bottom:4px;">⭐</div>
+                        <div style="font-weight:700; color:var(--text-main); font-size:1rem;">Your Collection is Empty</div>
+                        <p style="font-size:0.84rem; color:var(--text-dim); max-width:260px; margin-top:4px;">
+                            Click the <strong>Favourite</strong> button on any joke to save it here in localStorage across browser sessions.
+                        </p>
                     </div>
                 `;
                 return;
@@ -1379,7 +1417,7 @@
                     } else {
                         setSpeakingButtonState(false);
                     }
-                }, 240); // Snappy 240ms natural breath pause
+                }, 150); // 150ms natural breath pause
             };
 
             window.speechSynthesis.speak(setupUtterance);

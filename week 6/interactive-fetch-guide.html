@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Interactive Fetch &amp; Async Lab — Week 6</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.92);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --bg-code: #0b0f19;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.35);
+            --cyan: #38bdf8;
+            --cyan-glow: rgba(56, 189, 248, 0.25);
+            --indigo: #818cf8;
+            --purple: #c084fc;
+            --amber: #fbbf24;
+            --emerald: #34d399;
+            --rose: #f43f5e;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-sub: 12px;
+            --radius-btn: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: var(--bg-body) !important;
+            color-scheme: dark;
+            scroll-behavior: smooth;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body) !important;
+            background-image: 
+                radial-gradient(circle at 12% 5%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 88% 15%, rgba(129, 140, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 95%, rgba(192, 132, 252, 0.1) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 80px 20px;
+            line-height: 1.6;
+        }
+
+        /* Top Bar */
+        .topbar {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            gap: 16px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--cyan);
+            transform: translateY(-1px);
+        }
+
+        .nav-btn-assignment {
+            background: rgba(251, 191, 36, 0.12) !important;
+            border-color: rgba(251, 191, 36, 0.4) !important;
+            color: #fbbf24 !important;
+            font-weight: 600 !important;
+        }
+
+        .nav-btn-assignment:hover {
+            background: rgba(251, 191, 36, 0.22) !important;
+            border-color: #fbbf24 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 14px rgba(251, 191, 36, 0.3);
+        }
+
+        .page-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--cyan);
+            border-radius: 999px;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Assignment Notice Banner */
+        .assignment-notice-banner {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto 32px auto;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(245, 158, 11, 0.06));
+            border: 1px solid rgba(251, 191, 36, 0.35);
+            border-radius: var(--radius-sub);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .notice-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .notice-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .notice-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .notice-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fbbf24;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .notice-desc {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .notice-desc code {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 1px 6px;
+            border-radius: 4px;
+            color: var(--cyan);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .notice-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fbbf24;
+            color: #0b0f19;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 9px 16px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .notice-action-btn:hover {
+            background: #f59e0b;
+            transform: translateY(-1px);
+            box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .assignment-notice-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .notice-action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Header */
+        .header-title {
+            text-align: center;
+            max-width: 800px;
+            margin-bottom: 36px;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 40%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .header-title p {
+            color: var(--text-sub);
+            font-size: 1rem;
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Code Card */
+        .code-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 26px 28px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), var(--indigo));
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--cyan);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        /* 2-Column Split: Balanced 1fr 1fr */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 960px) {
+            .split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Code Box */
+        .code-editor {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        .editor-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 9px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .code-body {
+            padding: 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.84rem;
+            line-height: 1.65;
+            color: #cbd5e1;
+            overflow-x: auto;
+            flex: 1;
+        }
+
+        .token-kw { color: #c084fc; font-weight: 600; }
+        .token-fn { color: #38bdf8; }
+        .token-str { color: #34d399; }
+        .token-prop { color: #facc15; }
+        .token-comment { color: #64748b; font-style: italic; }
+
+        .btn-copy {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-sub);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.74rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy:hover {
+            color: var(--cyan);
+            border-color: var(--cyan);
+        }
+
+        /* Interactive Panel (Right Column) */
+        .live-panel {
+            background: var(--card-sub);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            position: relative;
+        }
+
+        .panel-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--cyan);
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Network Request Strip */
+        .net-bar {
+            background: #060910;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.76rem;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .net-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .method-badge {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--cyan);
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+        }
+
+        .status-pill {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-pill.idle {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+            border-color: var(--border);
+        }
+
+        .status-pill.error {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--rose);
+            border-color: rgba(244, 63, 94, 0.3);
+        }
+
+        .status-pill.warn {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--amber);
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        /* Visual DOM Target Cards */
+        .dom-target-wrap {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .dom-pill-tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .setup-bubble {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-left: 3px solid var(--cyan);
+            border-radius: 6px;
+            padding: 10px 12px;
+        }
+
+        .punch-bubble {
+            background: rgba(56, 189, 248, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-left: 3px solid var(--emerald);
+            border-radius: 6px;
+            padding: 10px 12px;
+        }
+
+        /* JSON Payload Inspector */
+        .json-inspector {
+            background: #060910;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .json-inspector-head {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.74rem;
+            color: var(--text-dim);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .json-body {
+            padding: 10px 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.76rem;
+            line-height: 1.5;
+            color: #94a3b8;
+            max-height: 130px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin: 0;
+        }
+
+        /* Execution Step Badges */
+        .exec-pipeline {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .exec-step {
+            font-size: 0.72rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .exec-step.active {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan-glow);
+        }
+
+        .exec-step.done {
+            background: rgba(52, 211, 153, 0.12);
+            border-color: rgba(52, 211, 153, 0.3);
+            color: #34d399;
+        }
+
+        /* Terminal Window */
+        .terminal-box {
+            background: #060910;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .terminal-topbar {
+            background: #0e1422;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.74rem;
+            color: var(--text-dim);
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .terminal-body {
+            padding: 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            line-height: 1.55;
+            color: #a5b4fc;
+            min-height: 140px;
+            max-height: 190px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            flex: 1;
+        }
+
+        .log-tag {
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+        .tag-info { background: rgba(56, 189, 248, 0.2); color: var(--cyan); }
+        .tag-ok { background: rgba(52, 211, 153, 0.2); color: #34d399; }
+        .tag-warn { background: rgba(251, 191, 36, 0.2); color: var(--amber); }
+        .tag-err { background: rgba(244, 63, 94, 0.2); color: var(--rose); }
+
+        /* User Profile Card (Card 3) */
+        .user-profile-widget {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .user-avatar-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cyan), var(--indigo));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #040812;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+        }
+
+        .user-info-text {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .user-name-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-handle-pill {
+            font-size: 0.72rem;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--cyan);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .user-details-row {
+            display: flex;
+            gap: 14px;
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            flex-wrap: wrap;
+        }
+
+        .user-chips-bar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .user-chip {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-chip:hover {
+            color: var(--cyan);
+            border-color: var(--cyan);
+        }
+
+        .user-chip.active {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--cyan);
+            color: #ffffff;
+            box-shadow: 0 0 10px var(--cyan-glow);
+        }
+
+        /* 404 Status Gauge (Card 4) */
+        .status-gauge-wrap {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .gauge-cell {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .gauge-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            font-weight: 700;
+        }
+
+        .gauge-val {
+            font-size: 0.96rem;
+            font-weight: 700;
+            font-family: 'Fira Code', monospace;
+            color: #ffffff;
+        }
+
+        .flow-branch-strip {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .flow-node {
+            font-size: 0.74rem;
+            padding: 5px 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .flow-node.executed {
+            background: rgba(52, 211, 153, 0.15);
+            border-color: #34d399;
+            color: #34d399;
+        }
+
+        .flow-node.caught {
+            background: rgba(251, 191, 36, 0.15);
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        /* Sandbox Frame (Card 5) */
+        .sandbox-frame {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sandbox-head {
+            background: #0d1320;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.74rem;
+            color: var(--text-dim);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sandbox-stage {
+            padding: 16px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .takeaway-pill {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            line-height: 1.45;
+        }
+
+        .takeaway-pill strong {
+            color: var(--cyan);
+        }
+
+        /* Action Buttons */
+        .live-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, var(--cyan), var(--indigo));
+            color: #040812;
+            border: none;
+            padding: 9px 16px;
+            border-radius: var(--radius-btn);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.86rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px var(--cyan-glow);
+            transition: all 0.2s ease;
+        }
+
+        .btn-run:hover:not(:disabled) {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+
+        .btn-run:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-sub {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-sub:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Tab Stepper (App Builder) */
+        .stepper-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-sub);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--cyan);
+            border-color: var(--cyan);
+        }
+
+        .tab-btn.active {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--cyan);
+            border-color: var(--cyan);
+            box-shadow: 0 0 12px var(--cyan-glow);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            color: #ffffff;
+            border: 1px solid var(--cyan);
+            padding: 10px 18px;
+            border-radius: var(--radius-btn);
+            font-size: 0.86rem;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="topbar">
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn">
+                <span>←</span> Coursework Hub
+            </a>
+            <a href="random-joke-fetcher.html" class="nav-btn nav-btn-assignment">
+                <span>🎯</span> Assignment: Joke Fetcher App →
+            </a>
+        </div>
+        <span class="page-badge">Week 6 · Interactive Lecture Notes</span>
+    </header>
+
+    <!-- Header -->
+    <div class="header-title">
+        <h1>Interactive Fetch &amp; async/await Lab</h1>
+        <p>Live runnable code examples from lecture notes: test APIs, inspect Promises, verify async/await, and catch network errors in real time.</p>
+    </div>
+
+    <!-- Explicit Assignment Notice Banner -->
+    <aside class="assignment-notice-banner" aria-label="Assignment Location Notice">
+        <div class="notice-left">
+            <div class="notice-icon">📝</div>
+            <div class="notice-text">
+                <div class="notice-title">
+                    <span>Looking for the Graded Assignment?</span>
+                </div>
+                <div class="notice-desc">
+                    The official <strong>Random Joke Fetcher Assignment</strong> is located in <a href="random-joke-fetcher.html"><code>random-joke-fetcher.html</code></a>. This page contains <em>lecture notes &amp; concept demonstrations</em>.
+                </div>
+            </div>
+        </div>
+        <a href="random-joke-fetcher.html" class="notice-action-btn">
+            Open Joke Fetcher Assignment <span>→</span>
+        </a>
+    </aside>
+
+    <!-- Main Container -->
+    <main class="container">
+
+        <!-- ==============================================================
+             CARD 1: fetch() — How to Write It (Interactive loadJoke)
+        ============================================================== -->
+        <section class="code-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>1.</span> fetch() — How to Write It
+                </div>
+                <span class="card-tag">Live loadJoke()</span>
+            </div>
+
+            <div class="split-grid">
+                <!-- Code Editor -->
+                <div class="code-editor">
+                    <div class="editor-top">
+                        <span>JavaScript (loadJoke.js)</span>
+                        <button class="btn-copy" onclick="copyCode('code-ex-1')">Copy</button>
+                    </div>
+                    <pre class="code-body"><code id="code-ex-1"><span class="token-kw">async function</span> <span class="token-fn">loadJoke</span>() {
+  <span class="token-kw">const</span> res  = <span class="token-kw">await</span> <span class="token-fn">fetch</span>(<span class="token-str">'https://official-joke-api.appspot.com/random_joke'</span>);
+  <span class="token-kw">const</span> data = <span class="token-kw">await</span> res.<span class="token-fn">json</span>();
+
+  document.<span class="token-fn">getElementById</span>(<span class="token-str">'jokeSetup'</span>).<span class="token-prop">textContent</span> = data.<span class="token-prop">setup</span>;
+  document.<span class="token-fn">getElementById</span>(<span class="token-str">'jokePunch'</span>).<span class="token-prop">textContent</span> = data.<span class="token-prop">punchline</span>;
+}</code></pre>
+                </div>
+
+                <!-- Live Interactive Panel -->
+                <div class="live-panel">
+                    <div class="panel-top">
+                        <span>DOM Target &amp; Network Inspector</span>
+                        <span class="status-pill idle" id="c1-status-pill">Idle · Ready</span>
+                    </div>
+
+                    <!-- Network Request Bar -->
+                    <div class="net-bar">
+                        <div class="net-left">
+                            <span class="method-badge">GET</span>
+                            <span style="color:#cbd5e1;">official-joke-api.appspot.com/random_joke</span>
+                        </div>
+                        <span id="c1-latency" style="color:var(--text-dim); font-size:0.72rem;">0ms</span>
+                    </div>
+
+                    <!-- DOM Target Box -->
+                    <div class="dom-target-wrap">
+                        <div class="setup-bubble">
+                            <div class="dom-pill-tag" style="color:var(--cyan);">
+                                <span>💬</span> #jokeSetup
+                            </div>
+                            <div id="jokeSetup" style="font-weight:600; color:var(--text-main); margin-top:4px; font-size:0.95rem;">
+                                Click "Run loadJoke()" to fetch from API
+                            </div>
+                        </div>
+                        
+                        <div class="punch-bubble">
+                            <div class="dom-pill-tag" style="color:var(--emerald);">
+                                <span>✨</span> #jokePunch
+                            </div>
+                            <div id="jokePunch" style="font-weight:700; color:#38bdf8; margin-top:4px; font-size:0.95rem;">
+                                Punchline will populate here
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live JSON Response Inspector -->
+                    <div class="json-inspector">
+                        <div class="json-inspector-head">
+                            <span>RAW RESPONSE (res.json())</span>
+                            <span id="c1-payload-id" style="color:var(--cyan);">ID: ---</span>
+                        </div>
+                        <pre class="json-body" id="c1-json-body">// Awaiting response payload...</pre>
+                    </div>
+
+                    <!-- Step-by-Step Execution Pipeline -->
+                    <div class="exec-pipeline">
+                        <span class="exec-step" id="c1-step-1">1. fetch()</span>
+                        <span class="exec-step" id="c1-step-2">2. res.json()</span>
+                        <span class="exec-step" id="c1-step-3">3. #jokeSetup</span>
+                        <span class="exec-step" id="c1-step-4">4. #jokePunch</span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="live-actions">
+                        <button class="btn-run" id="btn-run-c1" onclick="runCode1()">
+                            <span>▶</span> Run loadJoke()
+                        </button>
+                        <button class="btn-sub" onclick="resetCode1()">
+                            <span>🔄</span> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================================
+             CARD 2: Handling a Promise (.then / .catch)
+        ============================================================== -->
+        <section class="code-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>2.</span> Handling a Promise (.then &amp; .catch)
+                </div>
+                <span class="card-tag">Promise State Stream</span>
+            </div>
+
+            <div class="split-grid">
+                <!-- Code Editor -->
+                <div class="code-editor">
+                    <div class="editor-top">
+                        <span>JavaScript (promise-chain.js)</span>
+                        <button class="btn-copy" onclick="copyCode('code-ex-2')">Copy</button>
+                    </div>
+                    <pre class="code-body"><code id="code-ex-2"><span class="token-fn">fetch</span>(url)
+  .<span class="token-fn">then</span>(response => {
+    <span class="token-comment">// 1. runs when fulfilled (network response arrived)</span>
+    <span class="token-kw">return</span> response.<span class="token-fn">json</span>();
+  })
+  .<span class="token-fn">then</span>(data => {
+    <span class="token-comment">// 2. runs with the parsed JSON data</span>
+    console.<span class="token-fn">log</span>(data);
+  })
+  .<span class="token-fn">catch</span>(error => {
+    <span class="token-comment">// 3. runs if rejected (network drop, DNS error)</span>
+    console.<span class="token-fn">error</span>(<span class="token-str">'Failed:'</span>, error);
+  });</code></pre>
+                </div>
+
+                <!-- Live Interactive Panel -->
+                <div class="live-panel">
+                    <div class="panel-top">
+                        <span>Promise Pipeline Visualizer</span>
+                        <span class="status-pill idle" id="c2-status-pill">Pending State: Idle</span>
+                    </div>
+
+                    <!-- Connected Node Pipeline -->
+                    <div class="exec-pipeline" style="margin-bottom:2px;">
+                        <span class="exec-step" id="c2-node-call">1. fetch(url)</span>
+                        <span class="exec-step" id="c2-node-then1">2. .then(res.json)</span>
+                        <span class="exec-step" id="c2-node-then2">3. .then(data)</span>
+                        <span class="exec-step" id="c2-node-catch">4. .catch(err)</span>
+                    </div>
+
+                    <!-- Terminal Output Window -->
+                    <div class="terminal-box">
+                        <div class="terminal-topbar">
+                            <div class="terminal-dots">
+                                <span class="dot dot-red"></span>
+                                <span class="dot dot-yellow"></span>
+                                <span class="dot dot-green"></span>
+                            </div>
+                            <span>Promise Stream Terminal (stdout)</span>
+                            <span id="c2-clear-btn" style="cursor:pointer;" onclick="clearC2Terminal()">Clear</span>
+                        </div>
+                        <div class="terminal-body" id="c2-console">// Click one of the execution buttons below to stream promise states...</div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="live-actions">
+                        <button class="btn-run" id="btn-run-c2-real" onclick="runPromiseReal()">
+                            <span>⚡</span> Real Fetch (.then)
+                        </button>
+                        <button class="btn-sub" style="border-color:rgba(244,63,94,0.3); color:#fca5a5;" onclick="runPromiseReject()">
+                            <span>❌</span> Trigger .catch()
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================================
+             CARD 3: async / await — loadUser()
+        ============================================================== -->
+        <section class="code-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>3.</span> async / await — loadUser()
+                </div>
+                <span class="card-tag">JSON Placeholder</span>
+            </div>
+
+            <div class="split-grid">
+                <!-- Code Editor -->
+                <div class="code-editor">
+                    <div class="editor-top">
+                        <span>JavaScript (loadUser.js)</span>
+                        <button class="btn-copy" onclick="copyCode('code-ex-3')">Copy</button>
+                    </div>
+                    <pre class="code-body"><code id="code-ex-3"><span class="token-kw">async function</span> <span class="token-fn">loadUser</span>(id) {
+  <span class="token-kw">const</span> res  = <span class="token-kw">await</span> <span class="token-fn">fetch</span>(<span class="token-str">`https://jsonplaceholder.typicode.com/users/${id}`</span>);
+  <span class="token-kw">const</span> user = <span class="token-kw">await</span> res.<span class="token-fn">json</span>();
+
+  console.<span class="token-fn">log</span>(<span class="token-str">'Name:'</span>, user.name);
+  console.<span class="token-fn">log</span>(<span class="token-str">'Email:'</span>, user.email);
+}</code></pre>
+                </div>
+
+                <!-- Live Interactive Panel -->
+                <div class="live-panel">
+                    <div class="panel-top">
+                        <span>User Target &amp; Object Inspector</span>
+                        <span class="status-pill idle" id="c3-status-pill">User #1</span>
+                    </div>
+
+                    <!-- User Selector Pills -->
+                    <div class="user-chips-bar">
+                        <button class="user-chip active" id="uchip-1" onclick="selectUser(1)">#1 Leanne</button>
+                        <button class="user-chip" id="uchip-2" onclick="selectUser(2)">#2 Ervin</button>
+                        <button class="user-chip" id="uchip-3" onclick="selectUser(3)">#3 Clementine</button>
+                        <button class="user-chip" id="uchip-4" onclick="selectUser(4)">#4 Patricia</button>
+                        <button class="user-chip" id="uchip-5" onclick="selectUser(5)">#5 Chelsey</button>
+                    </div>
+
+                    <!-- Rendered User Card -->
+                    <div class="user-profile-widget" id="user-widget">
+                        <div class="user-avatar-circle" id="u-avatar">LG</div>
+                        <div class="user-info-text">
+                            <div class="user-name-title">
+                                <span id="u-name">Leanne Graham</span>
+                                <span class="user-handle-pill" id="u-username">@Bret</span>
+                            </div>
+                            <div class="user-details-row">
+                                <span id="u-email">✉️ Sincere@april.biz</span>
+                                <span id="u-company">🏢 Romaguera-Crona</span>
+                                <span id="u-city">📍 Gwenborough</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Console Inspector Row -->
+                    <div class="json-inspector">
+                        <div class="json-inspector-head">
+                            <span>CONSOLE LOG TRACE</span>
+                            <span style="color:var(--cyan);">console.log()</span>
+                        </div>
+                        <pre class="json-body" id="c3-console" style="max-height:85px;">Name: Leanne Graham
+Email: Sincere@april.biz</pre>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="live-actions">
+                        <button class="btn-run" onclick="runCode3()">
+                            <span>▶</span> Fetch Current User
+                        </button>
+                        <button class="btn-sub" onclick="randomUser()">
+                            <span>🎲</span> Random User
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================================
+             CARD 4: Error Handling & The 404 Gotcha
+        ============================================================== -->
+        <section class="code-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>4.</span> Error Handling (The 404 Gotcha)
+                </div>
+                <span class="card-tag">try / catch / finally</span>
+            </div>
+
+            <div class="split-grid">
+                <!-- Code Editor -->
+                <div class="code-editor">
+                    <div class="editor-top">
+                        <span>JavaScript (loadData.js)</span>
+                        <button class="btn-copy" onclick="copyCode('code-ex-4')">Copy</button>
+                    </div>
+                    <pre class="code-body"><code id="code-ex-4"><span class="token-kw">async function</span> <span class="token-fn">loadData</span>(url) {
+  <span class="token-kw">try</span> {
+    <span class="token-kw">const</span> res = <span class="token-kw">await</span> <span class="token-fn">fetch</span>(url);
+
+    <span class="token-comment">// ⚠️ 404 does NOT throw! You must check this:</span>
+    <span class="token-kw">if</span> (!res.ok) <span class="token-kw">throw new</span> Error(<span class="token-str">`HTTP error: ${res.status}`</span>);
+
+    <span class="token-kw">const</span> data = <span class="token-kw">await</span> res.<span class="token-fn">json</span>();
+    console.<span class="token-fn">log</span>(<span class="token-str">'Success:'</span>, data);
+
+  } <span class="token-kw">catch</span> (err) {
+    console.<span class="token-fn">error</span>(<span class="token-str">'Caught error:'</span>, err.message);
+
+  } <span class="token-kw">finally</span> {
+    console.<span class="token-fn">log</span>(<span class="token-str">'finally: always runs!'</span>);
+  }
+}</code></pre>
+                </div>
+
+                <!-- Live Interactive Panel -->
+                <div class="live-panel">
+                    <div class="panel-top">
+                        <span>HTTP Diagnostic Gauge &amp; Flow</span>
+                        <span class="status-pill warn" id="c4-scenario-badge">Gotcha Demo</span>
+                    </div>
+
+                    <!-- Scenario Selector -->
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn-sub" id="c4-btn-200" style="padding:6px 12px; font-size:0.78rem;" onclick="testErrorURL('200')">
+                            <span>✅</span> Test 200 OK
+                        </button>
+                        <button class="btn-sub" id="c4-btn-404" style="padding:6px 12px; font-size:0.78rem; border-color:var(--amber); color:#fef08a;" onclick="testErrorURL('404')">
+                            <span>⚠️</span> Test 404 Gotcha
+                        </button>
+                        <button class="btn-sub" id="c4-btn-net" style="padding:6px 12px; font-size:0.78rem; border-color:var(--rose); color:#fca5a5;" onclick="testErrorURL('net')">
+                            <span>❌</span> Test Network Drop
+                        </button>
+                    </div>
+
+                    <!-- Status Gauge Grid -->
+                    <div class="status-gauge-wrap">
+                        <div class="gauge-cell">
+                            <span class="gauge-label">Status Code</span>
+                            <span class="gauge-val" id="g-status" style="color:#34d399;">200 OK</span>
+                        </div>
+                        <div class="gauge-cell">
+                            <span class="gauge-label">res.ok (Boolean)</span>
+                            <span class="gauge-val" id="g-ok" style="color:#34d399;">true</span>
+                        </div>
+                        <div class="gauge-cell">
+                            <span class="gauge-label">Auto-Throws?</span>
+                            <span class="gauge-val" id="g-throws" style="color:var(--text-sub);">NO</span>
+                        </div>
+                    </div>
+
+                    <!-- Flow Branching Nodes -->
+                    <div class="flow-branch-strip">
+                        <span class="flow-node" id="fn-try">1. try { ... }</span>
+                        <span class="flow-node" id="fn-throw">2. if (!res.ok) throw</span>
+                        <span class="flow-node" id="fn-catch">3. catch (err)</span>
+                        <span class="flow-node" id="fn-finally">4. finally (Always)</span>
+                    </div>
+
+                    <!-- Diagnostic Console Trace -->
+                    <div class="json-inspector">
+                        <div class="json-inspector-head">
+                            <span>DIAGNOSTIC TRACE</span>
+                            <span id="c4-timing" style="color:var(--cyan);">Status: Verified</span>
+                        </div>
+                        <pre class="json-body" id="c4-trace" style="max-height:100px;">Click one of the test buttons above to trace the HTTP lifecycle.</pre>
+                    </div>
+
+                    <div class="live-actions">
+                        <span style="font-size:0.78rem; color:var(--text-sub); line-height:1.4;">
+                            💡 <strong>Key Takeaway:</strong> <code>fetch()</code> only rejects if the browser couldn't make the request (DNS failure, offline). HTTP 404/500 are valid responses, so you must inspect <code>res.ok</code>!
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================================
+             CARD 5: Build the Joke App — Step by Step (5 Tabs)
+        ============================================================== -->
+        <section class="code-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>5.</span> Build the Joke App — Step by Step
+                </div>
+                <span class="card-tag">5-Step Evolution</span>
+            </div>
+
+            <!-- Stepper Tabs -->
+            <div class="stepper-tabs">
+                <button class="tab-btn active" id="tab-btn-1" onclick="selectAppStep(1)">Step 1: HTML</button>
+                <button class="tab-btn" id="tab-btn-2" onclick="selectAppStep(2)">Step 2: Loading Msg</button>
+                <button class="tab-btn" id="tab-btn-3" onclick="selectAppStep(3)">Step 3: Fetch &amp; Parse</button>
+                <button class="tab-btn" id="tab-btn-4" onclick="selectAppStep(4)">Step 4: DOM Injection</button>
+                <button class="tab-btn" id="tab-btn-5" onclick="selectAppStep(5)">Step 5: try/catch/finally</button>
+            </div>
+
+            <div class="split-grid">
+                <!-- Code Editor -->
+                <div class="code-editor">
+                    <div class="editor-top">
+                        <span id="app-step-filename">step1-skeleton.html</span>
+                        <button class="btn-copy" onclick="copyCurrentAppStep()">Copy</button>
+                    </div>
+                    <pre class="code-body"><code id="app-step-code"></code></pre>
+                </div>
+
+                <!-- Live Preview of Step -->
+                <div class="live-panel">
+                    <div class="panel-top">
+                        <span id="app-step-title">Simulated Joke App Preview (Step 1)</span>
+                        <span class="status-pill idle" id="app-step-pill">Step 1 of 5</span>
+                    </div>
+
+                    <!-- Sandbox Frame -->
+                    <div class="sandbox-frame">
+                        <div class="sandbox-head">
+                            <span>Mini Sandbox Window</span>
+                            <span id="sandbox-url">browser://demo-view</span>
+                        </div>
+                        <div class="sandbox-stage" id="app-step-stage">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <button class="btn-run" id="demo-btn" onclick="runAppStepDemo()" style="padding:7px 14px; font-size:0.82rem;">
+                                    Load a Joke
+                                </button>
+                                <span id="demo-status" style="font-size:0.82rem; font-weight:700; color:var(--amber);"></span>
+                            </div>
+                            <div id="demo-joke-area" style="background:rgba(0,0,0,0.3); border:1px dashed var(--border); border-radius:6px; padding:12px; font-size:0.88rem; min-height:50px;">
+                                <span style="color:var(--text-dim);">(#joke-area placeholder ready for DOM injection)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Takeaway Explanation Card -->
+                    <div class="takeaway-pill" id="app-step-desc-pill">
+                        <strong>Step 1 Focus:</strong> Bare HTML structure with a button, an empty joke container div, and a status message element.
+                    </div>
+
+                    <!-- Action Controls -->
+                    <div class="live-actions">
+                        <button class="btn-run" onclick="runAppStepDemo()">
+                            <span>▶</span> Interact With Step Demo
+                        </button>
+                        <button class="btn-sub" onclick="selectAppStep((currentAppStep % 5) + 1)">
+                            <span>Next Step →</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast" role="status">
+        <span id="toast-icon">✓</span>
+        <span id="toast-msg">Copied</span>
+    </div>
+
+    <!-- JavaScript Execution Logic -->
+    <script>
+        // --- 1. Card 1: Live loadJoke() with Network & JSON Inspector ---
+        async function runCode1() {
+            const btn = document.getElementById('btn-run-c1');
+            const setupEl = document.getElementById('jokeSetup');
+            const punchEl = document.getElementById('jokePunch');
+            const pillEl = document.getElementById('c1-status-pill');
+            const latencyEl = document.getElementById('c1-latency');
+            const jsonEl = document.getElementById('c1-json-body');
+            const idEl = document.getElementById('c1-payload-id');
+
+            // Reset pipeline nodes
+            ['c1-step-1', 'c1-step-2', 'c1-step-3', 'c1-step-4'].forEach(id => {
+                const el = document.getElementById(id);
+                el.className = 'exec-step';
+            });
+
+            btn.disabled = true;
+            pillEl.className = 'status-pill warn';
+            pillEl.textContent = 'Fetching…';
+            document.getElementById('c1-step-1').className = 'exec-step active';
+            setupEl.textContent = 'Calling fetch(url)...';
+            punchEl.textContent = '...';
+
+            const startTime = performance.now();
+
+            try {
+                const res = await fetch('https://official-joke-api.appspot.com/random_joke');
+                const latency = Math.round(performance.now() - startTime);
+                latencyEl.textContent = `${latency}ms`;
+
+                document.getElementById('c1-step-1').className = 'exec-step done';
+                document.getElementById('c1-step-2').className = 'exec-step active';
+
+                const data = await res.json();
+                document.getElementById('c1-step-2').className = 'exec-step done';
+
+                document.getElementById('c1-step-3').className = 'exec-step active';
+                setupEl.textContent = data.setup;
+                document.getElementById('c1-step-3').className = 'exec-step done';
+
+                document.getElementById('c1-step-4').className = 'exec-step active';
+                punchEl.textContent = data.punchline;
+                document.getElementById('c1-step-4').className = 'exec-step done';
+
+                pillEl.className = 'status-pill';
+                pillEl.textContent = `200 OK (${latency}ms)`;
+                idEl.textContent = `ID #${data.id} (${data.type})`;
+
+                jsonEl.textContent = JSON.stringify(data, null, 2);
+                showToast('Joke & payload loaded into DOM!', '🎭');
+            } catch (err) {
+                pillEl.className = 'status-pill error';
+                pillEl.textContent = 'Fetch Error';
+                setupEl.textContent = 'Error: ' + err.message;
+                punchEl.textContent = 'Could not load joke';
+                jsonEl.textContent = `// Failed: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function resetCode1() {
+            document.getElementById('jokeSetup').textContent = 'Click "Run loadJoke()" to fetch from API';
+            document.getElementById('jokePunch').textContent = 'Punchline will populate here';
+            document.getElementById('c1-status-pill').className = 'status-pill idle';
+            document.getElementById('c1-status-pill').textContent = 'Idle · Ready';
+            document.getElementById('c1-latency').textContent = '0ms';
+            document.getElementById('c1-json-body').textContent = '// Awaiting response payload...';
+            document.getElementById('c1-payload-id').textContent = 'ID: ---';
+            ['c1-step-1', 'c1-step-2', 'c1-step-3', 'c1-step-4'].forEach(id => {
+                document.getElementById(id).className = 'exec-step';
+            });
+        }
+
+        // --- 2. Card 2: Promise .then / .catch Stream with Terminal ---
+        function clearC2Terminal() {
+            document.getElementById('c2-console').textContent = '// Terminal cleared. Ready for execution.\n';
+            resetC2Nodes();
+            document.getElementById('c2-status-pill').className = 'status-pill idle';
+            document.getElementById('c2-status-pill').textContent = 'Pending State: Idle';
+        }
+
+        function resetC2Nodes() {
+            ['c2-node-call', 'c2-node-then1', 'c2-node-then2', 'c2-node-catch'].forEach(id => {
+                document.getElementById(id).className = 'exec-step';
+            });
+        }
+
+        function getTimestamp() {
+            const d = new Date();
+            return d.toTimeString().split(' ')[0] + '.' + String(d.getMilliseconds()).padStart(3, '0');
+        }
+
+        function runPromiseReal() {
+            const logEl = document.getElementById('c2-console');
+            const pillEl = document.getElementById('c2-status-pill');
+            resetC2Nodes();
+
+            document.getElementById('c2-node-call').className = 'exec-step active';
+            pillEl.className = 'status-pill warn';
+            pillEl.textContent = 'Promise <pending>';
+
+            logEl.textContent = `[${getTimestamp()}] [CALL] fetch('https://official-joke-api.appspot.com/random_joke')\n`;
+            logEl.textContent += `[${getTimestamp()}] [INFO] Returns a Promise immediately in <pending> state\n`;
+            logEl.textContent += `[${getTimestamp()}] [THREAD] Main JavaScript execution thread is NOT blocked!\n`;
+
+            fetch('https://official-joke-api.appspot.com/random_joke')
+                .then(response => {
+                    document.getElementById('c2-node-call').className = 'exec-step done';
+                    document.getElementById('c2-node-then1').className = 'exec-step active';
+                    logEl.textContent += `[${getTimestamp()}] [1st .then] Fulfilled! HTTP status: ${response.status} (${response.statusText})\n`;
+                    logEl.textContent += `[${getTimestamp()}] [PARSE] Calling response.json() -> returns 2nd Promise\n`;
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('c2-node-then1').className = 'exec-step done';
+                    document.getElementById('c2-node-then2').className = 'exec-step done';
+                    pillEl.className = 'status-pill';
+                    pillEl.textContent = 'Fulfilled (200 OK)';
+
+                    logEl.textContent += `[${getTimestamp()}] [2nd .then] JSON body parsed successfully!\n`;
+                    logEl.textContent += `[${getTimestamp()}] [DATA] Setup: "${data.setup}"\n`;
+                    logEl.textContent += `[${getTimestamp()}] [DATA] Punchline: "${data.punchline}"\n`;
+                    logEl.scrollTop = logEl.scrollHeight;
+                    showToast('Promise stream completed!', '⚡');
+                })
+                .catch(error => {
+                    document.getElementById('c2-node-catch').className = 'exec-step active';
+                    pillEl.className = 'status-pill error';
+                    pillEl.textContent = 'Promise Rejected';
+                    logEl.textContent += `[${getTimestamp()}] [catch] Unexpected error: ${error.message}\n`;
+                });
+        }
+
+        function runPromiseReject() {
+            const logEl = document.getElementById('c2-console');
+            const pillEl = document.getElementById('c2-status-pill');
+            resetC2Nodes();
+
+            document.getElementById('c2-node-call').className = 'exec-step active';
+            pillEl.className = 'status-pill warn';
+            pillEl.textContent = 'Promise <pending>';
+
+            logEl.textContent = `[${getTimestamp()}] [CALL] fetch('https://invalid-unreachable-domain-xyz99.org')\n`;
+            logEl.textContent += `[${getTimestamp()}] [INFO] Browser attempts DNS resolution...\n`;
+
+            fetch('https://invalid-unreachable-domain-xyz99.org')
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => {
+                    document.getElementById('c2-node-call').className = 'exec-step';
+                    document.getElementById('c2-node-catch').className = 'exec-step active';
+                    pillEl.className = 'status-pill error';
+                    pillEl.textContent = 'Rejected (.catch invoked)';
+
+                    logEl.textContent += `[${getTimestamp()}] [FAIL] DNS resolution failed / Network offline!\n`;
+                    logEl.textContent += `[${getTimestamp()}] [.catch] Caught rejection: TypeError: ${error.message}\n`;
+                    logEl.textContent += `[${getTimestamp()}] [SAFE] Error handled safely without crashing application!\n`;
+                    logEl.scrollTop = logEl.scrollHeight;
+                    showToast('.catch() intercepted network error', '🛡️');
+                });
+        }
+
+        // --- 3. Card 3: async/await loadUser() & Profile Card ---
+        let currentUserId = 1;
+
+        function selectUser(id) {
+            currentUserId = id;
+            for (let i = 1; i <= 5; i++) {
+                const chip = document.getElementById(`uchip-${i}`);
+                if (chip) chip.classList.toggle('active', i === id);
+            }
+            runCode3();
+        }
+
+        function randomUser() {
+            const rand = Math.floor(Math.random() * 10) + 1;
+            currentUserId = rand;
+            for (let i = 1; i <= 5; i++) {
+                const chip = document.getElementById(`uchip-${i}`);
+                if (chip) chip.classList.toggle('active', i === rand);
+            }
+            runCode3();
+        }
+
+        async function runCode3() {
+            const id = currentUserId;
+            const logEl = document.getElementById('c3-console');
+            const pillEl = document.getElementById('c3-status-pill');
+            const nameEl = document.getElementById('u-name');
+            const usernameEl = document.getElementById('u-username');
+            const emailEl = document.getElementById('u-email');
+            const companyEl = document.getElementById('u-company');
+            const cityEl = document.getElementById('u-city');
+            const avatarEl = document.getElementById('u-avatar');
+
+            pillEl.className = 'status-pill warn';
+            pillEl.textContent = `Loading #${id}…`;
+            logEl.textContent = `await fetch('https://jsonplaceholder.typicode.com/users/${id}')...`;
+
+            try {
+                const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
+                const user = await res.json();
+
+                // Compute initials
+                const initials = user.name.split(' ').map(n => n[0]).slice(0, 2).join('');
+                avatarEl.textContent = initials;
+
+                nameEl.textContent = user.name;
+                usernameEl.textContent = `@${user.username}`;
+                emailEl.textContent = `✉️ ${user.email}`;
+                companyEl.textContent = `🏢 ${user.company ? user.company.name : 'Independent'}`;
+                cityEl.textContent = `📍 ${user.address ? user.address.city : 'N/A'}`;
+
+                logEl.textContent = `Name: "${user.name}"\nEmail: "${user.email}"\nPhone: "${user.phone || 'N/A'}"\nWebsite: "${user.website || 'N/A'}"`;
+
+                pillEl.className = 'status-pill';
+                pillEl.textContent = `User #${id} (Loaded)`;
+                showToast(`User #${id} loaded into widget!`, '👤');
+            } catch (err) {
+                pillEl.className = 'status-pill error';
+                pillEl.textContent = 'Error';
+                logEl.textContent = `Error: ${err.message}`;
+            }
+        }
+
+        // --- 4. Card 4: Error Handling & The 404 Gotcha ---
+        async function testErrorURL(type) {
+            const traceEl = document.getElementById('c4-trace');
+            const statusEl = document.getElementById('g-status');
+            const okEl = document.getElementById('g-ok');
+            const throwsEl = document.getElementById('g-throws');
+            const badgeEl = document.getElementById('c4-scenario-badge');
+
+            // Reset nodes
+            ['fn-try', 'fn-throw', 'fn-catch', 'fn-finally'].forEach(id => {
+                document.getElementById(id).className = 'flow-node';
+            });
+
+            document.getElementById('fn-try').className = 'flow-node executed';
+
+            if (type === '200') {
+                badgeEl.className = 'status-pill';
+                badgeEl.textContent = '200 OK Demo';
+                traceEl.textContent = '1. await fetch("https://jsonplaceholder.typicode.com/posts/1")\n';
+
+                try {
+                    const res = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+                    statusEl.textContent = '200 OK';
+                    statusEl.style.color = '#34d399';
+                    okEl.textContent = 'true';
+                    okEl.style.color = '#34d399';
+                    throwsEl.textContent = 'NO';
+                    throwsEl.style.color = 'var(--text-sub)';
+
+                    traceEl.textContent += `2. Received HTTP status: ${res.status}. Checking res.ok -> true\n`;
+                    if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+
+                    const data = await res.json();
+                    traceEl.textContent += `3. [try success]: Parsed Post #${data.id}: "${data.title.substring(0, 32)}..."\n`;
+                } catch (err) {
+                    document.getElementById('fn-catch').className = 'flow-node caught';
+                    traceEl.textContent += `-> [catch]: ${err.message}\n`;
+                } finally {
+                    document.getElementById('fn-finally').className = 'flow-node executed';
+                    traceEl.textContent += `4. [finally]: Always executes — useful for hiding loading spinners!\n`;
+                }
+            } else if (type === '404') {
+                badgeEl.className = 'status-pill warn';
+                badgeEl.textContent = '404 Gotcha Demo';
+                traceEl.textContent = '1. await fetch("https://jsonplaceholder.typicode.com/posts/99999") [404]\n';
+
+                try {
+                    const res = await fetch('https://jsonplaceholder.typicode.com/posts/99999');
+                    statusEl.textContent = '404 Not Found';
+                    statusEl.style.color = 'var(--amber)';
+                    okEl.textContent = 'false';
+                    okEl.style.color = 'var(--amber)';
+                    throwsEl.textContent = 'NO (Gotcha!)';
+                    throwsEl.style.color = 'var(--amber)';
+
+                    traceEl.textContent += `2. ⚠️ NOTICE: fetch() DID NOT throw! It arrived as a valid HTTP response.\n`;
+                    traceEl.textContent += `3. res.ok evaluates to FALSE. Executing manual throw:\n`;
+                    document.getElementById('fn-throw').className = 'flow-node caught';
+
+                    if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+                    const data = await res.json();
+                } catch (err) {
+                    document.getElementById('fn-catch').className = 'flow-node caught';
+                    traceEl.textContent += `4. [catch triggered by throw]: Caught "${err.message}"\n`;
+                } finally {
+                    document.getElementById('fn-finally').className = 'flow-node executed';
+                    traceEl.textContent += `5. [finally]: Cleanup completed successfully.\n`;
+                }
+            } else {
+                badgeEl.className = 'status-pill error';
+                badgeEl.textContent = 'Network Drop Demo';
+                traceEl.textContent = '1. await fetch("https://fake-offline-network-drop-domain.org")\n';
+
+                try {
+                    const res = await fetch('https://fake-offline-network-drop-domain.org');
+                    if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+                } catch (err) {
+                    statusEl.textContent = 'Network Fail';
+                    statusEl.style.color = 'var(--rose)';
+                    okEl.textContent = 'undefined';
+                    okEl.style.color = 'var(--rose)';
+                    throwsEl.textContent = 'YES (Auto)';
+                    throwsEl.style.color = 'var(--rose)';
+
+                    document.getElementById('fn-catch').className = 'flow-node caught';
+                    traceEl.textContent += `2. ❌ fetch() AUTO-THREW on network failure: TypeError: ${err.message}\n`;
+                    traceEl.textContent += `3. [catch]: Execution safely diverted to error handler.\n`;
+                } finally {
+                    document.getElementById('fn-finally').className = 'flow-node executed';
+                    traceEl.textContent += `4. [finally]: Always runs.\n`;
+                }
+            }
+        }
+
+        // --- 5. Card 5: Step-by-Step App Builder ---
+        const appSteps = {
+            1: {
+                filename: 'step1-skeleton.html',
+                title: 'Simulated Joke App Preview (Step 1: HTML Skeleton)',
+                pill: 'Step 1 of 5',
+                desc: '<strong>Step 1 Focus:</strong> Bare HTML structure with a button, an empty joke container div, and a status message element. Click the button to see that no JS logic is wired yet.',
+                code: `<!-- A button the user clicks -->
+<button onclick="loadJoke()">Load a Joke</button>
+
+<!-- Where the joke will appear -->
+<div id="joke-area"></div>
+
+<!-- Loading and error text -->
+<p id="status"></p>`
+            },
+            2: {
+                filename: 'step2-loading.js',
+                title: 'Simulated Joke App Preview (Step 2: Loading State)',
+                pill: 'Step 2 of 5',
+                desc: '<strong>Step 2 Focus:</strong> Immediate visual feedback. Setting status text to "Loading…" before any network request starts prevents users from clicking repeatedly.',
+                code: `async function loadJoke() {
+  document.getElementById('status').textContent = 'Loading…';
+  // fetch code goes here next
+}`
+            },
+            3: {
+                filename: 'step3-fetch.js',
+                title: 'Simulated Joke App Preview (Step 3: Fetch & Parse)',
+                pill: 'Step 3 of 5',
+                desc: '<strong>Step 3 Focus:</strong> Two-phase await. First await waits for HTTP headers from fetch(); second await waits for JSON body stream parsing via res.json().',
+                code: `async function loadJoke() {
+  document.getElementById('status').textContent = 'Loading…';
+
+  const res  = await fetch('https://official-joke-api.appspot.com/random_joke');
+  const data = await res.json();
+  // data now has: { setup: "...", punchline: "..." }
+}`
+            },
+            4: {
+                filename: 'step4-dom.js',
+                title: 'Simulated Joke App Preview (Step 4: DOM Injection)',
+                pill: 'Step 4 of 5',
+                desc: '<strong>Step 4 Focus:</strong> Injecting parsed setup and punchline into the DOM container and clearing the temporary "Loading…" status.',
+                code: `async function loadJoke() {
+  document.getElementById('status').textContent = 'Loading…';
+
+  const res  = await fetch('https://official-joke-api.appspot.com/random_joke');
+  const data = await res.json();
+
+  document.getElementById('joke-area').innerHTML =
+    \`<p><strong>\${data.setup}</strong></p>
+     <p>\${data.punchline}</p>\`;
+  document.getElementById('status').textContent = '';
+}`
+            },
+            5: {
+                filename: 'step5-complete.js',
+                title: 'Simulated Joke App Preview (Step 5: Professional Complete)',
+                pill: 'Step 5 of 5',
+                desc: '<strong>Step 5 Focus:</strong> Production grade error safety. Wrapped with try/catch/finally and an explicit !res.ok check to guarantee that network failures and 404s display friendly errors.',
+                code: `async function loadJoke() {
+  const status = document.getElementById('status');
+  status.textContent = 'Loading…';
+
+  try {
+    const res  = await fetch('https://official-joke-api.appspot.com/random_joke');
+    if (!res.ok) throw new Error(\`HTTP \${res.status}\`);
+    const data = await res.json();
+
+    document.getElementById('joke-area').innerHTML =
+      \`<p><strong>\${data.setup}</strong></p>
+       <p>\${data.punchline}</p>\`;
+
+  } catch (err) {
+    status.textContent = 'Error: ' + err.message;
+
+  } finally {
+    if (!status.textContent.startsWith('Error'))
+      status.textContent = '';
+  }
+}`
+            }
+        };
+
+        let currentAppStep = 1;
+
+        function selectAppStep(stepNum) {
+            currentAppStep = stepNum;
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx + 1 === stepNum);
+            });
+
+            const data = appSteps[stepNum];
+            document.getElementById('app-step-filename').textContent = data.filename;
+            document.getElementById('app-step-title').textContent = data.title;
+            document.getElementById('app-step-pill').textContent = data.pill;
+            document.getElementById('app-step-desc-pill').innerHTML = data.desc;
+            document.getElementById('app-step-code').textContent = data.code;
+
+            // Reset preview area
+            const area = document.getElementById('demo-joke-area');
+            const status = document.getElementById('demo-status');
+            status.textContent = '';
+
+            if (stepNum === 1) {
+                area.innerHTML = '<span style="color:var(--text-dim);">(Step 1: #joke-area empty placeholder awaiting script)</span>';
+            } else if (stepNum === 2) {
+                area.innerHTML = '<span style="color:var(--text-dim);">(Click "Load a Joke" to see instant Loading… feedback)</span>';
+            } else if (stepNum === 3) {
+                area.innerHTML = '<span style="color:var(--text-dim);">(Click to test fetch & parse in-memory)</span>';
+            } else {
+                area.innerHTML = '<span style="color:var(--text-dim);">(Click to load and inject full joke)</span>';
+            }
+        }
+
+        async function runAppStepDemo() {
+            const status = document.getElementById('demo-status');
+            const area = document.getElementById('demo-joke-area');
+            const btn = document.getElementById('demo-btn');
+
+            if (currentAppStep === 1) {
+                area.innerHTML = '<span style="color:var(--text-dim);">⚠️ Nothing happens: In Step 1, loadJoke() function is not defined yet!</span>';
+                status.textContent = '';
+                return;
+            }
+
+            if (currentAppStep === 2) {
+                status.textContent = 'Loading…';
+                area.innerHTML = '<span style="color:var(--amber);">Status updated to "Loading…" immediately! (Fetch not yet wired)</span>';
+                return;
+            }
+
+            status.textContent = 'Loading…';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('https://official-joke-api.appspot.com/random_joke');
+                if (!res.ok && currentAppStep === 5) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                if (currentAppStep === 3) {
+                    area.innerHTML = `<span style="color:#34d399;">✓ Data in memory:</span> <code>{ id: ${data.id}, setup: "${data.setup}" }</code><br><span style="color:var(--text-dim); font-size:0.75rem;">(Not injected to DOM yet until Step 4)</span>`;
+                    status.textContent = '';
+                } else if (currentAppStep >= 4) {
+                    area.innerHTML = `<div style="font-weight:700; color:#ffffff; font-size:0.95rem;">${data.setup}</div><div style="color:var(--cyan); font-weight:700; margin-top:4px;">${data.punchline}</div>`;
+                    status.textContent = '';
+                }
+            } catch (err) {
+                if (currentAppStep === 5) {
+                    status.textContent = 'Error: ' + err.message;
+                    area.innerHTML = `<span style="color:var(--rose);">Error caught safely: ${err.message}</span>`;
+                }
+            } finally {
+                btn.disabled = false;
+                if (currentAppStep === 5 && !status.textContent.startsWith('Error')) {
+                    status.textContent = '';
+                }
+            }
+        }
+
+        function copyCurrentAppStep() {
+            const code = appSteps[currentAppStep].code;
+            navigator.clipboard.writeText(code).then(() => {
+                showToast(`Copied Step ${currentAppStep} snippet!`, '📋');
+            });
+        }
+
+        // Copy utility
+        function copyCode(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            navigator.clipboard.writeText(el.textContent).then(() => {
+                showToast('Snippet copied to clipboard!', '📋');
+            });
+        }
+
+        let toastTimer;
+        function showToast(msg, icon = '✓') {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-icon').textContent = icon;
+            document.getElementById('toast-msg').textContent = msg;
+            t.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            selectAppStep(1);
+            runCode3(); // preload user
+            testErrorURL('200'); // preload 404 test gauge
+        });
+    </script>
+</body>
+</html>
