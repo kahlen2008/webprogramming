@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Grade Evaluator — Week 5 Conditions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-card-hover: rgba(28, 38, 62, 0.98);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-cyan: #38bdf8;
+            --accent-indigo: #818cf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.2);
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: #090d16 !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #090d16 !important;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, rgba(129, 140, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 90%, rgba(192, 132, 252, 0.1) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(9, 13, 22, 0.85);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
+
+        .nav-brand-badge {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+            color: #040812;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-cyan);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1280px;
+            margin: 40px auto 0 auto;
+            padding: 0 24px;
+        }
+
+        .header-title-box {
+            text-align: center;
+            margin-bottom: 34px;
+        }
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--accent-cyan);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+
+        .header-title-box h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        .header-title-box p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* Topic Card */
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            gap: 16px;
+        }
+
+        .topic-title-group h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.82rem;
+            padding: 4px 12px;
+            border-radius: 6px;
+            background: rgba(251, 191, 36, 0.12);
+            color: var(--accent-amber);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Split Grid */
+        .split-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+            gap: 28px;
+            align-items: start;
+        }
+
+        @media (max-width: 950px) {
+            .split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Code Block Styling */
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: #c084fc;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .copy-btn:hover {
+            color: var(--text-primary);
+        }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.92rem;
+            color: #e2e8f0;
+            padding: 20px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.65;
+        }
+
+        /* Syntax colors */
+        .token-comment { color: #64748b; font-style: italic; }
+        .token-kw { color: #c084fc; font-weight: 600; }
+        .token-fn { color: #38bdf8; }
+        .token-str { color: #34d399; }
+        .token-num { color: #fbbf24; }
+
+        /* Interactive Playground Box */
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            justify-content: space-between;
+        }
+
+        .interactive-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent-cyan);
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .ui-slider-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .score-slider {
+            width: 100%;
+            accent-color: var(--accent-cyan);
+            cursor: pointer;
+            height: 6px;
+        }
+
+        .grade-badge-display {
+            font-weight: 800;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .branch-tracker {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.84rem;
+            line-height: 1.6;
+        }
+
+        .branch-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            padding: 3px 0;
+            transition: color 0.2s;
+        }
+
+        .branch-line.active {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .branch-line.active::before {
+            content: '➜';
+            color: var(--accent-cyan);
+        }
+
+        .virtual-console {
+            background: #050811;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-emerald);
+        }
+
+        /* Floating Toast */
+        .toast-popup {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--accent-cyan);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .toast-popup.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation -->
+    <nav class="navbar">
+        <a href="../index.html" class="nav-brand">
+            <span class="nav-brand-badge">WEEK 5</span>
+            <span>Conditions (if / else)</span>
+        </a>
+        <a href="../index.html" class="back-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Coursework
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="header-title-box">
+            <h1>Grade Evaluator</h1>
+        </div>
+
+        <div class="topic-card">
+
+            <div class="split-grid">
+                <!-- Exact Code Block -->
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label"><span class="code-lang-dot"></span> JavaScript Conditions</span>
+                        <button class="copy-btn" onclick="copySnippet('code-conditions')">📋 Copy</button>
+                    </div>
+                    <pre><code id="code-conditions"><span class="token-kw">let</span> score = <span class="token-num" id="code-score-display">0</span>;
+
+<span class="token-kw">if</span> (score &gt;= <span class="token-num">90</span>) {
+  <span class="token-fn">console.log</span>(<span class="token-str">'A'</span>);
+} <span class="token-kw">else if</span> (score &gt;= <span class="token-num">80</span>) {
+  <span class="token-fn">console.log</span>(<span class="token-str">'B'</span>);
+} <span class="token-kw">else if</span> (score &gt;= <span class="token-num">70</span>) {
+  <span class="token-fn">console.log</span>(<span class="token-str">'C'</span>);
+} <span class="token-kw">else</span> {
+  <span class="token-fn">console.log</span>(<span class="token-str">'F'</span>);
+}</code></pre>
+                </div>
+
+                <!-- Interactive Evaluator -->
+                <div class="interactive-box">
+                    <div class="interactive-label">
+                        <span>Interactive Grade Evaluator</span>
+                        <span>Live Slider</span>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); padding: 18px; border-radius: 8px;">
+                        <div class="ui-slider-group" style="margin-bottom: 14px;">
+                            <label>Slide Score: <b id="score-slider-val" style="color:var(--accent-cyan); font-size:1.3rem;">0</b></label>
+                            <span id="grade-badge" class="grade-badge-display" style="background: var(--accent-rose); color:#fff;">Grade: F</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="0" id="score-range" class="score-slider" oninput="evaluateScore()">
+                    </div>
+
+                    <!-- Step Tracker Explanation -->
+                    <div class="branch-tracker">
+                        <div style="font-size: 0.76rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Evaluation Trace:</div>
+                        <div id="trace-90" class="branch-line">score &gt;= 90 ? <span id="cond-90-res">false</span></div>
+                        <div id="trace-80" class="branch-line">score &gt;= 80 ? <span id="cond-80-res">false</span></div>
+                        <div id="trace-70" class="branch-line">score &gt;= 70 ? <span id="cond-70-res">false</span></div>
+                        <div id="trace-else" class="branch-line active">else &rarr; 'F'</div>
+                    </div>
+
+                    <!-- Virtual Console -->
+                    <div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">DevTools Console Output:</div>
+                        <div class="virtual-console" id="console-output">&gt; 'F'</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Popup -->
+    <div id="toast" class="toast-popup">
+        <span>✨ Action executed</span>
+    </div>
+
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `<span>${message}</span>`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        function copySnippet(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            const text = el.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 Code copied to clipboard!');
+            }).catch(() => {
+                showToast('Copied code!');
+            });
+        }
+
+        function evaluateScore() {
+            const score = parseInt(document.getElementById('score-range').value, 10);
+            document.getElementById('score-slider-val').textContent = score;
+            document.getElementById('code-score-display').textContent = score;
+
+            const badge = document.getElementById('grade-badge');
+            const consoleOut = document.getElementById('console-output');
+
+            const trace90 = document.getElementById('trace-90');
+            const trace80 = document.getElementById('trace-80');
+            const trace70 = document.getElementById('trace-70');
+            const traceElse = document.getElementById('trace-else');
+
+            const res90 = document.getElementById('cond-90-res');
+            const res80 = document.getElementById('cond-80-res');
+            const res70 = document.getElementById('cond-70-res');
+
+            // Reset classes
+            [trace90, trace80, trace70, traceElse].forEach(el => el.classList.remove('active'));
+
+            let grade = 'F';
+            let color = 'var(--accent-rose)';
+            let textColor = '#fff';
+
+            if (score >= 90) {
+                grade = 'A';
+                color = 'var(--accent-emerald)';
+                textColor = '#022c22';
+                trace90.classList.add('active');
+                res90.textContent = 'true (matched!)';
+                res80.textContent = 'skipped';
+                res70.textContent = 'skipped';
+            } else if (score >= 80) {
+                grade = 'B';
+                color = 'var(--accent-cyan)';
+                textColor = '#082f49';
+                res90.textContent = 'false';
+                trace80.classList.add('active');
+                res80.textContent = 'true (matched!)';
+                res70.textContent = 'skipped';
+            } else if (score >= 70) {
+                grade = 'C';
+                color = 'var(--accent-amber)';
+                textColor = '#451a03';
+                res90.textContent = 'false';
+                res80.textContent = 'false';
+                trace70.classList.add('active');
+                res70.textContent = 'true (matched!)';
+            } else {
+                grade = 'F';
+                color = 'var(--accent-rose)';
+                textColor = '#fff';
+                res90.textContent = 'false';
+                res80.textContent = 'false';
+                res70.textContent = 'false';
+                traceElse.classList.add('active');
+            }
+
+            badge.textContent = 'Grade: ' + grade;
+            badge.style.background = color;
+            badge.style.color = textColor;
+            consoleOut.textContent = `> console.log('${grade}') → '${grade}'`;
+        }
+
+        // Initialize on load
+        evaluateScore();
+    </script>
+</body>
+</html>

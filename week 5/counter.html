@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Counter Mini-App — Week 5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-card-hover: rgba(28, 38, 62, 0.98);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-cyan: #38bdf8;
+            --accent-indigo: #818cf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.2);
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: #090d16 !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #090d16 !important;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, rgba(129, 140, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 90%, rgba(192, 132, 252, 0.1) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(9, 13, 22, 0.85);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
+
+        .nav-brand-badge {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+            color: #040812;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-cyan);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1280px;
+            margin: 40px auto 0 auto;
+            padding: 0 24px;
+        }
+
+        .header-title-box {
+            text-align: center;
+            margin-bottom: 34px;
+        }
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--accent-cyan);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+
+        .header-title-box h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        .header-title-box p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* Topic Card */
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            gap: 16px;
+        }
+
+        .topic-title-group h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.82rem;
+            padding: 4px 12px;
+            border-radius: 6px;
+            background: rgba(251, 191, 36, 0.12);
+            color: var(--accent-amber);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Split Grid */
+        .split-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+            gap: 28px;
+            align-items: start;
+        }
+
+        @media (max-width: 950px) {
+            .split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Code Block */
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: #38bdf8;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .copy-btn:hover {
+            color: var(--text-primary);
+        }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            padding: 18px 20px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.65;
+        }
+
+        .token-tag { color: #f43f5e; }
+        .token-attr { color: #38bdf8; }
+        .token-val { color: #34d399; }
+        .token-kw { color: #c084fc; font-weight: 600; }
+        .token-fn { color: #38bdf8; }
+        .token-str { color: #34d399; }
+        .token-num { color: #fbbf24; }
+
+        /* Interactive Box */
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .interactive-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent-cyan);
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .counter-stage {
+            text-align: center;
+            background: rgba(0,0,0,0.3);
+            padding: 36px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .counter-heading {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            color: #f8fafc;
+            margin-bottom: 14px;
+        }
+
+        #count {
+            color: var(--accent-cyan);
+            font-weight: 800;
+            font-size: 3.2rem;
+            display: inline-block;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 60px;
+        }
+
+        .interactive-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .ui-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ui-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .ui-btn-primary {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .ui-btn-primary:hover {
+            background: linear-gradient(135deg, #0369a1, #1d4ed8);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+        }
+
+        .ui-btn-danger {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fda4af;
+            border-color: rgba(244, 63, 94, 0.3);
+        }
+
+        .ui-btn-danger:hover {
+            background: rgba(244, 63, 94, 0.3);
+            color: #fff;
+        }
+
+        /* Floating Toast */
+        .toast-popup {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--accent-cyan);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .toast-popup.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation -->
+    <nav class="navbar">
+        <a href="../index.html" class="nav-brand">
+            <span class="nav-brand-badge">WEEK 5</span>
+            <span>Counter Mini-App</span>
+        </a>
+        <a href="../index.html" class="back-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Coursework
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="header-title-box">
+            <h1>Counter Mini-App</h1>
+        </div>
+
+        <div class="topic-card">
+            <div class="split-grid">
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label"><span class="code-lang-dot"></span> Complete Counter HTML + JS</span>
+                        <button class="copy-btn" onclick="copySnippet('code-counter-miniapp')">📋 Copy</button>
+                    </div>
+                    <pre><code id="code-counter-miniapp"><span class="token-kw">&lt;!DOCTYPE html&gt;</span>
+<span class="token-tag">&lt;html</span> <span class="token-attr">lang</span>=<span class="token-val">"en"</span><span class="token-tag">&gt;</span>
+<span class="token-tag">&lt;head&gt;</span>
+  <span class="token-tag">&lt;meta</span> <span class="token-attr">charset</span>=<span class="token-val">"UTF-8"</span><span class="token-tag">&gt;</span>
+  <span class="token-tag">&lt;title&gt;</span>Counter<span class="token-tag">&lt;/title&gt;</span>
+<span class="token-tag">&lt;/head&gt;</span>
+<span class="token-tag">&lt;body&gt;</span>
+  <span class="token-tag">&lt;h2&gt;</span>Counter: <span class="token-tag">&lt;span</span> <span class="token-attr">id</span>=<span class="token-val">"count"</span><span class="token-tag">&gt;</span>0<span class="token-tag">&lt;/span&gt;&lt;/h2&gt;</span>
+  <span class="token-tag">&lt;button</span> <span class="token-attr">onclick</span>=<span class="token-val">"change(1)"</span><span class="token-tag">&gt;</span>+ Add<span class="token-tag">&lt;/button&gt;</span>
+  <span class="token-tag">&lt;button</span> <span class="token-attr">onclick</span>=<span class="token-val">"change(-1)"</span><span class="token-tag">&gt;</span>- Subtract<span class="token-tag">&lt;/button&gt;</span>
+  <span class="token-tag">&lt;button</span> <span class="token-attr">onclick</span>=<span class="token-val">"reset()"</span><span class="token-tag">&gt;</span>Reset<span class="token-tag">&lt;/button&gt;</span>
+
+  <span class="token-tag">&lt;script&gt;</span>
+    <span class="token-kw">let</span> count = <span class="token-num">0</span>;
+    <span class="token-kw">function</span> <span class="token-fn">change</span>(amount) {
+      count = count + amount;
+      document.<span class="token-fn">getElementById</span>(<span class="token-str">'count'</span>).textContent = count;
+    }
+    <span class="token-kw">function</span> <span class="token-fn">reset</span>() {
+      count = <span class="token-num">0</span>;
+      document.<span class="token-fn">getElementById</span>(<span class="token-str">'count'</span>).textContent = <span class="token-num">0</span>;
+    }
+  <span class="token-tag">&lt;/script&gt;</span>
+<span class="token-tag">&lt;/body&gt;</span>
+<span class="token-tag">&lt;/html&gt;</span></code></pre>
+                </div>
+                <div class="interactive-box">
+                    <div class="interactive-label">
+                        <span>Live Working Counter App</span>
+                        <span>Interactive</span>
+                    </div>
+                    <div class="counter-stage">
+                        <h2 class="counter-heading">
+                            Counter: <span id="count">0</span>
+                        </h2>
+                        <div class="interactive-controls">
+                            <button class="ui-btn ui-btn-primary" onclick="change(1)">+ Add</button>
+                            <button class="ui-btn" onclick="change(-1)">- Subtract</button>
+                            <button class="ui-btn ui-btn-danger" onclick="reset()">Reset</button>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted); text-align: center;">
+                        This mini-app pairs standard button click handlers with state update logic and DOM manipulation.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast-popup">
+        <span>✨ Action executed</span>
+    </div>
+
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `<span>${message}</span>`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function copySnippet(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            const text = el.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 Code copied to clipboard!');
+            }).catch(() => {
+                showToast('Copied code!');
+            });
+        }
+
+        let count = 0;
+        function change(amount) {
+            count = count + amount;
+            const el = document.getElementById('count');
+            el.textContent = count;
+            el.style.transform = 'scale(1.25)';
+            setTimeout(() => { el.style.transform = 'scale(1)'; }, 150);
+        }
+        function reset() {
+            count = 0;
+            const el = document.getElementById('count');
+            el.textContent = 0;
+            el.style.transform = 'scale(0.9)';
+            setTimeout(() => { el.style.transform = 'scale(1)'; }, 150);
+            showToast('Counter reset to 0');
+        }
+    </script>
+</body>
+</html>

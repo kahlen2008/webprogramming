@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>JavaScript Loops: Step & Fruit Loops — Week 5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-card-hover: rgba(28, 38, 62, 0.98);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-cyan: #38bdf8;
+            --accent-indigo: #818cf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.2);
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: #090d16 !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #090d16 !important;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, rgba(129, 140, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 90%, rgba(192, 132, 252, 0.1) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(9, 13, 22, 0.85);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+        }
+
+        .nav-brand-badge {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+            color: #040812;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-cyan);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1280px;
+            margin: 40px auto 0 auto;
+            padding: 0 24px;
+        }
+
+        .header-title-box {
+            text-align: center;
+            margin-bottom: 38px;
+        }
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--accent-cyan);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+
+        .header-title-box h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        .header-title-box p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* Topic Card */
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            margin-bottom: 32px;
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            gap: 16px;
+        }
+
+        .topic-title-group h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.82rem;
+            padding: 4px 12px;
+            border-radius: 6px;
+            background: rgba(251, 191, 36, 0.12);
+            color: var(--accent-amber);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Split Grid */
+        .split-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+            gap: 28px;
+            align-items: start;
+        }
+
+        @media (max-width: 950px) {
+            .split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Code Block */
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: #c084fc;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .copy-btn:hover {
+            color: var(--text-primary);
+        }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.92rem;
+            color: #e2e8f0;
+            padding: 20px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.65;
+        }
+
+        .token-comment { color: #64748b; font-style: italic; }
+        .token-kw { color: #c084fc; font-weight: 600; }
+        .token-fn { color: #38bdf8; }
+        .token-str { color: #34d399; }
+        .token-num { color: #fbbf24; }
+
+        /* Interactive Box */
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .interactive-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent-cyan);
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .ui-slider-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .interactive-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .ui-btn {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ui-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .ui-btn-primary {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .ui-btn-primary:hover {
+            background: linear-gradient(135deg, #0369a1, #1d4ed8);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+        }
+
+        .ui-input {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            color: #fff;
+            padding: 8px 12px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .ui-input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .step-chip {
+            background: rgba(56, 189, 248, 0.2);
+            border: 1px solid #38bdf8;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Fruit Array Stage */
+        .fruit-array-stage {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 10px 0;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: var(--radius-sm);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            min-height: 110px;
+        }
+
+        .fruit-slot {
+            background: rgba(30, 41, 59, 0.85);
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 12px 18px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            min-width: 90px;
+        }
+
+        .fruit-slot.active {
+            border-color: var(--accent-cyan);
+            background: rgba(56, 189, 248, 0.25);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.45);
+            transform: translateY(-5px) scale(1.08);
+        }
+
+        .fruit-slot .fruit-icon {
+            font-size: 2.2rem;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .fruit-slot .fruit-name {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .fruit-slot .fruit-index {
+            position: absolute;
+            top: -8px;
+            right: -6px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--accent-cyan);
+            font-size: 0.7rem;
+            font-family: monospace;
+            padding: 1px 6px;
+            border-radius: 999px;
+            font-weight: 700;
+        }
+
+        .fruit-tracker-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+        }
+
+        .virtual-console {
+            background: #050811;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            color: #38bdf8;
+            max-height: 110px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Floating Toast */
+        .toast-popup {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--accent-cyan);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .toast-popup.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation -->
+    <nav class="navbar">
+        <a href="../index.html" class="nav-brand">
+            <span class="nav-brand-badge">WEEK 5</span>
+            <span>JavaScript Loops Suite</span>
+        </a>
+        <a href="../index.html" class="back-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Coursework
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="header-title-box">
+            <h1>Loops: Step Loop &amp; Fruit Loop</h1>
+        </div>
+
+        <!-- Step Loop -->
+        <div class="topic-card" id="step-loop-section">
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 700; color: #f1f5f9; margin-bottom: 20px;">The Step Loop</h3>
+            <div class="split-grid">
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label"><span class="code-lang-dot"></span> Counting Loop</span>
+                        <button class="copy-btn" onclick="copySnippet('code-step-loop')">📋 Copy</button>
+                    </div>
+                    <pre><code id="code-step-loop"><span class="token-comment">// Repeat 5 times</span>
+<span class="token-kw">for</span> (<span class="token-kw">let</span> i = <span class="token-num">1</span>; i &lt;= <span class="token-num" id="code-loop-max">5</span>; i++) {
+  <span class="token-fn">console.log</span>(<span class="token-str">'Step '</span> + i);
+}</code></pre>
+                </div>
+                <div class="interactive-box">
+                    <div class="interactive-label">
+                        <span>Interactive Step Loop Visualizer</span>
+                        <span>Loop Counter</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px;">
+                        <div class="ui-slider-group" style="justify-content: space-between; margin-bottom: 12px;">
+                            <label>Repeat Times (N): <b id="lbl-step-count" style="color:var(--accent-cyan); font-size:1.15rem;">5</b></label>
+                            <input type="range" min="1" max="8" value="5" id="slider-step-count" oninput="updateStepLoopLimit()" style="accent-color: var(--accent-cyan); width: 140px;">
+                        </div>
+                        <div class="interactive-controls">
+                            <button class="ui-btn ui-btn-primary" onclick="runNumericStepLoop()">▶ Run Step Loop</button>
+                            <button class="ui-btn" onclick="clearStepLoop()">Clear</button>
+                        </div>
+                    </div>
+
+                    <!-- Animated Step Output Track -->
+                    <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Generated Iterations:</div>
+                    <div id="step-loop-output" style="display: flex; gap: 8px; flex-wrap: wrap; min-height: 48px; align-items: center; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 6px;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">Click 'Run Step Loop' to watch steps execute.</span>
+                    </div>
+
+                    <!-- Virtual Console -->
+                    <div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Console Trace:</div>
+                        <div class="virtual-console" id="virtual-console-box">> Ready</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fruit Loop -->
+        <div class="topic-card" id="fruit-loop-section">
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 700; color: #f1f5f9; margin-bottom: 20px;">The Fruit Loop</h3>
+            <div class="split-grid">
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label"><span class="code-lang-dot"></span> Fruit Array Loop</span>
+                        <button class="copy-btn" onclick="copySnippet('code-fruit-only')">📋 Copy</button>
+                    </div>
+                    <pre><code id="code-fruit-only"><span class="token-comment">// Loop through an array</span>
+<span class="token-kw">let</span> fruits = [<span class="token-str">'apple'</span>, <span class="token-str">'banana'</span>, <span class="token-str">'cherry'</span>];
+
+<span class="token-kw">for</span> (<span class="token-kw">let</span> fruit <span class="token-kw">of</span> fruits) {
+  <span class="token-fn">console.log</span>(fruit);
+}</code></pre>
+                </div>
+                <div class="interactive-box">
+                    <div class="interactive-label">
+                        <span>Fruit Array Memory &amp; Loop Visualizer</span>
+                        <span>Interactive</span>
+                    </div>
+
+                    <!-- Visual Array Slots in Memory -->
+                    <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+                        Array in Memory: <code>fruits</code> (length: <span id="fruit-count-label">3</span>)
+                    </div>
+                    <div class="fruit-array-stage" id="fruit-array-stage">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <!-- Pointer / State Tracker -->
+                    <div class="fruit-tracker-box">
+                        <div>
+                            <span style="color:var(--text-muted);">Current variable:</span>
+                            <span style="color:var(--accent-cyan); font-weight:700;" id="fruit-tracker-var">fruit = (waiting)</span>
+                        </div>
+                        <div>
+                            <span style="color:var(--text-muted);">Console:</span>
+                            <span style="color:var(--accent-emerald);" id="fruit-tracker-out">&gt; console.log()</span>
+                        </div>
+                    </div>
+
+                    <!-- Loop Controls -->
+                    <div class="interactive-controls" style="margin-top: 6px;">
+                        <button class="ui-btn ui-btn-primary" onclick="playFruitLoopAuto()">▶ Run Fruit Loop</button>
+                        <button class="ui-btn" onclick="stepFruitLoop()">⏭ Next Step</button>
+                        <button class="ui-btn" onclick="resetFruitLoop()">🔄 Reset</button>
+                    </div>
+
+                    <!-- Custom Fruit Adder -->
+                    <div style="display: flex; gap: 8px; margin-top: 4px;">
+                        <input type="text" id="custom-fruit-input" class="ui-input" placeholder="Add fruit (e.g. mango, grape)...">
+                        <button class="ui-btn" onclick="addCustomFruit()">+ Add to Array</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast-popup">
+        <span>✨ Action executed</span>
+    </div>
+
+    <script>
+        // Toast Helper
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `<span>${message}</span>`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        // Copy Code Helper
+        function copySnippet(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            const text = el.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 Code copied to clipboard!');
+            }).catch(() => {
+                showToast('Copied code!');
+            });
+        }
+
+        // ==========================================
+        // Topic 12: Step Loop Implementation
+        // ==========================================
+        let stepLoopLimit = 5;
+
+        function updateStepLoopLimit() {
+            const val = document.getElementById('slider-step-count').value;
+            stepLoopLimit = parseInt(val, 10);
+            document.getElementById('lbl-step-count').textContent = stepLoopLimit;
+            document.getElementById('code-loop-max').textContent = stepLoopLimit;
+        }
+
+        function clearStepLoop() {
+            const out = document.getElementById('step-loop-output');
+            if (out) out.innerHTML = '<span style="font-size: 0.85rem; color: var(--text-muted);">Click \'Run Step Loop\' to watch steps execute.</span>';
+            document.getElementById('virtual-console-box').textContent = '> Cleared.';
+        }
+
+        function runNumericStepLoop() {
+            const out = document.getElementById('step-loop-output');
+            const consoleBox = document.getElementById('virtual-console-box');
+            if (!out) return;
+            out.innerHTML = '';
+            consoleBox.textContent = `// for (let i = 1; i <= ${stepLoopLimit}; i++)\n`;
+
+            for (let i = 1; i <= stepLoopLimit; i++) {
+                setTimeout(() => {
+                    const chip = document.createElement('span');
+                    chip.className = 'step-chip';
+                    chip.textContent = `Step ${i}`;
+                    out.appendChild(chip);
+                    consoleBox.textContent += `> Step ${i}\n`;
+                    consoleBox.scrollTop = consoleBox.scrollHeight;
+                    if (i === stepLoopLimit) showToast(`Step loop finished (1 to ${stepLoopLimit})!`);
+                }, i * 220);
+            }
+        }
+
+        // ==========================================
+        // Topic 13: Fruit Loop Implementation
+        // ==========================================
+        let fruitArray = ['apple', 'banana', 'cherry'];
+        let fruitIndex = -1;
+        let isLoopRunning = false;
+
+        const fruitEmojiMap = {
+            'apple': '🍎',
+            'banana': '🍌',
+            'cherry': '🍒',
+            'orange': '🍊',
+            'strawberry': '🍓',
+            'grape': '🍇',
+            'grapes': '🍇',
+            'watermelon': '🍉',
+            'pineapple': '🍍',
+            'mango': '🥭',
+            'peach': '🍑',
+            'kiwi': '🥝'
+        };
+
+        function getFruitEmoji(name) {
+            const clean = name.toLowerCase().trim();
+            return fruitEmojiMap[clean] || '🍏';
+        }
+
+        function renderFruitStage() {
+            const container = document.getElementById('fruit-array-stage');
+            if (!container) return;
+            container.innerHTML = '';
+            const countLabel = document.getElementById('fruit-count-label');
+            if (countLabel) countLabel.textContent = fruitArray.length;
+
+            fruitArray.forEach((fruit, idx) => {
+                const slot = document.createElement('div');
+                slot.className = 'fruit-slot' + (idx === fruitIndex ? ' active' : '');
+                slot.id = 'fruit-slot-' + idx;
+                slot.innerHTML = `
+                    <div class="fruit-index">[${idx}]</div>
+                    <div class="fruit-icon">${getFruitEmoji(fruit)}</div>
+                    <div class="fruit-name">${fruit}</div>
+                `;
+                container.appendChild(slot);
+            });
+        }
+
+        function highlightFruitStep(idx) {
+            fruitIndex = idx;
+            renderFruitStage();
+
+            const currentFruit = fruitArray[idx];
+            document.getElementById('fruit-tracker-var').textContent = `fruit = "${currentFruit}"`;
+            document.getElementById('fruit-tracker-out').textContent = `> ${currentFruit}`;
+        }
+
+        function playFruitLoopAuto() {
+            if (isLoopRunning) return;
+            isLoopRunning = true;
+            resetFruitLoop();
+
+            let idx = 0;
+            const timer = setInterval(() => {
+                if (idx < fruitArray.length) {
+                    highlightFruitStep(idx);
+                    idx++;
+                } else {
+                    clearInterval(timer);
+                    isLoopRunning = false;
+                    showToast('🎉 Fruit loop completed all iterations!');
+                }
+            }, 800);
+        }
+
+        function stepFruitLoop() {
+            if (fruitArray.length === 0) return;
+            let nextIndex = fruitIndex + 1;
+            if (nextIndex >= fruitArray.length) {
+                showToast('Reached end of fruits array. Resetting...');
+                resetFruitLoop();
+                return;
+            }
+            highlightFruitStep(nextIndex);
+        }
+
+        function resetFruitLoop() {
+            fruitIndex = -1;
+            renderFruitStage();
+            const trackerVar = document.getElementById('fruit-tracker-var');
+            const trackerOut = document.getElementById('fruit-tracker-out');
+            if (trackerVar) trackerVar.textContent = 'fruit = (waiting)';
+            if (trackerOut) trackerOut.textContent = '> (idle)';
+        }
+
+        function addCustomFruit() {
+            const input = document.getElementById('custom-fruit-input');
+            const val = input.value.trim().toLowerCase();
+            if (!val) return;
+            fruitArray.push(val);
+            input.value = '';
+            renderFruitStage();
+            showToast(`Added "${val}" to fruits array! Total: ${fruitArray.length}`);
+        }
+
+        // Initialize fruit stage
+        renderFruitStage();
+    </script>
+</body>
+</html>
