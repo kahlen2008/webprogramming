@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <title>E1: Prevent Submit & Custom Error — Week 6_2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.9);
+            --border: rgba(255, 255, 255, 0.09);
+            --blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 20%, rgba(129, 140, 248, 0.1) 0%, transparent 45%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 60px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--blue);
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 34px 30px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .card-subtitle {
+            color: var(--text-sub);
+            font-size: 0.88rem;
+            margin-bottom: 22px;
+            line-height: 1.5;
+            text-wrap: pretty;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            color: #cbd5e1;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #334155;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+            font-size: 14px;
+            color: #f8fafc;
+            margin-bottom: 6px;
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .error {
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: 600;
+            min-height: 18px;
+            display: block;
+        }
+
+        .success {
+            color: #10b981;
+            font-size: 15px;
+            font-weight: 700;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            display: none;
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #1a56db 0%, #2563eb 100%);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Week 6_2
+        </a>
+        <span class="badge">Exercise E1 · Beginner</span>
+    </div>
+
+    <div class="card">
+        <h2>Login Demo</h2>
+        <p class="card-subtitle">Task: Intercept submit event, call preventDefault, and show custom error or welcome message.</p>
+
+        <form id="login-form">
+            <label for="uname">Username</label>
+            <input type="text" id="uname" placeholder="Enter username">
+            <span class="error" id="uname-error"></span>
+            <button type="submit">Log In</button>
+        </form>
+
+        <div class="success" id="success-msg"></div>
+    </div>
+
+    <script>
+        // 1. Select #login-form, #uname, #uname-error, #success-msg
+        const loginForm = document.querySelector('#login-form');
+        const unameInput = document.querySelector('#uname');
+        const unameError = document.querySelector('#uname-error');
+        const successMsg = document.querySelector('#success-msg');
+
+        // 2. Add 'submit' listener to the form
+        loginForm.addEventListener('submit', (e) => {
+            // 3. Call e.preventDefault()
+            e.preventDefault();
+
+            const username = unameInput.value.trim();
+
+            // 4. If #uname.value.trim() is empty: show error, clear success
+            if (username === '') {
+                unameError.textContent = 'Username is required';
+                successMsg.textContent = '';
+                successMsg.style.display = 'none';
+                unameInput.focus();
+            } else {
+                // 5. Otherwise: show success message, clear error
+                unameError.textContent = '';
+                successMsg.textContent = `Welcome, ${username}!`;
+                successMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

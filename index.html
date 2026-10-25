@@ -46,13 +46,13 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1160px;
             width: 100%;
         }
 
         header {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 50px;
             animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
             transform: translateY(-20px);
@@ -77,107 +77,127 @@
         }
 
         .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .week-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 20px;
-            padding: 30px;
+            padding: 22px 28px;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
             transform: translateY(20px);
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 28px;
         }
 
         .week-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-color), var(--secondary-accent));
-            opacity: 0;
-            transition: opacity 0.4s ease;
+            top: 0; left: 0; bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--accent-color), var(--secondary-accent));
+            opacity: 0.6;
+            transition: all 0.3s ease;
         }
 
         .week-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px var(--accent-glow);
-            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3), 0 0 20px var(--accent-glow);
+            border-color: rgba(255, 255, 255, 0.18);
         }
 
         .week-card:hover::before {
             opacity: 1;
+            width: 6px;
         }
 
-        .week-card:nth-child(1) { animation-delay: 0.1s; }
-        .week-card:nth-child(2) { animation-delay: 0.2s; }
-        .week-card:nth-child(3) { animation-delay: 0.3s; }
-        .week-card:nth-child(4) { animation-delay: 0.4s; }
-        .week-card:nth-child(5) { animation-delay: 0.5s; }
+        .week-card:nth-child(1) { animation-delay: 0.08s; }
+        .week-card:nth-child(2) { animation-delay: 0.14s; }
+        .week-card:nth-child(3) { animation-delay: 0.20s; }
+        .week-card:nth-child(4) { animation-delay: 0.26s; }
+        .week-card:nth-child(5) { animation-delay: 0.32s; }
+        .week-card:nth-child(6) { animation-delay: 0.38s; }
+
+        .week-header {
+            width: 160px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
 
         .week-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 20px;
+            font-size: 1.45rem;
+            font-weight: 700;
             color: #f1f5f9;
             display: flex;
             align-items: center;
             gap: 10px;
+            margin: 0;
+            width: 160px;
+            flex-shrink: 0;
         }
 
         .link-list {
             list-style: none;
             padding: 0;
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            align-items: stretch;
         }
 
         .link-item {
             list-style: none;
-            list-style-type: none;
+            display: flex;
         }
 
         .link-item a {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 12px;
-            padding: 14px 18px;
+            gap: 10px;
+            padding: 12px 16px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
             text-decoration: none;
             color: #e2e8f0;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             position: relative;
             overflow: hidden;
+            width: 100%;
         }
 
         .link-item a::after {
             content: '→';
             position: absolute;
-            right: 18px;
+            right: 14px;
             opacity: 0;
-            transform: translateX(-10px);
-            transition: all 0.3s ease;
+            transform: translateX(-8px);
+            transition: all 0.25s ease;
             color: var(--accent-color);
         }
 
         .link-item a:hover {
             background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.15);
-            padding-right: 36px;
+            border-color: rgba(255, 255, 255, 0.16);
+            padding-right: 32px;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .link-item a:hover::after {
@@ -186,14 +206,14 @@
         }
 
         .link-name {
-            font-weight: 500;
-            font-size: 0.98rem;
+            font-weight: 600;
+            font-size: 0.92rem;
             white-space: nowrap;
         }
 
         .description {
             color: #94a3b8;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             white-space: nowrap;
             text-align: right;
             flex-shrink: 0;
@@ -212,10 +232,31 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .grid { grid-template-columns: 1fr; }
-            body { padding: 40px 20px; }
+        @media (max-width: 840px) {
+            .week-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 20px;
+            }
+
+            .week-header, .week-title {
+                width: 100%;
+            }
+
+            .link-list {
+                width: 100%;
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .link-list {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 40px 14px;
+            }
         }
     </style>
 </head>
@@ -319,6 +360,18 @@
                     Week 6
                 </h2>
                 <ul class="link-list">
+                    <li class="link-item">
+                        <a href="week 6/week 6_1/">
+                            <span class="link-name">week 6_1</span>
+                            <span class="description">Monday</span>
+                        </a>
+                    </li>
+                    <li class="link-item">
+                        <a href="week 6/week 6_2/">
+                            <span class="link-name">week 6_2</span>
+                            <span class="description">Friday</span>
+                        </a>
+                    </li>
                     <li class="link-item">
                         <a href="week 6/random-joke-fetcher.html">
                             <span class="link-name">Random Joke Fetcher</span>
