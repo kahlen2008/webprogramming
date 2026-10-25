@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Book Search — Step 6: Full Application</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(59, 130, 246, 0.35);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.25);
+            --cyan: #38bdf8;
+            --indigo: #818cf8;
+            --amber: #fbbf24;
+            --emerald: #34d399;
+            --rose: #f43f5e;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        button, input, select, textarea {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        html {
+            background-color: var(--bg-body) !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body) !important;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(129, 140, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(56, 189, 248, 0.06) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 60px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 860px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--blue);
+            transform: translateX(-2px);
+        }
+
+        .step-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 28px;
+            max-width: 860px;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 4vw, 2.6rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+        }
+
+        /* Card Container */
+        .search-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 32px 36px;
+            backdrop-filter: blur(16px);
+            width: 100%;
+            max-width: 860px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .search-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #34d399);
+        }
+
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-desc {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+
+        /* Quick chips */
+        .quick-chips-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .quick-chips-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 4px;
+        }
+
+        .book-chip {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .book-chip:hover {
+            border-color: var(--blue);
+            color: #ffffff;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Form */
+        .search-form {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-input-wrap {
+            flex: 1;
+            min-width: 260px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 12px 40px 12px 18px;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 12px var(--blue-glow);
+        }
+
+        .search-input.invalid {
+            border-color: var(--rose) !important;
+            box-shadow: 0 0 14px rgba(244, 63, 94, 0.35) !important;
+            animation: shake 0.35s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: none;
+            padding: 4px;
+        }
+
+        .clear-btn:hover {
+            color: var(--text-main);
+        }
+
+        .limit-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: rgba(15, 23, 42, 0.75);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 15px 15px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 12px 38px 12px 16px;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        .limit-select:hover {
+            border-color: rgba(96, 165, 250, 0.45);
+            background-color: rgba(22, 33, 56, 0.85);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        }
+
+        .limit-select:focus {
+            border-color: var(--blue);
+            background-color: rgba(22, 33, 56, 0.95);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .limit-select option {
+            background-color: #0c121e;
+            color: #f8fafc;
+            padding: 12px 14px;
+            font-size: 0.9rem;
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .help-message {
+            font-size: 0.88rem;
+            color: var(--text-dim);
+            margin-top: -6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .help-message.error {
+            color: var(--rose);
+            font-weight: 600;
+        }
+
+        /* Results Header */
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 20px;
+        }
+
+        .results-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .results-heading {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .results-count-badge {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--emerald);
+            background: rgba(52, 211, 153, 0.12);
+            padding: 3px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+
+        /* State Boxes */
+        .state-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-sub);
+            padding: 32px;
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Rich Book Cards */
+        .book-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .book-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 18px 22px;
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 22px;
+            align-items: center;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .book-card:hover {
+            border-color: var(--border-hover);
+            background: rgba(59, 130, 246, 0.06);
+            transform: translateX(4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .cover-box {
+            width: 80px;
+            height: 115px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            flex-shrink: 0;
+        }
+
+        .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .cover-fallback {
+            font-size: 2rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(129, 140, 248, 0.15));
+        }
+
+        .book-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .book-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .book-meta {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            line-height: 1.45;
+        }
+
+        .meta-line {
+            display: block;
+        }
+
+        .open-library-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--cyan);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .open-library-link:hover {
+            background: rgba(56, 189, 248, 0.18);
+            transform: translateY(-2px);
+        }
+
+        /* Nav */
+        .step-nav {
+            width: 100%;
+            max-width: 860px;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--blue);
+        }
+
+        @media (max-width: 640px) {
+            .book-card {
+                grid-template-columns: 80px 1fr;
+            }
+            .open-library-link {
+                grid-column: 1 / -1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Week 7 Tasks
+        </a>
+        <div class="step-pill">Step 6 of 6 — Full App</div>
+    </div>
+
+    <header class="header-title">
+        <h1>Step 6: Complete Book Search App</h1>
+        <p>The polished, complete book finder with cover previews, filters, quick tags, and live results.</p>
+    </header>
+
+    <div class="search-card">
+        <div class="card-header">
+            <h2 class="card-title">📚 Book Search</h2>
+            <p class="card-desc">Discover books by title using the Open Library Search API.</p>
+        </div>
+
+        <!-- Quick Tags -->
+        <div class="quick-chips-row">
+            <span class="chip-label">Quick Search:</span>
+            <button class="book-chip" data-query="Harry Potter">⚡ Harry Potter</button>
+            <button class="book-chip" data-query="1984">👁️ 1984</button>
+            <button class="book-chip" data-query="The Hobbit">🗡️ The Hobbit</button>
+            <button class="book-chip" data-query="Pride and Prejudice">💌 Pride and Prejudice</button>
+            <button class="book-chip" data-query="Dune">🪐 Dune</button>
+        </div>
+
+        <form class="search-form" id="searchForm" onsubmit="event.preventDefault(); executeSearch();">
+            <div class="search-input-wrap">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search books..." value="Harry Potter">
+                <button type="button" id="clearBtn" class="clear-btn" title="Clear search">✕</button>
+            </div>
+
+            <select id="limitSelect" class="limit-select">
+                <option value="5">5 results</option>
+                <option value="10" selected>10 results</option>
+                <option value="20">20 results</option>
+            </select>
+
+            <button type="submit" class="btn-search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Search
+            </button>
+        </form>
+
+        <div id="helpMessage" class="help-message">Search for your favorite books!</div>
+
+        <div class="results-section">
+            <div class="results-header-bar">
+                <h3 class="results-heading">Results</h3>
+                <span id="resultCountBadge" class="results-count-badge" style="display: none;">0 books</span>
+            </div>
+
+            <div id="resultsContainer">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <div class="step-nav">
+        <a href="step5.html" class="nav-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Prev: Step 5
+        </a>
+        <a href="book-finder.html" class="nav-btn" style="background: rgba(59, 130, 246, 0.2); border-color: var(--blue);">
+            🚀 Unified Book Finder
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearBtn');
+        const limitSelect = document.getElementById('limitSelect');
+        const helpMessage = document.getElementById('helpMessage');
+        const container = document.getElementById('resultsContainer');
+        const resultCountBadge = document.getElementById('resultCountBadge');
+
+        function updateClearBtn() {
+            clearBtn.style.display = searchInput.value ? 'block' : 'none';
+        }
+
+        searchInput.addEventListener('input', () => {
+            updateClearBtn();
+            if (searchInput.classList.contains('invalid')) {
+                searchInput.classList.remove('invalid');
+                helpMessage.className = 'help-message';
+                helpMessage.textContent = 'Search for your favorite books!';
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            updateClearBtn();
+            searchInput.focus();
+        });
+
+        document.querySelectorAll('.book-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                searchInput.value = chip.getAttribute('data-query');
+                updateClearBtn();
+                executeSearch();
+            });
+        });
+
+        limitSelect.addEventListener('change', () => {
+            if (searchInput.value.trim()) {
+                executeSearch();
+            }
+        });
+
+        async function executeSearch() {
+            const query = searchInput.value.trim();
+            const limit = limitSelect.value;
+
+            if (!query) {
+                searchInput.classList.add('invalid');
+                helpMessage.className = 'help-message error';
+                helpMessage.innerHTML = '⚠️ Please enter a book title to search!';
+                container.innerHTML = `<div class="state-box" style="color: var(--amber);">Please enter a book title above.</div>`;
+                resultCountBadge.style.display = 'none';
+                return;
+            }
+
+            helpMessage.className = 'help-message';
+            helpMessage.textContent = `Showing results for "${query}"`;
+            resultCountBadge.style.display = 'none';
+
+            container.innerHTML = `
+                <div class="state-box">
+                    <div class="spinner"></div>
+                    <div>Searching Open Library for "<strong>${escapeHtml(query)}</strong>"...</div>
+                </div>
+            `;
+
+            const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(query)}&limit=${limit}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+                const data = await response.json();
+
+                if (!data.docs || data.docs.length === 0) {
+                    container.innerHTML = `
+                        <div class="state-box">
+                            <span style="font-size: 2rem;">🔍</span>
+                            <div>No books found matching "<strong>${escapeHtml(query)}</strong>". Try another keyword!</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                resultCountBadge.textContent = `${data.docs.length} found`;
+                resultCountBadge.style.display = 'inline-block';
+
+                container.innerHTML = `
+                    <ul class="book-list">
+                        ${data.docs.map(doc => {
+                            const author = doc.author_name ? doc.author_name.join(', ') : 'Unknown Author';
+                            const firstPublished = doc.first_publish_year || 'Unknown';
+                            const editions = doc.edition_count || '1';
+                            const coverId = doc.cover_i;
+                            const coverUrl = coverId ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg` : null;
+                            const workKey = doc.key ? `https://openlibrary.org${doc.key}` : `https://openlibrary.org/search?q=${encodeURIComponent(doc.title)}`;
+
+                            return `
+                                <li class="book-card">
+                                    <div class="cover-box">
+                                        ${coverUrl ? `
+                                            <img class="cover-img" src="${coverUrl}" alt="Cover" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'cover-fallback\\'>📖</div>';">
+                                        ` : `
+                                            <div class="cover-fallback">📖</div>
+                                        `}
+                                    </div>
+                                    <div class="book-info">
+                                        <div class="book-title">${escapeHtml(doc.title)}</div>
+                                        <div class="book-meta">
+                                            <span class="meta-line">Author(s): <strong>${escapeHtml(author)}</strong></span>
+                                            <span class="meta-line">First published: ${firstPublished}</span>
+                                            <span class="meta-line">Editions: ${editions}</span>
+                                        </div>
+                                    </div>
+                                    <a href="${workKey}" target="_blank" rel="noopener noreferrer" class="open-library-link">
+                                        View on Open Library ↗
+                                    </a>
+                                </li>
+                            `;
+                        }).join('')}
+                    </ul>
+                `;
+
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `
+                    <div class="state-box" style="border-color: rgba(244, 63, 94, 0.3);">
+                        <span style="font-size: 2rem;">⚠️</span>
+                        <div style="color: var(--rose); font-weight: 600;">Unable to fetch books from Open Library</div>
+                        <div style="font-size: 0.85rem; color: var(--text-dim);">${escapeHtml(err.message)}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        updateClearBtn();
+        executeSearch();
+    </script>
+</body>
+</html>

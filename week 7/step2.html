@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Book Search — Step 2: Fetch by Title</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(59, 130, 246, 0.35);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.25);
+            --cyan: #38bdf8;
+            --indigo: #818cf8;
+            --emerald: #34d399;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        button, input, select, textarea {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: var(--bg-body) !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body) !important;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(129, 140, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(56, 189, 248, 0.06) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 60px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--blue);
+            transform: translateX(-2px);
+        }
+
+        .step-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 28px;
+            max-width: 800px;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 4vw, 2.6rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+        }
+
+        /* Card Container */
+        .search-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 32px 36px;
+            backdrop-filter: blur(16px);
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .search-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #818cf8);
+        }
+
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-desc {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+
+        /* Form */
+        .search-form {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        .search-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 12px 18px;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 12px var(--blue-glow);
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: -8px;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 20px;
+        }
+
+        .results-heading {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .initial-msg {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-sub);
+            padding: 24px;
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .book-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .book-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .book-item:hover {
+            border-color: var(--border-hover);
+            background: rgba(59, 130, 246, 0.06);
+            transform: translateX(3px);
+        }
+
+        .book-title {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        .book-idx {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--blue);
+            background: rgba(59, 130, 246, 0.12);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        /* Nav */
+        .step-nav {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--blue);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Week 7 Tasks
+        </a>
+        <div class="step-pill">Step 2 of 6</div>
+    </div>
+
+    <header class="header-title">
+        <h1>Step 2: Fetch by Title</h1>
+        <p>Search by title using the Open Library API and show matching book titles.</p>
+    </header>
+
+    <div class="search-card">
+        <div class="card-header">
+            <h2 class="card-title">📚 Book Search</h2>
+            <p class="card-desc">Discover books by title using the Open Library Search API.</p>
+        </div>
+
+        <form class="search-form" id="searchForm" onsubmit="event.preventDefault(); searchBooks();">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search books..." value="d">
+            <button type="submit" class="btn-search">Search</button>
+        </form>
+
+        <div class="help-text">Search for your favorite books!</div>
+
+        <div class="results-section">
+            <h3 class="results-heading">Results</h3>
+            <div id="resultsContainer">
+                <div class="initial-msg">Enter a book title to get started.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-nav">
+        <a href="step1.html" class="nav-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Prev: Step 1
+        </a>
+        <a href="step3.html" class="nav-btn">
+            Next: Step 3 — Input Validation
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+    </div>
+
+    <script>
+        async function searchBooks() {
+            const query = document.getElementById('searchInput').value;
+            const container = document.getElementById('resultsContainer');
+
+            const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(query)}&limit=10`;
+            container.innerHTML = `<div class="initial-msg">Fetching from Open Library...</div>`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.docs && data.docs.length > 0) {
+                    container.innerHTML = `
+                        <ul class="book-list">
+                            ${data.docs.map((doc, idx) => `
+                                <li class="book-item">
+                                    <span class="book-title">${escapeHtml(doc.title)}</span>
+                                    <span class="book-idx">#${idx + 1}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                } else {
+                    container.innerHTML = `<div class="initial-msg">No books found.</div>`;
+                }
+            } catch (err) {
+                container.innerHTML = `<div class="initial-msg" style="color: var(--rose);">Error: ${err.message}</div>`;
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // Run initial sample query
+        searchBooks();
+    </script>
+</body>
+</html>

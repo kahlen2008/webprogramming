@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Open Library Book Finder — Week 7</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(59, 130, 246, 0.35);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.25);
+            --indigo: #818cf8;
+            --indigo-glow: rgba(129, 140, 248, 0.25);
+            --cyan: #38bdf8;
+            --amber: #fbbf24;
+            --emerald: #34d399;
+            --rose: #f43f5e;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        button, input, select, textarea {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        html {
+            background-color: var(--bg-body) !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body) !important;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(129, 140, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(56, 189, 248, 0.06) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 60px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--blue);
+            transform: translateX(-2px);
+        }
+
+        .api-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #60a5fa;
+            box-shadow: 0 0 8px #60a5fa;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.85); }
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 28px;
+            max-width: 850px;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.2rem, 4.5vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Controls Section */
+        .controls-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 24px 28px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .search-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-input-wrap {
+            flex: 1;
+            min-width: 280px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 13px 40px 13px 44px;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 14px var(--blue-glow);
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 14px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: none;
+            padding: 4px;
+        }
+
+        .clear-btn:hover {
+            color: var(--text-main);
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 26px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Filter Row */
+        .filter-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chips-wrap {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 2px;
+        }
+
+        .topic-chip {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 6px 13px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .topic-chip:hover {
+            border-color: var(--blue);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .controls-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .select-filter {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: rgba(15, 23, 42, 0.75);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 13px 13px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 8px 32px 8px 14px;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        .select-filter:hover {
+            border-color: rgba(96, 165, 250, 0.45);
+            background-color: rgba(22, 33, 56, 0.85);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        }
+
+        .select-filter:focus {
+            border-color: var(--blue);
+            background-color: rgba(22, 33, 56, 0.95);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .select-filter option {
+            background-color: #0c121e;
+            color: #f8fafc;
+            padding: 10px 12px;
+            font-size: 0.88rem;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .view-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: var(--blue);
+            color: #ffffff;
+        }
+
+        /* Results Bar */
+        .results-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .results-count {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .results-count strong {
+            color: #ffffff;
+        }
+
+        /* Grid View */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .book-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .book-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-hover);
+            box-shadow: 0 16px 35px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.15);
+        }
+
+        .book-cover-wrap {
+            width: 100%;
+            height: 280px;
+            background: #060b14;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .book-cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .book-card:hover .book-cover-img {
+            transform: scale(1.04);
+        }
+
+        .book-cover-fallback {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--text-dim);
+            font-size: 3rem;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(129, 140, 248, 0.1));
+        }
+
+        .edition-pill {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(18, 24, 38, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #93c5fd;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .book-card-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .book-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .book-author {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .book-footer {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .btn-view-ol {
+            color: var(--cyan);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-view-ol:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* List View Mode */
+        .books-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .books-list .book-card {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            align-items: center;
+            padding: 16px 20px;
+        }
+
+        .books-list .book-cover-wrap {
+            width: 80px;
+            height: 110px;
+            border-radius: 6px;
+        }
+
+        .books-list .edition-pill {
+            display: none;
+        }
+
+        .books-list .book-card-body {
+            padding: 0 16px;
+        }
+
+        .books-list .book-footer {
+            border-top: none;
+            padding-top: 0;
+            margin-top: 0;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        /* State Boxes */
+        .state-box {
+            background: var(--card-bg);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-card);
+            padding: 60px 20px;
+            color: var(--text-sub);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Step progression ribbon */
+        .steps-ribbon {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ribbon-header {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-links-track {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+        }
+
+        .step-track-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 10px 14px;
+            text-decoration: none;
+            color: var(--text-sub);
+            font-size: 0.82rem;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .step-track-item:hover {
+            border-color: var(--blue);
+            color: #ffffff;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .step-track-num {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--blue);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .step-track-name {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 680px) {
+            .filter-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .controls-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .books-list .book-card {
+                grid-template-columns: 80px 1fr;
+            }
+            .books-list .book-footer {
+                grid-column: 1 / -1;
+                flex-direction: row;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+                padding-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="../index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Course Hub
+        </a>
+        <div class="api-pill">
+            <span class="pulse-dot"></span>
+            openlibrary.org/search.json
+        </div>
+    </div>
+
+    <header class="header-title">
+        <h1>Open Library Book Finder</h1>
+        <p>Unified book explorer featuring search, covers, publication details, and step-by-step progress references.</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Controls -->
+        <div class="controls-card">
+            <form class="search-row" id="searchForm" onsubmit="event.preventDefault(); performSearch();">
+                <div class="search-input-wrap">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search by book title or author..." value="The Lord of the Rings">
+                    <button type="button" id="clearBtn" class="clear-btn">✕</button>
+                </div>
+                <button type="submit" class="btn-search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Search Books
+                </button>
+            </form>
+
+            <div class="filter-row">
+                <div class="chips-wrap">
+                    <span class="chip-label">Genres:</span>
+                    <button class="topic-chip" data-query="Fantasy">🧙 Fantasy</button>
+                    <button class="topic-chip" data-query="Science Fiction">🚀 Sci-Fi</button>
+                    <button class="topic-chip" data-query="Mystery">🔍 Mystery</button>
+                    <button class="topic-chip" data-query="Philosophy">🏛️ Philosophy</button>
+                    <button class="topic-chip" data-query="Cyberpunk">🤖 Cyberpunk</button>
+                </div>
+
+                <div class="controls-right">
+                    <select id="limitSelect" class="select-filter">
+                        <option value="6">6 books</option>
+                        <option value="12" selected>12 books</option>
+                        <option value="24">24 books</option>
+                    </select>
+
+                    <div class="view-toggle">
+                        <button class="view-btn active" id="btnGrid" title="Grid View">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        </button>
+                        <button class="view-btn" id="btnList" title="List View">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Info Bar -->
+        <div class="results-bar">
+            <div id="resultsInfo" class="results-count">
+                Ready to search Open Library
+            </div>
+        </div>
+
+        <!-- Books Container -->
+        <div id="booksContainer" class="books-grid">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- Steps Navigation Ribbon -->
+        <div class="steps-ribbon">
+            <div class="ribbon-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                Curriculum Progression Steps
+            </div>
+            <div class="step-links-track">
+                <a href="step1.html" class="step-track-item">
+                    <span class="step-track-num">Step 1</span>
+                    <span class="step-track-name">Form &amp; Results</span>
+                </a>
+                <a href="step2.html" class="step-track-item">
+                    <span class="step-track-num">Step 2</span>
+                    <span class="step-track-name">Fetch Title API</span>
+                </a>
+                <a href="step3.html" class="step-track-item">
+                    <span class="step-track-num">Step 3</span>
+                    <span class="step-track-name">Input Validation</span>
+                </a>
+                <a href="step4.html" class="step-track-item">
+                    <span class="step-track-num">Step 4</span>
+                    <span class="step-track-name">States &amp; Errors</span>
+                </a>
+                <a href="step5.html" class="step-track-item">
+                    <span class="step-track-num">Step 5</span>
+                    <span class="step-track-name">Covers &amp; Details</span>
+                </a>
+                <a href="step6.html" class="step-track-item">
+                    <span class="step-track-num">Step 6</span>
+                    <span class="step-track-name">Full Step App</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'grid';
+
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearBtn');
+        const limitSelect = document.getElementById('limitSelect');
+        const resultsInfo = document.getElementById('resultsInfo');
+        const booksContainer = document.getElementById('booksContainer');
+        const btnGrid = document.getElementById('btnGrid');
+        const btnList = document.getElementById('btnList');
+
+        function updateClearBtn() {
+            clearBtn.style.display = searchInput.value ? 'block' : 'none';
+        }
+
+        searchInput.addEventListener('input', updateClearBtn);
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            updateClearBtn();
+            searchInput.focus();
+        });
+
+        document.querySelectorAll('.topic-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                searchInput.value = chip.getAttribute('data-query');
+                updateClearBtn();
+                performSearch();
+            });
+        });
+
+        limitSelect.addEventListener('change', () => {
+            if (searchInput.value.trim()) performSearch();
+        });
+
+        btnGrid.addEventListener('click', () => {
+            currentMode = 'grid';
+            btnGrid.classList.add('active');
+            btnList.classList.remove('active');
+            booksContainer.className = 'books-grid';
+        });
+
+        btnList.addEventListener('click', () => {
+            currentMode = 'list';
+            btnList.classList.add('active');
+            btnGrid.classList.remove('active');
+            booksContainer.className = 'books-list';
+        });
+
+        async function performSearch() {
+            const query = searchInput.value.trim();
+            const limit = limitSelect.value;
+
+            if (!query) {
+                booksContainer.innerHTML = `
+                    <div class="state-box" style="grid-column: 1 / -1; border-color: rgba(251, 191, 36, 0.3);">
+                        <span style="font-size: 2rem;">⚠️</span>
+                        <div style="color: var(--amber); font-weight: 600;">Please enter a book title or author</div>
+                    </div>
+                `;
+                resultsInfo.innerHTML = 'Enter a search term above';
+                return;
+            }
+
+            resultsInfo.innerHTML = `Searching for "<strong>${escapeHtml(query)}</strong>"...`;
+            booksContainer.innerHTML = `
+                <div class="state-box" style="grid-column: 1 / -1;">
+                    <div class="spinner"></div>
+                    <div>Searching Open Library for "<strong>${escapeHtml(query)}</strong>"...</div>
+                </div>
+            `;
+
+            const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=${limit}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+                const data = await response.json();
+
+                if (!data.docs || data.docs.length === 0) {
+                    booksContainer.innerHTML = `
+                        <div class="state-box" style="grid-column: 1 / -1;">
+                            <span style="font-size: 2rem;">🔍</span>
+                            <div>No books found matching "<strong>${escapeHtml(query)}</strong>". Try another keyword!</div>
+                        </div>
+                    `;
+                    resultsInfo.innerHTML = `Found <strong>0</strong> books`;
+                    return;
+                }
+
+                resultsInfo.innerHTML = `Showing <strong>${data.docs.length}</strong> of <strong>${(data.numFound || data.docs.length).toLocaleString()}</strong> matches for "<strong>${escapeHtml(query)}</strong>"`;
+
+                booksContainer.innerHTML = data.docs.map(doc => {
+                    const author = doc.author_name ? doc.author_name.join(', ') : 'Unknown Author';
+                    const firstPublished = doc.first_publish_year || 'N/A';
+                    const editions = doc.edition_count || '1';
+                    const coverId = doc.cover_i;
+                    const coverUrl = coverId ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg` : null;
+                    const workKey = doc.key ? `https://openlibrary.org${doc.key}` : `https://openlibrary.org/search?q=${encodeURIComponent(doc.title)}`;
+
+                    return `
+                        <div class="book-card">
+                            <div class="book-cover-wrap">
+                                ${coverUrl ? `
+                                    <img class="book-cover-img" src="${coverUrl}" alt="${escapeHtml(doc.title)}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'book-cover-fallback\\'>📖<span style=\\'font-size: 0.8rem; font-weight: 600;\\'>No Cover</span></div>';">
+                                ` : `
+                                    <div class="book-cover-fallback">
+                                        <span>📖</span>
+                                        <span style="font-size: 0.8rem; font-weight: 600;">No Cover</span>
+                                    </div>
+                                `}
+                                <span class="edition-pill">${editions} ${editions === 1 ? 'ed.' : 'eds.'}</span>
+                            </div>
+
+                            <div class="book-card-body">
+                                <h3 class="book-title" title="${escapeHtml(doc.title)}">${escapeHtml(doc.title)}</h3>
+                                <div class="book-author">By ${escapeHtml(author)}</div>
+                                
+                                <div class="book-footer">
+                                    <span>📅 ${firstPublished}</span>
+                                    <a href="${workKey}" target="_blank" rel="noopener noreferrer" class="btn-view-ol">
+                                        Open Library ↗
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error(err);
+                booksContainer.innerHTML = `
+                    <div class="state-box" style="grid-column: 1 / -1; border-color: rgba(244, 63, 94, 0.3);">
+                        <span style="font-size: 2rem;">⚠️</span>
+                        <div style="color: var(--rose); font-weight: 600;">Failed to fetch books from Open Library</div>
+                        <div style="font-size: 0.85rem; color: var(--text-dim);">${escapeHtml(err.message)}</div>
+                    </div>
+                `;
+                resultsInfo.innerHTML = 'Error loading results';
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        updateClearBtn();
+        performSearch();
+    </script>
+</body>
+</html>
