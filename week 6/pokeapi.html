@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>PokéAPI Explorer — Week 6</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(239, 68, 68, 0.35);
+            --rose: #ef4444;
+            --rose-glow: rgba(239, 68, 68, 0.25);
+            --cyan: #38bdf8;
+            --indigo: #818cf8;
+            --amber: #fbbf24;
+            --emerald: #34d399;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+
+            /* Type Colors */
+            --type-normal: #a8a878;
+            --type-fire: #f08030;
+            --type-water: #6890f0;
+            --type-grass: #78c850;
+            --type-electric: #f8d030;
+            --type-ice: #98d8d8;
+            --type-fighting: #c03028;
+            --type-poison: #a040a0;
+            --type-ground: #e0c068;
+            --type-flying: #a890f0;
+            --type-psychic: #f85888;
+            --type-bug: #a8b820;
+            --type-rock: #b8a038;
+            --type-ghost: #705898;
+            --type-dragon: #7038f8;
+            --type-dark: #705848;
+            --type-steel: #b8b8d0;
+            --type-fairy: #ee99ac;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: var(--bg-body) !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body) !important;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(239, 68, 68, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(251, 191, 36, 0.1) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(56, 189, 248, 0.06) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 60px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--rose);
+            transform: translateX(-2px);
+        }
+
+        .api-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #f87171;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #f87171;
+            box-shadow: 0 0 8px #f87171;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.85); }
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, #f87171 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Search & Controls */
+        .controls-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 22px 26px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .search-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 240px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 12px 18px;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--rose);
+            box-shadow: 0 0 14px var(--rose-glow);
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-random {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 12px 18px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-random:hover {
+            border-color: var(--amber);
+            background: rgba(251, 191, 36, 0.1);
+        }
+
+        .quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .quick-chip {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-chip:hover {
+            border-color: var(--rose);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+
+        /* Pokemon Hero Card */
+        .pokemon-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 40px;
+            backdrop-filter: blur(16px);
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pokemon-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ef4444, #f59e0b);
+        }
+
+        .artwork-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            text-align: center;
+        }
+
+        .artwork-aura {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.2) 0%, transparent 70%);
+            transition: all 0.5s ease;
+        }
+
+        .pokemon-sprite {
+            width: 220px;
+            height: 220px;
+            object-fit: contain;
+            filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.6));
+            transition: transform 0.3s ease;
+            animation: bounceIdle 3s ease-in-out infinite;
+        }
+
+        @keyframes bounceIdle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .shiny-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            transition: all 0.2s;
+        }
+
+        .shiny-toggle.active {
+            border-color: var(--amber);
+            color: var(--amber);
+            background: rgba(251, 191, 36, 0.12);
+        }
+
+        /* Details column */
+        .details-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .pokedex-num {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f87171;
+            letter-spacing: 0.05em;
+        }
+
+        .pokemon-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: capitalize;
+            line-height: 1.1;
+        }
+
+        .type-badges-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .type-badge {
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #ffffff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .phys-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 14px 18px;
+            text-align: center;
+        }
+
+        .phys-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .phys-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .phys-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Stats Bars */
+        .stats-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stat-row {
+            display: grid;
+            grid-template-columns: 80px 40px 1fr;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.82rem;
+        }
+
+        .stat-name {
+            color: var(--text-sub);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .stat-number {
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: right;
+        }
+
+        .stat-track {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #f59e0b);
+            border-radius: 999px;
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Tutorial code section */
+        .snippet-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 24px;
+        }
+
+        .snippet-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #f87171;
+        }
+
+        .code-box {
+            background: #040810;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 16px 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.86rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .code-kw { color: #f43f5e; font-weight: 600; }
+        .code-fn { color: #38bdf8; }
+        .code-str { color: #a7f3d0; }
+        .code-comment { color: #64748b; font-style: italic; }
+
+        @media (max-width: 768px) {
+            .pokemon-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .artwork-column {
+                margin: 0 auto;
+            }
+            .type-badges-row {
+                justify-content: center;
+            }
+            .phys-stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="../index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Course Hub
+        </a>
+        <div class="api-pill">
+            <span class="pulse-dot"></span>
+            pokeapi.co/api/v2
+        </div>
+    </div>
+
+    <header class="header-title">
+        <h1>PokéAPI Explorer</h1>
+        <p>Browse official Pokémon artwork, base combat stats, elemental typings, and ability data.</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Controls -->
+        <div class="controls-card">
+            <div class="search-row">
+                <input type="text" id="pokeSearchInput" class="search-input" placeholder="Enter Pokémon name or ID (e.g. pikachu, charizard, 150)...">
+                <button id="searchBtn" class="btn-search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Search
+                </button>
+                <button id="randomBtn" class="btn-random">
+                    🎲 Random
+                </button>
+            </div>
+
+            <div class="quick-chips">
+                <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-dim); margin-right: 4px;">Popular:</span>
+                <button class="quick-chip" data-name="pikachu">⚡ Pikachu</button>
+                <button class="quick-chip" data-name="charizard">🔥 Charizard</button>
+                <button class="quick-chip" data-name="gengar">👻 Gengar</button>
+                <button class="quick-chip" data-name="mewtwo">🔮 Mewtwo</button>
+                <button class="quick-chip" data-name="eevee">🦊 Eevee</button>
+                <button class="quick-chip" data-name="lucario">🥋 Lucario</button>
+                <button class="quick-chip" data-name="snorlax">💤 Snorlax</button>
+            </div>
+        </div>
+
+        <!-- Pokemon Hero Card -->
+        <div class="pokemon-card">
+            <div class="artwork-column">
+                <div class="artwork-aura" id="artworkAura">
+                    <img id="pokeSprite" class="pokemon-sprite" src="" alt="Pokemon Artwork">
+                </div>
+                <button id="shinyToggle" class="shiny-toggle">
+                    ✨ Shiny Variant
+                </button>
+            </div>
+
+            <div class="details-column">
+                <div>
+                    <div class="pokedex-num" id="pokeId">#025</div>
+                    <h2 class="pokemon-name" id="pokeName">Pikachu</h2>
+                </div>
+
+                <div class="type-badges-row" id="typeBadges">
+                    <!-- Dynamic badges -->
+                </div>
+
+                <div class="phys-stats-grid">
+                    <div class="phys-item">
+                        <span class="phys-label">Height</span>
+                        <span class="phys-val" id="pokeHeight">0.4 m</span>
+                    </div>
+                    <div class="phys-item">
+                        <span class="phys-label">Weight</span>
+                        <span class="phys-val" id="pokeWeight">6.0 kg</span>
+                    </div>
+                    <div class="phys-item">
+                        <span class="phys-label">Base EXP</span>
+                        <span class="phys-val" id="pokeExp">112</span>
+                    </div>
+                </div>
+
+                <!-- Base Combat Stats -->
+                <div class="stats-wrap" id="statsWrap">
+                    <!-- Dynamic stats bars -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tutorial Snippet -->
+        <div class="snippet-section">
+            <div class="snippet-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                How It Works in JavaScript
+            </div>
+            <pre class="code-box"><code><span class="code-kw">async function</span> <span class="code-fn">fetchPokemon</span>(nameOrId = <span class="code-str">'pikachu'</span>) {
+  <span class="code-kw">const</span> url = <span class="code-str">`https://pokeapi.co/api/v2/pokemon/${nameOrId.toLowerCase()}`</span>;
+  <span class="code-kw">const</span> res = <span class="code-kw">await</span> <span class="code-fn">fetch</span>(url);
+  <span class="code-kw">const</span> pokemon = <span class="code-kw">await</span> res.<span class="code-fn">json</span>();
+  
+  <span class="code-kw">const</span> sprite = pokemon.sprites.other[<span class="code-str">'official-artwork'</span>].front_default;
+  <span class="code-kw">const</span> types = pokemon.types.<span class="code-fn">map</span>(t => t.type.name);
+  console.<span class="code-fn">log</span>(<span class="code-str">`Loaded ${pokemon.name} (${types.join(', ')})`</span>);
+}</code></pre>
+        </div>
+    </div>
+
+    <script>
+        let currentPokemon = null;
+        let isShiny = false;
+
+        const pokeSearchInput = document.getElementById('pokeSearchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const randomBtn = document.getElementById('randomBtn');
+        const shinyToggle = document.getElementById('shinyToggle');
+
+        const pokeSprite = document.getElementById('pokeSprite');
+        const pokeId = document.getElementById('pokeId');
+        const pokeName = document.getElementById('pokeName');
+        const typeBadges = document.getElementById('typeBadges');
+        const pokeHeight = document.getElementById('pokeHeight');
+        const pokeWeight = document.getElementById('pokeWeight');
+        const pokeExp = document.getElementById('pokeExp');
+        const statsWrap = document.getElementById('statsWrap');
+        const artworkAura = document.getElementById('artworkAura');
+
+        const typeColorMap = {
+            normal: '#a8a878', fire: '#f08030', water: '#6890f0', grass: '#78c850',
+            electric: '#f8d030', ice: '#98d8d8', fighting: '#c03028', poison: '#a040a0',
+            ground: '#e0c068', flying: '#a890f0', psychic: '#f85888', bug: '#a8b820',
+            rock: '#b8a038', ghost: '#705898', dragon: '#7038f8', dark: '#705848',
+            steel: '#b8b8d0', fairy: '#ee99ac'
+        };
+
+        // Quick chip clicks
+        document.querySelectorAll('.quick-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const name = chip.getAttribute('data-name');
+                pokeSearchInput.value = name;
+                fetchPokemonData(name);
+            });
+        });
+
+        searchBtn.addEventListener('click', () => {
+            const query = pokeSearchInput.value.trim();
+            if (query) fetchPokemonData(query);
+        });
+
+        pokeSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = pokeSearchInput.value.trim();
+                if (query) fetchPokemonData(query);
+            }
+        });
+
+        randomBtn.addEventListener('click', () => {
+            const randomId = Math.floor(Math.random() * 898) + 1;
+            fetchPokemonData(randomId);
+        });
+
+        shinyToggle.addEventListener('click', () => {
+            isShiny = !isShiny;
+            shinyToggle.classList.toggle('active', isShiny);
+            updateArtwork();
+        });
+
+        function updateArtwork() {
+            if (!currentPokemon) return;
+            const sprites = currentPokemon.sprites;
+            const officialArt = sprites.other && sprites.other['official-artwork'];
+
+            if (isShiny) {
+                pokeSprite.src = (officialArt && officialArt.front_shiny) || sprites.front_shiny || sprites.front_default;
+            } else {
+                pokeSprite.src = (officialArt && officialArt.front_default) || sprites.front_default;
+            }
+        }
+
+        async function fetchPokemonData(nameOrId) {
+            const cleanQuery = String(nameOrId).toLowerCase().trim();
+            const url = `https://pokeapi.co/api/v2/pokemon/${cleanQuery}`;
+
+            try {
+                const res = await fetch(url);
+
+                if (!res.ok) throw new Error(`Pokemon "${nameOrId}" not found`);
+                const data = await res.json();
+                currentPokemon = data;
+
+                pokeId.textContent = `#${String(data.id).padStart(3, '0')}`;
+                pokeName.textContent = data.name.replace('-', ' ');
+                pokeSearchInput.value = data.name;
+
+                pokeHeight.textContent = `${(data.height / 10).toFixed(1)} m`;
+                pokeWeight.textContent = `${(data.weight / 10).toFixed(1)} kg`;
+                pokeExp.textContent = data.base_experience || 'N/A';
+
+                // Types
+                typeBadges.innerHTML = data.types.map(t => {
+                    const color = typeColorMap[t.type.name] || '#64748b';
+                    return `<span class="type-badge" style="background: ${color};">${t.type.name}</span>`;
+                }).join('');
+
+                const primaryType = data.types[0]?.type.name;
+                const auraColor = typeColorMap[primaryType] || '#ef4444';
+                artworkAura.style.background = `radial-gradient(circle, ${auraColor}33 0%, transparent 70%)`;
+
+                updateArtwork();
+
+                // Stats calculation
+                let totalBST = 0;
+                statsWrap.innerHTML = data.stats.map(s => {
+                    totalBST += s.base_stat;
+                    const pct = Math.min(100, Math.round((s.base_stat / 255) * 100));
+                    const statLabels = {
+                        'hp': 'HP',
+                        'attack': 'ATK',
+                        'defense': 'DEF',
+                        'special-attack': 'SP. ATK',
+                        'special-defense': 'SP. DEF',
+                        'speed': 'SPEED'
+                    };
+                    return `
+                        <div class="stat-row">
+                            <span class="stat-name">${statLabels[s.stat.name] || s.stat.name}</span>
+                            <span class="stat-number">${s.base_stat}</span>
+                            <div class="stat-track">
+                                <div class="stat-fill" style="width: ${pct}%;"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error(err);
+                alert(`Could not find Pokémon "${nameOrId}". Check the spelling or ID!`);
+            }
+        }
+
+        // Initial fetch with Pikachu
+        fetchPokemonData('pikachu');
+    </script>
+</body>
+</html>

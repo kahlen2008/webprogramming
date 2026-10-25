@@ -23,6 +23,7 @@
             --amber: #fbbf24;
             --amber-glow: rgba(251, 191, 36, 0.2);
             --rose: #f43f5e;
+            --emerald: #34d399;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
             --text-dim: #64748b;
@@ -91,87 +92,42 @@
             transform: translateX(-2px);
         }
 
-        .page-badge {
-            font-size: 0.78rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            background: rgba(56, 189, 248, 0.12);
-            color: var(--cyan);
-            border-radius: 999px;
-            border: 1px solid rgba(56, 189, 248, 0.25);
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .page-badge-assignment {
-            background: rgba(251, 191, 36, 0.15) !important;
-            color: #fbbf24 !important;
-            border-color: rgba(251, 191, 36, 0.4) !important;
-            font-weight: 700 !important;
-        }
-
-        /* Header */
+        /* Title Header */
         .header-title {
             text-align: center;
-            margin-bottom: 28px;
-        }
-
-        .assignment-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.08));
-            border: 1px solid rgba(251, 191, 36, 0.4);
-            color: #fde047;
-            padding: 5px 14px;
-            border-radius: 999px;
-            font-size: 0.78rem;
-            font-weight: 800;
-            letter-spacing: 0.6px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            box-shadow: 0 0 16px rgba(251, 191, 36, 0.15);
+            margin-bottom: 30px;
+            max-width: 780px;
         }
 
         .header-title h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 2.3rem;
+            font-size: 2.6rem;
             font-weight: 800;
             letter-spacing: -0.5px;
             background: linear-gradient(135deg, #ffffff 40%, var(--cyan) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 6px;
+            margin-bottom: 10px;
         }
 
         .header-title p {
             color: var(--text-sub);
-            font-size: 0.95rem;
-            max-width: 750px;
-            margin: 0 auto;
-            line-height: 1.5;
+            font-size: 0.98rem;
+            line-height: 1.55;
         }
 
-        .notes-guide-ref {
-            margin-top: 10px;
-            font-size: 0.84rem;
-            color: var(--text-dim);
+        .header-title p strong {
+            color: var(--text-main);
         }
 
-        .notes-guide-ref a {
-            color: var(--cyan);
-            font-weight: 600;
-            text-decoration: underline;
-        }
-
-        /* 2-Column Side-by-Side Grid */
+        /* Workspace 2-Column Grid */
         .workspace-grid {
             width: 100%;
             max-width: 1100px;
             display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
+            grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
             gap: 24px;
-            align-items: stretch;
+            align-items: start;
         }
 
         @media (max-width: 900px) {
@@ -180,7 +136,7 @@
             }
         }
 
-        /* Joke Card Container */
+        /* Joke Card */
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -191,9 +147,14 @@
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 20px;
             position: relative;
             overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.14);
         }
 
         .card::before {
@@ -210,141 +171,152 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
         }
 
         .tag-pill {
-            font-size: 0.76rem;
-            font-weight: 700;
-            color: var(--cyan);
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid rgba(56, 189, 248, 0.25);
-            padding: 4px 10px;
-            border-radius: 999px;
-            text-transform: capitalize;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--cyan);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: capitalize;
+            padding: 4px 12px;
+            border-radius: 999px;
+            letter-spacing: 0.3px;
         }
 
         .joke-id {
             font-size: 0.8rem;
-            font-weight: 600;
             color: var(--text-dim);
-            letter-spacing: 0.3px;
+            font-family: monospace;
+            font-weight: 600;
         }
 
-        /* Dialogue Box / Joke View */
+        /* Category Selector Bar */
+        .category-bar {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sub);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .category-bar-label {
+            font-size: 0.76rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .category-endpoint-hint {
+            font-family: monospace;
+            color: var(--cyan);
+            font-size: 0.72rem;
+            text-transform: none;
+        }
+
+        .category-pills {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        @media (max-width: 550px) {
+            .category-pills {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .cat-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-sub);
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 7px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .cat-btn:hover {
+            background: rgba(255, 255, 255, 0.09);
+            color: var(--text-main);
+            border-color: rgba(56, 189, 248, 0.25);
+        }
+
+        .cat-btn.active {
+            background: rgba(56, 189, 248, 0.18);
+            border-color: var(--cyan);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+        }
+
+        /* Joke Dialogue Stage */
         .joke-stage {
             min-height: 220px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin-bottom: 24px;
-        }
-
-        .joke-dialogue {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            animation: fadeIn 0.35s ease;
-        }
-
-        /* Setup Quote Card */
-        .speech-card {
-            padding: 18px 20px;
-            border-radius: var(--radius-sub);
-            transition: all 0.25s ease;
             position: relative;
         }
 
-        .speech-setup {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-        }
-
-        .speech-label {
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .speech-setup .speech-label {
-            color: var(--cyan);
-        }
-
-        .setup-content {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.32rem;
-            font-weight: 600;
-            line-height: 1.45;
-            color: var(--text-main);
-        }
-
-        /* Punchline Card */
-        .speech-punchline {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(129, 140, 248, 0.1) 100%);
-            border: 1px solid rgba(56, 189, 248, 0.35);
-            box-shadow: 0 4px 20px var(--cyan-glow);
-        }
-
-        .speech-punchline .speech-label {
-            color: #67e8f9;
-        }
-
-        .punchline-content {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.38rem;
-            font-weight: 700;
-            line-height: 1.4;
-            color: #ffffff;
-            letter-spacing: -0.2px;
-        }
-
-        /* Loading Spinner View */
+        /* Loading Spinner */
         .loading-state {
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px 0;
             gap: 16px;
-            animation: fadeIn 0.3s ease;
+            padding: 40px 0;
         }
 
         .spinner-ring {
-            width: 48px;
-            height: 48px;
-            border: 3px solid rgba(56, 189, 248, 0.15);
-            border-top: 3px solid var(--cyan);
+            width: 44px;
+            height: 44px;
+            border: 3.5px solid rgba(56, 189, 248, 0.15);
+            border-top-color: var(--cyan);
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            filter: drop-shadow(0 0 10px var(--cyan-glow));
+            animation: spin 0.8s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .loading-text {
             color: var(--text-sub);
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             font-weight: 500;
         }
 
-        /* Error View */
+        /* Error Box */
         .error-state {
             display: none;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             text-align: center;
             gap: 12px;
-            padding: 24px;
+            padding: 30px 16px;
             background: rgba(244, 63, 94, 0.08);
-            border: 1px solid rgba(244, 63, 94, 0.25);
+            border: 1px dashed rgba(244, 63, 94, 0.3);
             border-radius: var(--radius-sub);
-            animation: fadeIn 0.3s ease;
         }
 
         .error-state h3 {
@@ -374,17 +346,138 @@
             background: rgba(244, 63, 94, 0.35);
         }
 
-        /* Bottom Action Toolbar: Clean unified row */
+        /* Joke Content Display */
+        .joke-dialogue {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .speech-card {
+            background: var(--card-sub);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 16px 20px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .speech-setup {
+            border-left: 3px solid var(--cyan);
+        }
+
+        .speech-punchline {
+            border-left: 3px solid var(--indigo);
+            background: rgba(129, 140, 248, 0.07);
+        }
+
+        .speech-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .speech-setup .speech-label {
+            color: var(--cyan);
+        }
+
+        .speech-punchline .speech-label {
+            color: var(--indigo);
+        }
+
+        .setup-content {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .punchline-content {
+            font-size: 1.15rem;
+            line-height: 1.5;
+            color: #ffffff;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.2px;
+        }
+
+        /* Star Rating Widget */
+        .rating-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sub);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .rating-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rating-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .star-group {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .star-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 1.45rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 2px 3px;
+            transition: all 0.15s ease;
+            border-radius: 4px;
+        }
+
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .star-btn.active,
+        .star-btn.hovered {
+            color: var(--amber);
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
+        }
+
+        .rating-feedback {
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--amber);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Bottom Action Toolbar */
         .action-bar {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding-top: 18px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 6px;
         }
 
         .btn-main {
-            flex: 1.5;
+            flex: 1.4;
             background: linear-gradient(135deg, var(--cyan), var(--indigo));
             color: #040812;
             border: none;
@@ -418,7 +511,7 @@
         .btn-group-tools {
             display: flex;
             gap: 8px;
-            flex: 1.8;
+            flex: 1.6;
         }
 
         .btn-icon {
@@ -426,9 +519,9 @@
             background: rgba(255, 255, 255, 0.04);
             color: var(--text-main);
             border: 1px solid var(--border);
-            padding: 12px 10px;
+            padding: 12px 12px;
             border-radius: var(--radius-btn);
-            font-size: 0.86rem;
+            font-size: 0.88rem;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
@@ -450,17 +543,9 @@
             cursor: not-allowed;
         }
 
-        .btn-icon.speaking {
-            background: rgba(56, 189, 248, 0.2) !important;
-            border-color: var(--cyan) !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 14px var(--cyan-glow);
-            animation: pulseSpeech 1.2s infinite ease-in-out;
-        }
-
-        @keyframes pulseSpeech {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+        .btn-copy:hover:not(:disabled) {
+            border-color: var(--cyan);
+            color: var(--cyan);
         }
 
         .btn-fav {
@@ -480,99 +565,6 @@
             color: #fef08a;
         }
 
-        /* Voice Selector Bar */
-        .voice-picker-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 16px;
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.025);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sub);
-        }
-
-        .voice-label-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 700;
-            color: var(--cyan);
-            font-size: 0.74rem;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            white-space: nowrap;
-        }
-
-        .voice-select-wrap {
-            flex: 1;
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .voice-dropdown {
-            width: 100%;
-            background: #111827;
-            color: var(--text-main);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: var(--radius-btn);
-            padding: 8px 36px 8px 12px;
-            font-size: 0.84rem;
-            font-family: inherit;
-            outline: none;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            transition: all 0.2s ease;
-        }
-
-        .voice-dropdown:hover {
-            border-color: var(--cyan);
-            background-color: #162033;
-        }
-
-        .voice-dropdown:focus {
-            border-color: var(--cyan);
-            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
-        }
-
-        .voice-dropdown optgroup {
-            background: #0c121e;
-            color: var(--cyan);
-            font-weight: 700;
-            padding: 6px 0;
-        }
-
-        .voice-dropdown option {
-            background: #111827;
-            color: #f1f5f9;
-            padding: 8px;
-            font-weight: 500;
-        }
-
-        .voice-test-btn {
-            background: rgba(56, 189, 248, 0.08);
-            color: var(--cyan);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            border-radius: var(--radius-btn);
-            padding: 8px 14px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-
-        .voice-test-btn:hover {
-            background: rgba(56, 189, 248, 0.2);
-            border-color: var(--cyan);
-            transform: translateY(-1px);
-        }
-
         /* Favourites Column */
         .fav-card {
             background: var(--card-bg);
@@ -580,14 +572,14 @@
             border-radius: var(--radius-card);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            padding: 28px;
+            padding: 26px;
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
             height: 100%;
-            min-height: 420px;
+            min-height: 480px;
         }
 
         .fav-card::before {
@@ -604,7 +596,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             padding-bottom: 12px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
@@ -652,7 +644,7 @@
             flex-direction: column;
             gap: 12px;
             flex: 1;
-            max-height: 360px;
+            max-height: 440px;
             overflow-y: auto;
             padding-right: 6px;
         }
@@ -705,23 +697,45 @@
         }
 
         .fav-item-meta {
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             color: var(--text-dim);
-            margin-top: 6px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .fav-item-delete {
+        .fav-star-badge {
+            color: var(--amber);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .fav-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .fav-btn-action {
             background: transparent;
             border: none;
             color: var(--text-dim);
-            font-size: 1rem;
+            font-size: 0.9rem;
             cursor: pointer;
-            padding: 2px 6px;
+            padding: 4px 6px;
             border-radius: 4px;
             transition: all 0.2s ease;
         }
 
-        .fav-item-delete:hover {
+        .fav-btn-action:hover {
+            color: var(--cyan);
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .fav-btn-action.delete:hover {
             color: var(--rose);
             background: rgba(244, 63, 94, 0.15);
         }
@@ -733,7 +747,7 @@
             justify-content: center;
             text-align: center;
             flex: 1;
-            padding: 30px 10px;
+            padding: 40px 10px;
             color: var(--text-dim);
             gap: 8px;
         }
@@ -748,60 +762,32 @@
             line-height: 1.4;
         }
 
-        /* Toast */
+        /* Floating Toast */
         .toast {
             position: fixed;
             bottom: 24px;
-            right: 24px;
-            background: #1e293b;
-            color: #ffffff;
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            padding: 10px 18px;
-            border-radius: var(--radius-btn);
-            font-size: 0.86rem;
-            font-weight: 500;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 999;
-            pointer-events: none;
-            display: flex;
+            left: 50%;
+            transform: translateX(-50%) translateY(30px);
+            background: rgba(15, 23, 42, 0.96);
+            border: 1px solid var(--cyan);
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 16px var(--cyan-glow);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
         }
 
         .toast.show {
-            transform: translateY(0);
             opacity: 1;
-        }
-
-        /* Animations */
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 600px) {
-            .header-title h1 {
-                font-size: 1.8rem;
-            }
-            .card, .fav-card {
-                padding: 20px;
-            }
-            .setup-content, .punchline-content {
-                font-size: 1.15rem;
-            }
-            .action-bar {
-                flex-direction: column;
-            }
-            .btn-main, .btn-group-tools {
-                width: 100%;
-            }
+            transform: translateX(-50%) translateY(0);
         }
     </style>
 </head>
@@ -809,36 +795,24 @@
 
     <!-- Top Navigation Bar -->
     <header class="topbar">
-        <div style="display:flex; gap:10px; align-items:center;">
-            <a href="../index.html" class="back-link">
-                <span>←</span> Coursework Hub
-            </a>
-            <a href="interactive-fetch-guide.html" class="back-link" title="Lecture notes on how fetch() works">
-                <span>📖</span> Lecture Notes (Fetch Guide)
-            </a>
-        </div>
-        <span class="page-badge page-badge-assignment">★ Week 6 Official Assignment Submission</span>
+        <a href="../index.html" class="back-link">
+            <span>←</span> Coursework Hub
+        </a>
     </header>
 
     <!-- Page Title -->
     <div class="header-title">
-        <div class="assignment-pill">
-            <span>📝</span> Official Coursework Assignment Submission
-        </div>
         <h1>Random Joke Fetcher</h1>
-        <p>This is the required <strong>Week 6 Assignment</strong>: Live API fetch from <code>official-joke-api</code>, separated setup &amp; punchline, spinner animation, custom voice synthesizer, and localStorage favourites.</p>
-        <div class="notes-guide-ref">
-            Looking for the study notes &amp; concept breakdowns? Open the <a href="interactive-fetch-guide.html">Interactive Fetch &amp; Async Guide →</a>
-        </div>
+        <p>Live API fetch from <code>official-joke-api</code> with category filtering, separate setup &amp; punchline, 1–5 star rating system, clipboard copying, and localStorage persistence.</p>
     </div>
 
-    <!-- Main Workspace Grid: Jokes on Left, Favourites on Right -->
+    <!-- Main Workspace Grid -->
     <main class="workspace-grid">
 
-        <!-- 1. Left Column: Joke Display & Fetcher -->
+        <!-- 1. Left Column: Joke Display & Controls -->
         <section class="card" aria-live="polite">
             
-            <!-- Meta Info: Type & Joke ID -->
+            <!-- Meta Info -->
             <div class="card-top">
                 <span class="tag-pill" id="category-badge">
                     <span>🏷️</span> <span id="category-text">General</span>
@@ -846,10 +820,32 @@
                 <span class="joke-id" id="joke-id-display">Joke #---</span>
             </div>
 
+            <!-- Category Selector (Extra Credit) -->
+            <div class="category-bar">
+                <div class="category-bar-label">
+                    <span>Select Category</span>
+                    <span class="category-endpoint-hint" id="endpoint-hint">/random_joke</span>
+                </div>
+                <div class="category-pills">
+                    <button class="cat-btn" data-cat="programming" onclick="switchCategory('programming')">
+                        <span>💻</span> Programming
+                    </button>
+                    <button class="cat-btn" data-cat="knock-knock" onclick="switchCategory('knock-knock')">
+                        <span>🚪</span> Knock-Knock
+                    </button>
+                    <button class="cat-btn" data-cat="general" onclick="switchCategory('general')">
+                        <span>😄</span> General
+                    </button>
+                    <button class="cat-btn active" data-cat="random" onclick="switchCategory('random')">
+                        <span>🎲</span> Any / All
+                    </button>
+                </div>
+            </div>
+
             <!-- Dialogue Stage -->
             <div class="joke-stage">
                 
-                <!-- Loading State with Challenge Spinner -->
+                <!-- Loading State with Spinner -->
                 <div class="loading-state" id="loading-view">
                     <div class="spinner-ring" aria-label="Loading joke"></div>
                     <div class="loading-text">Loading fresh joke…</div>
@@ -889,7 +885,22 @@
 
             </div>
 
-            <!-- Unified Single-Row Action Bar -->
+            <!-- Star Rating Widget (Extra Credit 1-5 Stars persisting in localStorage) -->
+            <div class="rating-box" id="rating-widget">
+                <div class="rating-left">
+                    <span class="rating-title">Rate Joke:</span>
+                    <div class="star-group" id="star-group" onmouseleave="resetStarHover()">
+                        <button class="star-btn" data-star="1" onclick="rateJoke(1)" onmouseenter="hoverStar(1)" title="1 Star - Meh">★</button>
+                        <button class="star-btn" data-star="2" onclick="rateJoke(2)" onmouseenter="hoverStar(2)" title="2 Stars - Okay">★</button>
+                        <button class="star-btn" data-star="3" onclick="rateJoke(3)" onmouseenter="hoverStar(3)" title="3 Stars - Good">★</button>
+                        <button class="star-btn" data-star="4" onclick="rateJoke(4)" onmouseenter="hoverStar(4)" title="4 Stars - Great">★</button>
+                        <button class="star-btn" data-star="5" onclick="rateJoke(5)" onmouseenter="hoverStar(5)" title="5 Stars - Hilarious!">★</button>
+                    </div>
+                </div>
+                <span class="rating-feedback" id="rating-feedback">Unrated</span>
+            </div>
+
+            <!-- Unified Action Bar -->
             <div class="action-bar">
                 <!-- Primary Action -->
                 <button class="btn-main" id="load-joke-btn" onclick="fetchRandomJoke()">
@@ -904,32 +915,16 @@
                         <span id="fav-label">Favourite</span>
                     </button>
 
-                    <button class="btn-icon" id="copy-btn" onclick="copyCurrentJoke()" title="Copy setup & punchline to clipboard" disabled>
-                        <span>📋</span>
-                        <span>Copy</span>
-                    </button>
-
-                    <button class="btn-icon" id="speak-btn" onclick="speakCurrentJoke()" title="Read joke aloud" disabled>
-                        <span>🔊</span>
-                        <span>Listen</span>
+                    <button class="btn-icon btn-copy" id="copy-btn" onclick="copyCurrentJoke()" title="Copy setup & punchline to clipboard" disabled>
+                        <span id="copy-icon">📋</span>
+                        <span id="copy-label">Copy</span>
                     </button>
                 </div>
-            </div>
-
-            <!-- Choose Any Voice Selector -->
-            <div class="voice-picker-bar">
-                <span class="voice-label-badge">🎙️ Voice:</span>
-                <div class="voice-select-wrap">
-                    <select id="voice-select" onchange="onVoiceChanged()" class="voice-dropdown" aria-label="Select Voice">
-                        <option value="">⭐ Auto (Best Natural Voice)</option>
-                    </select>
-                </div>
-                <button class="voice-test-btn" onclick="testSelectedVoice()" title="Test chosen voice">▶ Test</button>
             </div>
 
         </section>
 
-        <!-- 2. Right Column: Saved Favourites (Side-by-Side) -->
+        <!-- 2. Right Column: Saved Favourites -->
         <aside class="fav-card">
             
             <div class="fav-header">
@@ -956,167 +951,21 @@
 
     <!-- JavaScript Logic -->
     <script>
-        const API_URL = 'https://official-joke-api.appspot.com/random_joke';
+        const BASE_API = 'https://official-joke-api.appspot.com';
         const STORAGE_KEY = 'favourite_jokes';
+        const RATINGS_STORAGE_KEY = 'joke_ratings';
+        const CATEGORY_STORAGE_KEY = 'selected_joke_category';
 
         let currentJoke = null;
-        let speechVoices = [];
-        const VOICE_STORAGE_KEY = 'selected_voice_uri';
+        let selectedCategory = localStorage.getItem(CATEGORY_STORAGE_KEY) || 'random';
 
-        function initVoices() {
-            if ('speechSynthesis' in window) {
-                speechVoices = window.speechSynthesis.getVoices();
-                populateVoiceDropdown();
-            }
-        }
-
-        if ('speechSynthesis' in window) {
-            initVoices();
-            window.speechSynthesis.onvoiceschanged = initVoices;
-        }
-
-        /**
-         * Clean & format a voice name into human-readable label
-         */
-        function formatVoiceName(voice) {
-            let name = voice.name
-                .replace(/Microsoft|Google|Apple|Desktop|Online/gi, '')
-                .replace(/\(Natural\)/gi, '✨ Natural')
-                .replace(/\(United States\)|\(United Kingdom\)/gi, '')
-                .replace(/[-_]/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim();
-
-            const lang = voice.lang || '';
-            const region = lang.includes('US') ? 'US' : (lang.includes('GB') ? 'UK' : (lang.includes('AU') ? 'AU' : ''));
-            return region ? `${name} [${region}]` : `${name} (${lang})`;
-        }
-
-        /**
-         * Populate the voice selector with structured optgroups and clean names
-         */
-        function populateVoiceDropdown() {
-            const select = document.getElementById('voice-select');
-            if (!select || speechVoices.length === 0) return;
-
-            const savedVoiceURI = localStorage.getItem(VOICE_STORAGE_KEY);
-            select.innerHTML = '<option value="">⭐ Auto-Detect (Best Natural Voice)</option>';
-
-            const naturalGroup = document.createElement('optgroup');
-            naturalGroup.label = '✨ Recommended Natural Voices';
-
-            const standardGroup = document.createElement('optgroup');
-            standardGroup.label = '🌐 Other Installed Voices';
-
-            // Filter and sort English voices first
-            const enVoices = speechVoices.filter(v => v.lang.startsWith('en'));
-            const otherVoices = speechVoices.filter(v => !v.lang.startsWith('en'));
-
-            [...enVoices, ...otherVoices].forEach(voice => {
-                const opt = document.createElement('option');
-                opt.value = voice.voiceURI || voice.name;
-                opt.textContent = formatVoiceName(voice);
-
-                if (savedVoiceURI && (voice.voiceURI === savedVoiceURI || voice.name === savedVoiceURI)) {
-                    opt.selected = true;
-                }
-
-                const isNatural = voice.name.includes('Natural') || voice.name.includes('Neural') || voice.name.includes('Online') || voice.name.includes('Google');
-                if (isNatural) {
-                    naturalGroup.appendChild(opt);
-                } else {
-                    standardGroup.appendChild(opt);
-                }
-            });
-
-            if (naturalGroup.children.length > 0) select.appendChild(naturalGroup);
-            if (standardGroup.children.length > 0) select.appendChild(standardGroup);
-        }
-
-        function onVoiceChanged() {
-            const select = document.getElementById('voice-select');
-            if (!select) return;
-            const chosen = select.value;
-            if (chosen) {
-                localStorage.setItem(VOICE_STORAGE_KEY, chosen);
-                showToast(`Voice changed: ${select.options[select.selectedIndex].text}`, '🎙️');
-            } else {
-                localStorage.removeItem(VOICE_STORAGE_KEY);
-                showToast('Voice set to Auto-Detect', '🎙️');
-            }
-        }
-
-        /**
-         * Get the user's selected voice or fallback to highest-fidelity natural voice
-         */
-        function getSelectedOrBestVoice() {
-            if (!speechVoices || speechVoices.length === 0) {
-                initVoices();
-            }
-
-            const select = document.getElementById('voice-select');
-            const chosenURI = select ? select.value : localStorage.getItem(VOICE_STORAGE_KEY);
-
-            if (chosenURI) {
-                const found = speechVoices.find(v => (v.voiceURI && v.voiceURI === chosenURI) || v.name === chosenURI);
-                if (found) return found;
-            }
-
-            return getBestNaturalVoice();
-        }
-
-        /**
-         * Select the highest-fidelity natural neural voice available
-         */
-        function getBestNaturalVoice() {
-            if (!speechVoices || speechVoices.length === 0) {
-                initVoices();
-            }
-
-            // 1. Natural / Neural Online voices (Edge, Chrome, Windows 11)
-            const naturalVoice = speechVoices.find(v => 
-                v.lang.startsWith('en') && 
-                (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Online'))
-            );
-            if (naturalVoice) return naturalVoice;
-
-            // 2. Google High-Quality English voices (Chrome)
-            const googleVoice = speechVoices.find(v => 
-                v.lang.startsWith('en') && v.name.includes('Google')
-            );
-            if (googleVoice) return googleVoice;
-
-            // 3. Apple premium voices (Samantha, Siri, Daniel)
-            const appleVoice = speechVoices.find(v => 
-                v.lang.startsWith('en') && 
-                (v.name.includes('Samantha') || v.name.includes('Siri') || v.name.includes('Karen') || v.name.includes('Daniel'))
-            );
-            if (appleVoice) return appleVoice;
-
-            // 4. Modern desktop voices
-            const modernVoice = speechVoices.find(v => 
-                v.lang.startsWith('en') && 
-                (v.name.includes('Zira') || v.name.includes('Mark') || v.name.includes('David'))
-            );
-            if (modernVoice) return modernVoice;
-
-            return speechVoices.find(v => v.lang.startsWith('en')) || speechVoices[0] || null;
-        }
-
-        /**
-         * Preview/test the chosen voice with sample dialogue
-         */
-        function testSelectedVoice() {
-            if (!('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel();
-
-            const voice = getSelectedOrBestVoice();
-            const utt = new SpeechSynthesisUtterance("Here's how I sound telling your jokes!");
-            if (voice) utt.voice = voice;
-            utt.rate = 0.98;
-            window.speechSynthesis.speak(utt);
-            showToast(`Testing: ${voice ? voice.name.replace(/Microsoft|Google/g, '').trim() : 'Default'}`, '🔊');
-        }
+        const ratingLabels = {
+            1: '1/5 · Meh 😐',
+            2: '2/5 · Okay 🙂',
+            3: '3/5 · Good 😄',
+            4: '4/5 · Great 😆',
+            5: '5/5 · Hilarious! 🤣'
+        };
 
         // DOM Elements
         const loadingView = document.getElementById('loading-view');
@@ -1127,26 +976,61 @@
         const punchlineText = document.getElementById('punchline-text');
         const categoryText = document.getElementById('category-text');
         const jokeIdDisplay = document.getElementById('joke-id-display');
+        const endpointHint = document.getElementById('endpoint-hint');
         
         const loadJokeBtn = document.getElementById('load-joke-btn');
         const loadBtnLabel = document.getElementById('load-btn-label');
         const saveFavBtn = document.getElementById('save-fav-btn');
         const copyBtn = document.getElementById('copy-btn');
-        const speakBtn = document.getElementById('speak-btn');
+        const copyLabel = document.getElementById('copy-label');
         
         const favListContainer = document.getElementById('fav-list');
         const favBadgeCount = document.getElementById('fav-badge-count');
         const errorMessageText = document.getElementById('error-message-text');
 
+        const ratingFeedback = document.getElementById('rating-feedback');
+        const starButtons = document.querySelectorAll('.star-btn');
+
         /**
-         * Fetch joke from the official-joke-api
+         * Switch Joke Category & Update UI
+         */
+        function switchCategory(cat) {
+            selectedCategory = cat;
+            localStorage.setItem(CATEGORY_STORAGE_KEY, cat);
+            updateCategoryTabsUI();
+            fetchRandomJoke();
+        }
+
+        function updateCategoryTabsUI() {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.getAttribute('data-cat') === selectedCategory) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            if (selectedCategory === 'random') {
+                endpointHint.textContent = '/random_joke';
+            } else {
+                endpointHint.textContent = `/jokes/${selectedCategory}/random`;
+            }
+        }
+
+        /**
+         * Fetch joke from the matching endpoint
          */
         async function fetchRandomJoke() {
             setLoadingState(true);
             errorView.style.display = 'none';
 
+            let endpoint = `${BASE_API}/random_joke`;
+            if (selectedCategory !== 'random') {
+                endpoint = `${BASE_API}/jokes/${selectedCategory}/random`;
+            }
+
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(endpoint);
 
                 if (!response.ok) {
                     throw new Error(`Server returned status code: ${response.status}`);
@@ -1154,12 +1038,15 @@
 
                 const data = await response.json();
 
-                if (!data || !data.setup || !data.punchline) {
+                // Handle both single object ({...}) and array ([{...}]) formats returned by the API
+                const joke = Array.isArray(data) ? data[0] : data;
+
+                if (!joke || !joke.setup || !joke.punchline) {
                     throw new Error('Incomplete joke data received.');
                 }
 
-                currentJoke = data;
-                renderJoke(data);
+                currentJoke = joke;
+                renderJoke(joke);
 
             } catch (err) {
                 console.error('Error fetching joke:', err);
@@ -1182,7 +1069,6 @@
                 loadBtnLabel.textContent = 'Loading…';
                 saveFavBtn.disabled = true;
                 copyBtn.disabled = true;
-                speakBtn.disabled = true;
             } else {
                 loadingView.style.display = 'none';
                 loadJokeBtn.disabled = false;
@@ -1202,7 +1088,6 @@
 
             saveFavBtn.disabled = true;
             copyBtn.disabled = true;
-            speakBtn.disabled = true;
         }
 
         /**
@@ -1212,7 +1097,6 @@
             errorView.style.display = 'none';
             jokeContentView.style.display = 'flex';
 
-            // Displays setup text and punchline separately
             setupText.textContent = joke.setup;
             punchlineText.textContent = joke.punchline;
 
@@ -1221,9 +1105,134 @@
 
             saveFavBtn.disabled = false;
             copyBtn.disabled = false;
-            speakBtn.disabled = false;
 
             updateFavButtonState();
+            renderJokeRating(joke);
+        }
+
+        /**
+         * Star Rating System (1–5) stored in localStorage
+         */
+        function getSavedRatings() {
+            try {
+                const stored = localStorage.getItem(RATINGS_STORAGE_KEY);
+                return stored ? JSON.parse(stored) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function getJokeKey(joke) {
+            if (!joke) return null;
+            return joke.id ? `joke_${joke.id}` : `text_${joke.setup.slice(0, 20)}`;
+        }
+
+        function renderJokeRating(joke) {
+            const ratings = getSavedRatings();
+            const key = getJokeKey(joke);
+            const savedRating = key && ratings[key] ? ratings[key] : 0;
+
+            displayStars(savedRating);
+
+            if (savedRating > 0) {
+                ratingFeedback.textContent = `Rated: ${ratingLabels[savedRating] || savedRating + '/5'}`;
+            } else {
+                ratingFeedback.textContent = 'Click stars to rate';
+            }
+        }
+
+        function displayStars(rating) {
+            starButtons.forEach(btn => {
+                const val = parseInt(btn.getAttribute('data-star'), 10);
+                if (val <= rating) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+                btn.classList.remove('hovered');
+            });
+        }
+
+        function hoverStar(rating) {
+            starButtons.forEach(btn => {
+                const val = parseInt(btn.getAttribute('data-star'), 10);
+                if (val <= rating) {
+                    btn.classList.add('hovered');
+                } else {
+                    btn.classList.remove('hovered');
+                }
+            });
+            ratingFeedback.textContent = ratingLabels[rating] || `${rating}/5 Stars`;
+        }
+
+        function resetStarHover() {
+            starButtons.forEach(btn => btn.classList.remove('hovered'));
+            if (currentJoke) {
+                const ratings = getSavedRatings();
+                const key = getJokeKey(currentJoke);
+                const savedRating = key && ratings[key] ? ratings[key] : 0;
+                displayStars(savedRating);
+                if (savedRating > 0) {
+                    ratingFeedback.textContent = `Rated: ${ratingLabels[savedRating] || savedRating + '/5'}`;
+                } else {
+                    ratingFeedback.textContent = 'Click stars to rate';
+                }
+            }
+        }
+
+        function rateJoke(stars) {
+            if (!currentJoke) return;
+
+            const ratings = getSavedRatings();
+            const key = getJokeKey(currentJoke);
+            ratings[key] = stars;
+
+            try {
+                localStorage.setItem(RATINGS_STORAGE_KEY, JSON.stringify(ratings));
+                displayStars(stars);
+                ratingFeedback.textContent = `Rated: ${ratingLabels[stars] || stars + '/5'}`;
+                showToast(`Saved ${stars}-star rating!`, '⭐');
+
+                // If currently saved as favourite, refresh favourites list to reflect rating
+                renderFavouritesList();
+            } catch (err) {
+                showToast('Could not save rating to localStorage', '⚠️');
+            }
+        }
+
+        /**
+         * Copy setup and punchline text to clipboard using navigator.clipboard
+         */
+        async function copyCurrentJoke() {
+            if (!currentJoke) return;
+            const text = `${currentJoke.setup}\n${currentJoke.punchline}`;
+            try {
+                await navigator.clipboard.writeText(text);
+                copyLabel.textContent = 'Copied!';
+                showToast('Joke copied to clipboard!', '📋');
+                setTimeout(() => {
+                    copyLabel.textContent = 'Copy';
+                }, 1800);
+            } catch (err) {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('Joke copied to clipboard!', '📋');
+            }
+        }
+
+        async function copyJokeText(setup, punchline) {
+            const text = `${setup}\n${punchline}`;
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('Copied from favourites!', '📋');
+            } catch (err) {
+                showToast('Failed to copy', '⚠️');
+            }
         }
 
         /**
@@ -1314,6 +1323,7 @@
 
         function renderFavouritesList() {
             const list = getSavedFavourites();
+            const ratings = getSavedRatings();
             favListContainer.innerHTML = '';
 
             if (list.length === 0) {
@@ -1327,15 +1337,27 @@
             }
 
             list.forEach(fav => {
+                const key = getJokeKey(fav);
+                const rating = key && ratings[key] ? ratings[key] : null;
+                const starsText = rating ? `★`.repeat(rating) : '';
+
                 const item = document.createElement('div');
                 item.className = 'fav-item';
                 item.innerHTML = `
                     <div class="fav-item-body">
                         <div class="fav-item-setup">${escapeHtml(fav.setup)}</div>
                         <div class="fav-item-punchline">${escapeHtml(fav.punchline)}</div>
-                        <div class="fav-item-meta">${escapeHtml(fav.type || 'general')} · ${fav.savedAt || 'Saved'}</div>
+                        <div class="fav-item-meta">
+                            <span>${escapeHtml(fav.type || 'general')}</span>
+                            <span>•</span>
+                            <span>${fav.savedAt || 'Saved'}</span>
+                            ${rating ? `<span class="fav-star-badge">${starsText} (${rating}/5)</span>` : ''}
+                        </div>
                     </div>
-                    <button class="fav-item-delete" title="Remove favourite" onclick="removeFavouriteById(${fav.id})">✕</button>
+                    <div class="fav-actions">
+                        <button class="fav-btn-action" title="Copy joke" onclick="copyJokeText(${JSON.stringify(fav.setup)}, ${JSON.stringify(fav.punchline)})">📋</button>
+                        <button class="fav-btn-action delete" title="Remove favourite" onclick="removeFavouriteById(${fav.id})">✕</button>
+                    </div>
                 `;
                 favListContainer.appendChild(item);
             });
@@ -1366,87 +1388,6 @@
             }
         }
 
-        async function copyCurrentJoke() {
-            if (!currentJoke) return;
-            const text = `${currentJoke.setup}\n${currentJoke.punchline}`;
-            try {
-                await navigator.clipboard.writeText(text);
-                showToast('Joke copied to clipboard!', '📋');
-            } catch (err) {
-                showToast('Could not copy to clipboard', '⚠️');
-            }
-        }
-
-        /**
-         * Speak joke aloud with natural pacing, dramatic comedic pause, and human-like neural voice
-         */
-        function speakCurrentJoke() {
-            if (!currentJoke || !('speechSynthesis' in window)) {
-                showToast('Speech not supported in browser', '⚠️');
-                return;
-            }
-
-            // Toggle stop if already speaking
-            if (window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
-                setSpeakingButtonState(false);
-                showToast('Speech stopped', '⏹️');
-                return;
-            }
-
-            const voice = getSelectedOrBestVoice();
-            const voiceDisplayName = voice 
-                ? voice.name.replace(/Online|\(Natural\)|\(United States\)|\(United Kingdom\)|Microsoft|Google/gi, '').trim()
-                : 'Natural Voice';
-
-            setSpeakingButtonState(true);
-
-            // Clean text for speech
-            const cleanSetup = currentJoke.setup.trim();
-            const cleanPunchline = currentJoke.punchline.trim();
-
-            const setupUtterance = new SpeechSynthesisUtterance(cleanSetup);
-            if (voice) setupUtterance.voice = voice;
-            setupUtterance.rate = 0.96;   // Relaxed, natural conversational speed
-            setupUtterance.pitch = 1.0;   // Inquisitive, human pitch
-
-            const punchlineUtterance = new SpeechSynthesisUtterance(cleanPunchline);
-            if (voice) punchlineUtterance.voice = voice;
-            punchlineUtterance.rate = 0.94;   // Measured comedic timing
-            punchlineUtterance.pitch = 1.04;  // Slightly lively delivery
-
-            // Event handlers
-            punchlineUtterance.onend = () => setSpeakingButtonState(false);
-            punchlineUtterance.onerror = () => setSpeakingButtonState(false);
-            setupUtterance.onerror = () => setSpeakingButtonState(false);
-
-            // Quick natural pause between setup and punchline (snappy 240ms)
-            setupUtterance.onend = () => {
-                setTimeout(() => {
-                    // Check if speech was cancelled in the interim
-                    if (window.speechSynthesis.speaking || !window.speechSynthesis.paused) {
-                        window.speechSynthesis.speak(punchlineUtterance);
-                    } else {
-                        setSpeakingButtonState(false);
-                    }
-                }, 150); // 150ms natural breath pause
-            };
-
-            window.speechSynthesis.speak(setupUtterance);
-            showToast(`Voice: ${voiceDisplayName}`, '🎙️');
-        }
-
-        function setSpeakingButtonState(isSpeaking) {
-            if (!speakBtn) return;
-            if (isSpeaking) {
-                speakBtn.classList.add('speaking');
-                speakBtn.innerHTML = '<span>⏹️</span><span>Stop</span>';
-            } else {
-                speakBtn.classList.remove('speaking');
-                speakBtn.innerHTML = '<span>🔊</span><span>Listen</span>';
-            }
-        }
-
         let toastTimer;
         function showToast(message, icon = '✓') {
             const toastEl = document.getElementById('toast');
@@ -1474,6 +1415,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            updateCategoryTabsUI();
             updateFavCountBadge();
             renderFavouritesList();
             fetchRandomJoke();

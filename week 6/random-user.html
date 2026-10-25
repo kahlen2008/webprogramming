@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Random User Profile Generator — Week 6</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(52, 211, 153, 0.35);
+            --emerald: #34d399;
+            --emerald-glow: rgba(52, 211, 153, 0.25);
+            --cyan: #38bdf8;
+            --indigo: #818cf8;
+            --amber: #fbbf24;
+            --rose: #f43f5e;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: var(--bg-body) !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body) !important;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(52, 211, 153, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(251, 191, 36, 0.06) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 60px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--emerald);
+            transform: translateX(-2px);
+        }
+
+        .api-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            color: var(--emerald);
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 8px var(--emerald);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.85); }
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Controls Card */
+        .controls-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 20px 26px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .control-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .segmented-ctrl {
+            display: flex;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .segmented-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .segmented-btn.active {
+            background: var(--emerald);
+            color: #042416;
+            box-shadow: 0 2px 8px var(--emerald-glow);
+        }
+
+        .btn-generate {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            border: none;
+            color: #022013;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 10px 22px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(52, 211, 153, 0.35);
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(52, 211, 153, 0.5);
+        }
+
+
+        /* Profile Showcase Card */
+        .profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 36px 40px;
+            backdrop-filter: blur(16px);
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 36px;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #34d399, #38bdf8);
+        }
+
+        .avatar-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            text-align: center;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            padding: 5px;
+            background: linear-gradient(135deg, #34d399, #38bdf8);
+            box-shadow: 0 10px 25px rgba(52, 211, 153, 0.3);
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #111827;
+            display: block;
+        }
+
+        .gender-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            text-transform: capitalize;
+        }
+
+        .nat-flag {
+            font-size: 1.1rem;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .user-name-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.15;
+        }
+
+        .user-username {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            color: var(--emerald);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 6px;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-label {
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detail-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            word-break: break-all;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .btn-subtle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-subtle:hover {
+            color: var(--text-main);
+            border-color: var(--emerald);
+        }
+
+        /* Batch Grid */
+        .batch-grid {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .mini-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 14px;
+            transition: all 0.2s;
+        }
+
+        .mini-card:hover {
+            border-color: var(--emerald);
+            transform: translateY(-4px);
+        }
+
+        .mini-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid var(--emerald);
+        }
+
+        /* Raw JSON section */
+        .raw-json-card {
+            background: #040810;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #a7f3d0;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            display: none;
+        }
+
+        /* Tutorial code section */
+        .snippet-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 24px;
+        }
+
+        .snippet-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--emerald);
+        }
+
+        .code-box {
+            background: #040810;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 16px 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.86rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .code-kw { color: #f43f5e; font-weight: 600; }
+        .code-fn { color: #34d399; }
+        .code-str { color: #38bdf8; }
+        .code-comment { color: #64748b; font-style: italic; }
+
+        @media (max-width: 768px) {
+            .profile-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            .user-username {
+                justify-content: center;
+            }
+            .action-row {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="../index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Course Hub
+        </a>
+        <div class="api-pill">
+            <span class="pulse-dot"></span>
+            randomuser.me/api
+        </div>
+    </div>
+
+    <header class="header-title">
+        <h1>Random User Profile Generator</h1>
+        <p>Generate authentic mock user profiles with avatars, contact metadata, and geographical locations.</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Controls -->
+        <div class="controls-card">
+            <div class="control-group">
+                <span class="control-label">Gender:</span>
+                <div class="segmented-ctrl">
+                    <button class="segmented-btn active" data-gender="">All</button>
+                    <button class="segmented-btn" data-gender="female">Female</button>
+                    <button class="segmented-btn" data-gender="male">Male</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <span class="control-label">Display Mode:</span>
+                <div class="segmented-ctrl">
+                    <button class="segmented-btn active" data-mode="single">Single Spotlight</button>
+                    <button class="segmented-btn" data-mode="multi">Trio (3 Users)</button>
+                </div>
+            </div>
+
+            <button id="generateBtn" class="btn-generate">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                Generate User
+            </button>
+        </div>
+
+        <!-- Single Spotlight Card -->
+        <div id="singleCard" class="profile-card">
+            <div class="avatar-column">
+                <div class="avatar-wrap">
+                    <img id="userAvatar" class="avatar-img" src="" alt="User Avatar">
+                </div>
+                <div class="gender-badge" id="genderBadge">
+                    <span id="genderIcon">👤</span>
+                    <span id="genderText">Female</span> · <span id="natText">US</span>
+                </div>
+            </div>
+            <div class="profile-details">
+                <div>
+                    <h2 class="user-name-title" id="userName">Loading Name...</h2>
+                    <div class="user-username">
+                        <span>@<span id="userUsername">username</span></span>
+                    </div>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Email Address</span>
+                        <span class="detail-value" id="userEmail">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Phone / Cell</span>
+                        <span class="detail-value" id="userPhone">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Location</span>
+                        <span class="detail-value" id="userLocation">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Age &amp; Birthday</span>
+                        <span class="detail-value" id="userAge">--</span>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button id="copyEmailBtn" class="btn-subtle">📋 Copy Email</button>
+                    <button id="toggleJsonBtn" class="btn-subtle">{ } View JSON</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Multi Grid (Trio) -->
+        <div id="multiGrid" class="batch-grid"></div>
+
+        <!-- Raw JSON Preview -->
+        <pre id="rawJsonBox" class="raw-json-card"></pre>
+
+        <!-- Tutorial Snippet -->
+        <div class="snippet-section">
+            <div class="snippet-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                How It Works in JavaScript
+            </div>
+            <pre class="code-box"><code><span class="code-kw">async function</span> <span class="code-fn">fetchRandomUser</span>() {
+  <span class="code-kw">const</span> response = <span class="code-kw">await</span> <span class="code-fn">fetch</span>(<span class="code-str">'https://randomuser.me/api/'</span>);
+  <span class="code-kw">const</span> data = <span class="code-kw">await</span> response.<span class="code-fn">json</span>();
+  <span class="code-kw">const</span> user = data.results[0];
+  
+  console.<span class="code-fn">log</span>(<span class="code-str">`Name: ${user.name.first} ${user.name.last}`</span>);
+  console.<span class="code-fn">log</span>(<span class="code-str">`Email: ${user.email}`</span>);
+  console.<span class="code-fn">log</span>(<span class="code-str">`Picture: ${user.picture.large}`</span>);
+}</code></pre>
+        </div>
+    </div>
+
+    <script>
+        let selectedGender = '';
+        let displayMode = 'single';
+        let latestUserData = null;
+
+        const generateBtn = document.getElementById('generateBtn');
+
+        const singleCard = document.getElementById('singleCard');
+        const multiGrid = document.getElementById('multiGrid');
+        const rawJsonBox = document.getElementById('rawJsonBox');
+
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const userUsername = document.getElementById('userUsername');
+        const userEmail = document.getElementById('userEmail');
+        const userPhone = document.getElementById('userPhone');
+        const userLocation = document.getElementById('userLocation');
+        const userAge = document.getElementById('userAge');
+        const genderText = document.getElementById('genderText');
+        const genderIcon = document.getElementById('genderIcon');
+        const natText = document.getElementById('natText');
+        const copyEmailBtn = document.getElementById('copyEmailBtn');
+        const toggleJsonBtn = document.getElementById('toggleJsonBtn');
+
+        // Gender selectors
+        document.querySelectorAll('[data-gender]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('[data-gender]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedGender = btn.getAttribute('data-gender');
+                fetchUsers();
+            });
+        });
+
+        // Mode selectors
+        document.querySelectorAll('[data-mode]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                displayMode = btn.getAttribute('data-mode');
+                fetchUsers();
+            });
+        });
+
+        generateBtn.addEventListener('click', () => fetchUsers());
+
+        copyEmailBtn.addEventListener('click', () => {
+            if (!latestUserData || !latestUserData.results[0]) return;
+            const email = latestUserData.results[0].email;
+            navigator.clipboard.writeText(email);
+            copyEmailBtn.textContent = '✓ Copied!';
+            setTimeout(() => {
+                copyEmailBtn.textContent = '📋 Copy Email';
+            }, 1800);
+        });
+
+        toggleJsonBtn.addEventListener('click', () => {
+            if (rawJsonBox.style.display === 'block') {
+                rawJsonBox.style.display = 'none';
+                toggleJsonBtn.textContent = '{ } View JSON';
+            } else {
+                rawJsonBox.style.display = 'block';
+                toggleJsonBtn.textContent = '✕ Hide JSON';
+            }
+        });
+
+        async function fetchUsers() {
+            const count = displayMode === 'multi' ? 3 : 1;
+            let url = `https://randomuser.me/api/?results=${count}`;
+            if (selectedGender) {
+                url += `&gender=${selectedGender}`;
+            }
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                latestUserData = data;
+
+                rawJsonBox.textContent = JSON.stringify(data, null, 2);
+
+                if (displayMode === 'single') {
+                    singleCard.style.display = 'grid';
+                    multiGrid.style.display = 'none';
+                    renderSingle(data.results[0]);
+                } else {
+                    singleCard.style.display = 'none';
+                    multiGrid.style.display = 'grid';
+                    renderMulti(data.results);
+                }
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderSingle(user) {
+            userAvatar.src = user.picture.large;
+            userName.textContent = `${user.name.title} ${user.name.first} ${user.name.last}`;
+            userUsername.textContent = user.login.username;
+            userEmail.textContent = user.email;
+            userPhone.textContent = `${user.phone} / ${user.cell}`;
+            userLocation.textContent = `${user.location.city}, ${user.location.country}`;
+            userAge.textContent = `${user.dob.age} yrs (${new Date(user.dob.date).toLocaleDateString()})`;
+
+            genderText.textContent = user.gender;
+            genderIcon.textContent = user.gender === 'female' ? '♀' : '♂';
+            natText.textContent = user.nat;
+        }
+
+        function renderMulti(users) {
+            multiGrid.innerHTML = users.map(user => `
+                <div class="mini-card">
+                    <img class="mini-avatar" src="${user.picture.large}" alt="${user.name.first}">
+                    <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem;">${user.name.first} ${user.name.last}</h3>
+                    <p style="font-size: 0.85rem; color: var(--emerald); font-family: 'Fira Code', monospace;">@${user.login.username}</p>
+                    <p style="font-size: 0.88rem; color: var(--text-sub);">${user.email}</p>
+                    <p style="font-size: 0.85rem; color: var(--text-dim);">📍 ${user.location.city}, ${user.location.country}</p>
+                </div>
+            `).join('');
+        }
+
+        // Initial fetch
+        fetchUsers();
+    </script>
+</body>
+</html>

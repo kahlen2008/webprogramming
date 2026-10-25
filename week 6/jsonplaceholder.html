@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>JSONPlaceholder Explorer — Week 6</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.3);
+            --cyan: #38bdf8;
+            --cyan-glow: rgba(56, 189, 248, 0.25);
+            --indigo: #818cf8;
+            --indigo-glow: rgba(129, 140, 248, 0.25);
+            --amber: #fbbf24;
+            --emerald: #34d399;
+            --rose: #f43f5e;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: var(--bg-body) !important;
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body) !important;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(129, 140, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(56, 189, 248, 0.06) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 60px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--cyan);
+            transform: translateX(-2px);
+        }
+
+        .api-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--cyan);
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.85); }
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+
+        .header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 30%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Controls Card */
+        .controls-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 22px 26px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .control-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .control-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .segmented-ctrl {
+            display: flex;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .segmented-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .segmented-btn.active {
+            background: var(--cyan);
+            color: #04121e;
+            box-shadow: 0 2px 8px var(--cyan-glow);
+        }
+
+        .filter-input {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 8px 14px;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            min-width: 220px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 12px var(--cyan-glow);
+        }
+
+        .btn-fetch {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+            border: none;
+            color: #04121e;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
+        }
+
+        .btn-fetch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(56, 189, 248, 0.5);
+        }
+
+        .btn-fetch:active {
+            transform: translateY(0);
+        }
+
+
+        /* View Mode Bar */
+        .view-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+
+        .view-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-copy {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy:hover {
+            color: var(--text-main);
+            border-color: var(--cyan);
+        }
+
+        /* Posts Grid */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 18px;
+        }
+
+        .item-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(56, 189, 248, 0.15);
+        }
+
+        .item-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), var(--indigo));
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .item-card:hover::before {
+            opacity: 1;
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .item-id-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--cyan);
+            background: rgba(56, 189, 248, 0.1);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .item-user-badge {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .item-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.35;
+            text-transform: capitalize;
+        }
+
+        .item-body {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            line-height: 1.55;
+            flex-grow: 1;
+        }
+
+        /* Code View */
+        .json-viewer {
+            background: #040810;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #93c5fd;
+            overflow-x: auto;
+            max-height: 600px;
+            display: none;
+            line-height: 1.55;
+        }
+
+        /* Loading Skeleton */
+        .loading-state {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            gap: 16px;
+            color: var(--text-sub);
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(56, 189, 248, 0.15);
+            border-top-color: var(--cyan);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tutorial code section */
+        .snippet-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 24px;
+            margin-top: 10px;
+        }
+
+        .snippet-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--cyan);
+        }
+
+        .code-box {
+            background: #040810;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 16px 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.86rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .code-kw { color: #f43f5e; font-weight: 600; }
+        .code-fn { color: #38bdf8; }
+        .code-str { color: #a7f3d0; }
+        .code-comment { color: #64748b; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="../index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Course Hub
+        </a>
+        <div class="api-pill">
+            <span class="pulse-dot"></span>
+            jsonplaceholder.typicode.com
+        </div>
+    </div>
+
+    <header class="header-title">
+        <h1>JSONPlaceholder Explorer</h1>
+        <p>Explore REST API consumption with fake posts, live search filtering, and raw payload inspection.</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Controls -->
+        <div class="controls-card">
+            <div class="control-group">
+                <span class="control-label">Resource:</span>
+                <div class="segmented-ctrl">
+                    <button class="segmented-btn active" data-res="posts">Posts</button>
+                    <button class="segmented-btn" data-res="users">Users</button>
+                    <button class="segmented-btn" data-res="todos">Todos</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <input type="text" id="searchInput" class="filter-input" placeholder="Search by title or body...">
+            </div>
+
+            <div class="control-group">
+                <span class="control-label">Limit:</span>
+                <div class="segmented-ctrl">
+                    <button class="segmented-btn active" data-limit="9">9</button>
+                    <button class="segmented-btn" data-limit="18">18</button>
+                    <button class="segmented-btn" data-limit="50">50</button>
+                </div>
+                <button id="fetchBtn" class="btn-fetch">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    Fetch Data
+                </button>
+            </div>
+        </div>
+
+        <!-- View Tabs & Action -->
+        <div class="view-bar">
+            <div class="view-tabs">
+                <button class="tab-btn active" id="tabGrid">Visual Cards</button>
+                <button class="tab-btn" id="tabJson">Raw JSON</button>
+            </div>
+            <button id="copyJsonBtn" class="btn-copy">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy JSON
+            </button>
+        </div>
+
+        <!-- Cards Grid -->
+        <div id="itemsGrid" class="items-grid"></div>
+
+        <!-- Raw JSON Viewer -->
+        <pre id="jsonViewer" class="json-viewer"></pre>
+
+        <!-- Tutorial Snippet -->
+        <div class="snippet-section">
+            <div class="snippet-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                How It Works in JavaScript
+            </div>
+            <pre class="code-box"><code><span class="code-kw">async function</span> <span class="code-fn">fetchJsonPlaceholder</span>(resource = <span class="code-str">'posts'</span>, limit = <span class="code-str">10</span>) {
+  <span class="code-kw">try</span> {
+    <span class="code-kw">const</span> response = <span class="code-kw">await</span> <span class="code-fn">fetch</span>(<span class="code-str">`https://jsonplaceholder.typicode.com/${resource}?_limit=${limit}`</span>);
+    <span class="code-kw">const</span> data = <span class="code-kw">await</span> response.<span class="code-fn">json</span>();
+    console.<span class="code-fn">log</span>(data); <span class="code-comment">// Array of post / user objects</span>
+    <span class="code-kw">return</span> data;
+  } <span class="code-kw">catch</span> (error) {
+    console.<span class="code-fn">error</span>(<span class="code-str">'Fetch error:'</span>, error);
+  }
+}</code></pre>
+        </div>
+    </div>
+
+    <script>
+        let currentResource = 'posts';
+        let currentLimit = 9;
+        let fetchedData = [];
+
+        const itemsGrid = document.getElementById('itemsGrid');
+        const jsonViewer = document.getElementById('jsonViewer');
+        const searchInput = document.getElementById('searchInput');
+        const fetchBtn = document.getElementById('fetchBtn');
+        const tabGrid = document.getElementById('tabGrid');
+        const tabJson = document.getElementById('tabJson');
+        const copyJsonBtn = document.getElementById('copyJsonBtn');
+
+        // Segmented controls for Resource
+        document.querySelectorAll('[data-res]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('[data-res]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentResource = btn.getAttribute('data-res');
+                fetchResource();
+            });
+        });
+
+        // Segmented controls for Limit
+        document.querySelectorAll('[data-limit]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('[data-limit]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentLimit = parseInt(btn.getAttribute('data-limit'));
+                fetchResource();
+            });
+        });
+
+        tabGrid.addEventListener('click', () => {
+            tabGrid.classList.add('active');
+            tabJson.classList.remove('active');
+            itemsGrid.style.display = 'grid';
+            jsonViewer.style.display = 'none';
+        });
+
+        tabJson.addEventListener('click', () => {
+            tabJson.classList.add('active');
+            tabGrid.classList.remove('active');
+            itemsGrid.style.display = 'none';
+            jsonViewer.style.display = 'block';
+        });
+
+        fetchBtn.addEventListener('click', () => fetchResource());
+
+        searchInput.addEventListener('input', () => {
+            filterAndRender();
+        });
+
+        copyJsonBtn.addEventListener('click', () => {
+            if (!fetchedData || fetchedData.length === 0) return;
+            navigator.clipboard.writeText(JSON.stringify(fetchedData, null, 2));
+            const oldText = copyJsonBtn.innerHTML;
+            copyJsonBtn.innerHTML = `✓ Copied!`;
+            setTimeout(() => {
+                copyJsonBtn.innerHTML = oldText;
+            }, 1800);
+        });
+
+        async function fetchResource() {
+            const url = `https://jsonplaceholder.typicode.com/${currentResource}?_limit=${currentLimit}`;
+
+            itemsGrid.innerHTML = `
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Fetching ${currentResource} from JSONPlaceholder...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                fetchedData = data;
+
+                jsonViewer.textContent = JSON.stringify(data, null, 2);
+                filterAndRender();
+
+            } catch (err) {
+                console.error(err);
+                itemsGrid.innerHTML = `
+                    <div class="loading-state">
+                        <p style="color: var(--rose);">Failed to fetch data: ${err.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function filterAndRender() {
+            const term = searchInput.value.toLowerCase().trim();
+            let filtered = fetchedData;
+
+            if (term) {
+                filtered = fetchedData.filter(item => {
+                    const titleMatch = (item.title || item.name || '').toLowerCase().includes(term);
+                    const bodyMatch = (item.body || item.email || '').toLowerCase().includes(term);
+                    return titleMatch || bodyMatch;
+                });
+            }
+
+            if (filtered.length === 0) {
+                itemsGrid.innerHTML = `
+                    <div class="loading-state">
+                        <p>No results match "${term}".</p>
+                    </div>
+                `;
+                return;
+            }
+
+            itemsGrid.innerHTML = filtered.map(item => {
+                if (currentResource === 'posts') {
+                    return `
+                        <div class="item-card">
+                            <div class="item-header">
+                                <span class="item-id-badge">Post #${item.id}</span>
+                                <span class="item-user-badge">User ID: ${item.userId}</span>
+                            </div>
+                            <h3 class="item-title">${escapeHtml(item.title)}</h3>
+                            <p class="item-body">${escapeHtml(item.body)}</p>
+                        </div>
+                    `;
+                } else if (currentResource === 'users') {
+                    return `
+                        <div class="item-card">
+                            <div class="item-header">
+                                <span class="item-id-badge">User #${item.id}</span>
+                                <span class="item-user-badge">@${escapeHtml(item.username)}</span>
+                            </div>
+                            <h3 class="item-title">${escapeHtml(item.name)}</h3>
+                            <p class="item-body">
+                                📧 ${escapeHtml(item.email)}<br>
+                                🏢 ${escapeHtml(item.company?.name || 'Company')}<br>
+                                📍 ${escapeHtml(item.address?.city || 'City')}
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="item-card">
+                            <div class="item-header">
+                                <span class="item-id-badge">Todo #${item.id}</span>
+                                <span class="item-user-badge" style="color: ${item.completed ? 'var(--emerald)' : 'var(--amber)'}">
+                                    ${item.completed ? '✓ Completed' : '○ Pending'}
+                                </span>
+                            </div>
+                            <h3 class="item-title" style="${item.completed ? 'text-decoration: line-through; opacity: 0.75;' : ''}">${escapeHtml(item.title)}</h3>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Initial fetch
+        fetchResource();
+    </script>
+</body>
+</html>
