@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>Topic 02: event.preventDefault() — HTML · CSS · JS Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(168, 85, 247, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-purple: #c084fc;
+            --accent-cyan: #38bdf8;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main) !important;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1050px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-purple);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .nav-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 5px 12px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .topic-title-group h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #ffffff 40%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(168, 85, 247, 0.12);
+            color: var(--accent-purple);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            font-weight: 600;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            line-height: 1.55;
+            text-wrap: pretty;
+        }
+
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.05fr;
+            gap: 22px;
+        }
+
+        @media (max-width: 900px) {
+            .split-grid { grid-template-columns: 1fr; }
+        }
+
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: var(--accent-purple);
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: color 0.2s;
+        }
+
+        .copy-btn:hover { color: var(--text-primary); }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            color: #e2e8f0;
+            padding: 18px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .token-keyword { color: #f43f5e; font-weight: 600; }
+        .token-function { color: #38bdf8; }
+        .token-string { color: #34d399; }
+        .token-comment { color: #64748b; font-style: italic; }
+
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .interactive-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
+
+        .interactive-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #a855f7;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #a855f7;
+        }
+
+        .demo-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-row label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .demo-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-sm);
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .demo-input:focus {
+            border-color: var(--accent-purple);
+        }
+
+        .demo-btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
+        }
+
+        .toggle-switch-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+        }
+
+        .toggle-label {
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .btn-toggle {
+            background: rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-toggle.disabled {
+            background: rgba(244, 63, 94, 0.2);
+            color: #f43f5e;
+            border-color: rgba(244, 63, 94, 0.4);
+        }
+
+        .console-logger {
+            background: #060911;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            min-height: 85px;
+            max-height: 120px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .log-entry { color: #94a3b8; }
+        .log-success { color: #34d399; }
+        .log-warning { color: #fbbf24; }
+        .log-error { color: #f43f5e; }
+
+        .key-points-card {
+            margin-top: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+        }
+
+        .key-points-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--accent-purple);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-points-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .key-points-list li {
+            position: relative;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .key-points-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="navbar">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back to Week 6_2
+            </a>
+            <span class="nav-badge">Topic 02</span>
+        </div>
+
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title-group">
+                    <h2>event.preventDefault()</h2>
+                </div>
+                <span class="topic-rule-badge">Submit Interception</span>
+            </div>
+            <p class="topic-desc">When a form is submitted, the browser's default behavior is to navigate to the action URL or reload the page. <code>event.preventDefault()</code> stops this immediately, letting your JavaScript take full control. This is the first line of every JS form validation handler.</p>
+
+            <div class="split-grid">
+                <!-- Left: Code Box -->
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label">
+                            <span class="code-lang-dot"></span>
+                            JavaScript
+                        </span>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
+                    </div>
+                    <pre><code id="code-content"><span class="token-keyword">const</span> form = document.<span class="token-function">querySelector</span>(<span class="token-string">'#my-form'</span>);
+
+form.<span class="token-function">addEventListener</span>(<span class="token-string">'submit'</span>, (e) =&gt; {
+  e.<span class="token-function">preventDefault</span>();  <span class="token-comment">// ← STOP the page reload!</span>
+
+  <span class="token-comment">// Now run your own custom validation</span>
+  <span class="token-keyword">const</span> email = document.<span class="token-function">querySelector</span>(<span class="token-string">'#email'</span>).value;
+
+  <span class="token-keyword">if</span> (!email) {
+    showError(<span class="token-string">'Email is required'</span>);
+    <span class="token-keyword">return</span>;  <span class="token-comment">// stop here</span>
+  }
+
+  <span class="token-comment">// All good — submit programmatically or via fetch()</span>
+  console.<span class="token-function">log</span>(<span class="token-string">'Form is valid! Sending...'</span>);
+});</code></pre>
+                </div>
+
+                <!-- Right: Interactive Box -->
+                <div class="interactive-box">
+                    <div class="interactive-header">
+                        <span class="interactive-title">
+                            <span class="pulse-dot"></span>
+                            Live Demo — preventDefault in action
+                        </span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Try submitting</span>
+                    </div>
+
+                    <div class="toggle-switch-row">
+                        <span class="toggle-label">e.preventDefault() active:</span>
+                        <button class="btn-toggle" id="toggle-btn" onclick="togglePreventDefault()">ENABLED (ON)</button>
+                    </div>
+
+                    <form class="demo-form" id="my-form" onsubmit="handleDemoSubmit(event)">
+                        <div class="form-row">
+                            <label for="demo-email">Email Address:</label>
+                            <input type="text" id="demo-email" class="demo-input" placeholder="Type anything...">
+                        </div>
+                        <div class="demo-btn-row">
+                            <button type="submit" class="btn-submit">Submit Form</button>
+                            <button type="button" class="btn-submit" style="background: rgba(255,255,255,0.08);" onclick="clearLogger()">Clear Log</button>
+                        </div>
+                    </form>
+
+                    <div class="console-logger" id="console-log">
+                        <div class="log-entry">› Console ready. Click 'Submit Form' to see preventDefault intercept.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Points -->
+            <div class="key-points-card">
+                <div class="key-points-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Key Points
+                </div>
+                <ul class="key-points-list">
+                    <li>Listen on the <code>'submit'</code> event of the <code>&lt;form&gt;</code> element, not the button's click event.</li>
+                    <li><code>e.preventDefault()</code> must be called at the very beginning, before any asynchronous code or promises.</li>
+                    <li>Without <code>preventDefault()</code>, the browser reloads the page even if you have validation errors below.</li>
+                    <li>The event object <code>e</code> also contains <code>e.target</code> — a direct reference to the form element itself.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let preventDefaultEnabled = true;
+
+        function togglePreventDefault() {
+            preventDefaultEnabled = !preventDefaultEnabled;
+            const btn = document.getElementById('toggle-btn');
+            if (preventDefaultEnabled) {
+                btn.textContent = 'ENABLED (ON)';
+                btn.classList.remove('disabled');
+                addLog('✓ e.preventDefault() ENABLED. Form submits will be intercepted safely.', 'log-success');
+            } else {
+                btn.textContent = 'DISABLED (OFF)';
+                btn.classList.add('disabled');
+                addLog('⚠️ e.preventDefault() DISABLED. Submitting will simulate full page reload!', 'log-warning');
+            }
+        }
+
+        function handleDemoSubmit(e) {
+            if (preventDefaultEnabled) {
+                e.preventDefault();
+                const email = document.getElementById('demo-email').value.trim();
+                addLog(`🛑 e.preventDefault() executed! Page reload PREVENTED.`, 'log-success');
+                if (!email) {
+                    addLog(`❌ Validation check: Email is empty! Displaying error message.`, 'log-error');
+                } else {
+                    addLog(`✓ Form valid! Intercepted email: "${email}". Ready for fetch() API send.`, 'log-success');
+                }
+            } else {
+                e.preventDefault(); // Don't actually navigate away in iframe, but simulate reload
+                addLog(`💥 [Page Reload Triggered] Form submitted natively. JS state would be wiped!`, 'log-error');
+                document.getElementById('demo-email').value = '';
+            }
+        }
+
+        function addLog(text, className = 'log-entry') {
+            const logger = document.getElementById('console-log');
+            const item = document.createElement('div');
+            item.className = className;
+            item.textContent = `› ${text}`;
+            logger.appendChild(item);
+            logger.scrollTop = logger.scrollHeight;
+        }
+
+        function clearLogger() {
+            document.getElementById('console-log').innerHTML = '<div class="log-entry">› Console cleared.</div>';
+        }
+    </script>
+</body>
+</html>

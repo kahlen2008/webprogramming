@@ -60,7 +60,7 @@
 
         .topbar {
             width: 100%;
-            max-width: 860px;
+            max-width: 1200px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -127,10 +127,23 @@
 
         .main-container {
             width: 100%;
-            max-width: 860px;
+            max-width: 1200px;
             display: flex;
             flex-direction: column;
             gap: 24px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 960px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Homework Featured Card */
@@ -160,7 +173,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-width: 580px;
+            max-width: 860px;
         }
 
         .hero-tag {
@@ -287,6 +300,12 @@
             flex-shrink: 0;
         }
 
+        .topic-num {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: #c084fc;
+        }
+
         .item-text {
             display: flex;
             flex-direction: column;
@@ -407,53 +426,159 @@
             </div>
         </div>
 
-        <!-- Practice Exercises -->
-        <div class="section-card">
-            <div class="section-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                Practice Exercises
+        <!-- Content Grid: Lecture Topics (Left) & Practice Exercises (Right) -->
+        <div class="content-grid">
+
+            <!-- Lecture Topics (Left) -->
+            <div class="section-card">
+                <div class="section-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    Lecture Topics (Core Concepts &amp; Interactive Demos)
+                </div>
+
+                <ul class="exercises-list">
+                    <li>
+                        <a href="topic-1.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">01</span>
+                                <div class="item-text">
+                                    <span class="item-title">Why Forms?</span>
+                                    <span class="item-desc">Primary way users send data to servers; 3 real-world daily patterns; live Google search form.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-2.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">02</span>
+                                <div class="item-text">
+                                    <span class="item-title">The &lt;form&gt; Element</span>
+                                    <span class="item-desc">Container anatomy, action &amp; method attributes, GET vs POST difference, and live HTTP request inspector.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-3.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">03</span>
+                                <div class="item-text">
+                                    <span class="item-title">Input Types</span>
+                                    <span class="item-desc">HTML5 input types: text, email, password, number, date, range, checkbox, radio, and select dropdown.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-4.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">04</span>
+                                <div class="item-text">
+                                    <span class="item-title">HTML5 Validation Attributes</span>
+                                    <span class="item-desc">Constraint validation: required, minlength/maxlength, min/max, step, regex pattern, and title tooltip.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-5.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">05</span>
+                                <div class="item-text">
+                                    <span class="item-title">Labels &amp; Accessibility</span>
+                                    <span class="item-desc">&lt;label for="id"&gt; pairing, hit-area expansion, screen reader announcements, and why placeholder is not a label.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-6.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">06</span>
+                                <div class="item-text">
+                                    <span class="item-title">Grouping Fields: &lt;fieldset&gt; &amp; &lt;legend&gt;</span>
+                                    <span class="item-desc">Dividing complex forms logically into fieldsets, accessible group titles, and structured layout preview.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-7.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">07</span>
+                                <div class="item-text">
+                                    <span class="item-title">CSS Validation Pseudo-classes</span>
+                                    <span class="item-desc">Zero-JS reactive styles: :focus, :valid, :invalid, and :invalid:not(:placeholder-shown) pro UX comparison.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
             </div>
 
-            <ul class="exercises-list">
-                <li>
-                    <a href="e1-login-form.html" class="exercise-item">
-                        <div class="item-left">
-                            <span class="item-num">E1</span>
-                            <div class="item-text">
-                                <span class="item-title">Build a Login Form</span>
-                                <span class="item-desc">Form with method="post", email field, password, and "Remember me" checkbox.</span>
-                            </div>
-                        </div>
-                        <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </a>
-                </li>
+            <!-- Practice Exercises (Right) -->
+            <div class="section-card">
+                <div class="section-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Practice Exercises
+                </div>
 
-                <li>
-                    <a href="e2-validation.html" class="exercise-item">
-                        <div class="item-left">
-                            <span class="item-num">E2</span>
-                            <div class="item-text">
-                                <span class="item-title">Add Required &amp; Pattern Attributes</span>
-                                <span class="item-desc">Gachon registration form with 9-digit Student ID pattern, email, minlength, and age min/max.</span>
+                <ul class="exercises-list">
+                    <li>
+                        <a href="e1-login-form.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">E1</span>
+                                <div class="item-text">
+                                    <span class="item-title">Build a Login Form</span>
+                                    <span class="item-desc">Form with method="post", email field, password, and "Remember me" checkbox.</span>
+                                </div>
                             </div>
-                        </div>
-                        <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </a>
-                </li>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="e3-css-validation.html" class="exercise-item">
-                        <div class="item-left">
-                            <span class="item-num">E3</span>
-                            <div class="item-text">
-                                <span class="item-title">Style Valid/Invalid States with CSS</span>
-                                <span class="item-desc">Real-time green/red borders and focus outlines using :valid, :invalid, and :placeholder-shown.</span>
+                    <li>
+                        <a href="e2-validation.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">E2</span>
+                                <div class="item-text">
+                                    <span class="item-title">Add Required &amp; Pattern Attributes</span>
+                                    <span class="item-desc">Gachon registration form with 9-digit Student ID pattern, email, minlength, and age min/max.</span>
+                                </div>
                             </div>
-                        </div>
-                        <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </a>
-                </li>
-            </ul>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="e3-css-validation.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">E3</span>
+                                <div class="item-text">
+                                    <span class="item-title">Style Valid/Invalid States with CSS</span>
+                                    <span class="item-desc">Real-time green/red borders and focus outlines using :valid, :invalid, and :placeholder-shown.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
         </div>
 
     </div>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>Topic 06: Real-time Feedback with the "input" Event — HTML · CSS · JS Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(168, 85, 247, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-purple: #c084fc;
+            --accent-cyan: #38bdf8;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main) !important;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1050px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-purple);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .nav-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 5px 12px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .topic-title-group h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #ffffff 40%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(168, 85, 247, 0.12);
+            color: var(--accent-purple);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            font-weight: 600;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            line-height: 1.55;
+            text-wrap: pretty;
+        }
+
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.05fr;
+            gap: 22px;
+        }
+
+        @media (max-width: 900px) {
+            .split-grid { grid-template-columns: 1fr; }
+        }
+
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: var(--accent-purple);
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: color 0.2s;
+        }
+
+        .copy-btn:hover { color: var(--text-primary); }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            padding: 16px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.55;
+        }
+
+        .token-keyword { color: #f43f5e; font-weight: 600; }
+        .token-function { color: #38bdf8; }
+        .token-string { color: #34d399; }
+        .token-comment { color: #64748b; font-style: italic; }
+
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .interactive-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
+
+        .interactive-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #a855f7;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #a855f7;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-group label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .demo-input {
+            width: 100%;
+            padding: 10px 38px 10px 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-sm);
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .demo-input.ok {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        .demo-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 12px;
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .err-msg {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #f87171;
+            min-height: 18px;
+        }
+
+        .key-points-card {
+            margin-top: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+        }
+
+        .key-points-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--accent-purple);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-points-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .key-points-list li {
+            position: relative;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .key-points-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="navbar">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back to Week 6_2
+            </a>
+            <span class="nav-badge">Topic 06</span>
+        </div>
+
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title-group">
+                    <h2>Real-time Feedback with the "input" Event</h2>
+                </div>
+                <span class="topic-rule-badge">Live Keystroke UX</span>
+            </div>
+            <p class="topic-desc">The <code>'input'</code> event fires on every keystroke as the field's value changes. Combined with a function checking validity, this provides instantaneous visual feedback, dynamic green/red border states, and instant error removal.</p>
+
+            <div class="split-grid">
+                <!-- Left: Code Box -->
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label">
+                            <span class="code-lang-dot"></span>
+                            JavaScript
+                        </span>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
+                    </div>
+                    <pre><code id="code-content"><span class="token-keyword">const</span> emailInput = document.<span class="token-function">querySelector</span>(<span class="token-string">'#email'</span>);
+<span class="token-keyword">const</span> emailError = document.<span class="token-function">querySelector</span>(<span class="token-string">'#email-error'</span>);
+
+emailInput.<span class="token-function">addEventListener</span>(<span class="token-string">'input'</span>, () =&gt; {
+  <span class="token-keyword">const</span> v = emailInput.validity;
+
+  <span class="token-keyword">if</span> (v.valid) {
+    emailError.textContent = <span class="token-string">''</span>;          <span class="token-comment">// clear error</span>
+    emailInput.classList.<span class="token-function">remove</span>(<span class="token-string">'error'</span>);
+    emailInput.classList.<span class="token-function">add</span>(<span class="token-string">'ok'</span>);
+  } <span class="token-keyword">else</span> {
+    <span class="token-keyword">if</span> (v.valueMissing) emailError.textContent = <span class="token-string">'Email is required.'</span>;
+    <span class="token-keyword">if</span> (v.typeMismatch) emailError.textContent = <span class="token-string">'Not a valid email format.'</span>;
+    emailInput.classList.<span class="token-function">add</span>(<span class="token-string">'error'</span>);
+    emailInput.classList.<span class="token-function">remove</span>(<span class="token-string">'ok'</span>);
+  }
+});</code></pre>
+                </div>
+
+                <!-- Right: Interactive Box -->
+                <div class="interactive-box">
+                    <div class="interactive-header">
+                        <span class="interactive-title">
+                            <span class="pulse-dot"></span>
+                            Live Demo — Real-time Validation
+                        </span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Type to see reactive states</span>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="rt-email">Email Address (type="email" required):</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="rt-email" class="demo-input" placeholder="Type an email address...">
+                            <span class="input-icon" id="email-icon"></span>
+                        </div>
+                        <span class="err-msg" id="rt-email-err"></span>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="rt-id">Student ID (pattern="^\d{9}$"):</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="rt-id" class="demo-input" placeholder="e.g. 202112345" maxlength="9">
+                            <span class="input-icon" id="id-icon"></span>
+                        </div>
+                        <span class="err-msg" id="rt-id-err"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Points -->
+            <div class="key-points-card">
+                <div class="key-points-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Key Points
+                </div>
+                <ul class="key-points-list">
+                    <li><code>'input'</code> fires immediately on every keystroke — use it for dynamic, responsive feedback.</li>
+                    <li><code>'change'</code> fires only when focus leaves the field (blur) — better for slower, less aggressive checks.</li>
+                    <li>Only show error highlights after the user has started interacting with the field; don't flash empty inputs red immediately.</li>
+                    <li>Standard pattern: read <code>input.validity</code> → update error span text → toggle <code>.ok</code> / <code>.error</code> classes.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const emailInput = document.getElementById('rt-email');
+        const emailErr = document.getElementById('rt-email-err');
+        const emailIcon = document.getElementById('email-icon');
+
+        const idInput = document.getElementById('rt-id');
+        const idErr = document.getElementById('rt-id-err');
+        const idIcon = document.getElementById('id-icon');
+
+        emailInput.addEventListener('input', () => {
+            const v = emailInput.validity;
+            if (!emailInput.value) {
+                emailErr.textContent = '';
+                emailInput.className = 'demo-input';
+                emailIcon.textContent = '';
+                return;
+            }
+
+            if (v.valid) {
+                emailErr.textContent = '';
+                emailInput.className = 'demo-input ok';
+                emailIcon.textContent = '✓';
+                emailIcon.style.color = '#34d399';
+            } else {
+                if (v.typeMismatch) emailErr.textContent = 'Please include an @ and valid domain (e.g. user@gachon.ac.kr)';
+                else emailErr.textContent = 'Invalid email address.';
+                emailInput.className = 'demo-input error';
+                emailIcon.textContent = '❌';
+                emailIcon.style.color = '#f43f5e';
+            }
+        });
+
+        idInput.addEventListener('input', () => {
+            const val = idInput.value;
+            if (!val) {
+                idErr.textContent = '';
+                idInput.className = 'demo-input';
+                idIcon.textContent = '';
+                return;
+            }
+
+            const is9Digits = /^\d{9}$/.test(val);
+            if (is9Digits) {
+                idErr.textContent = '';
+                idInput.className = 'demo-input ok';
+                idIcon.textContent = '✓';
+                idIcon.style.color = '#34d399';
+            } else {
+                idErr.textContent = `Must be exactly 9 numeric digits (${val.length}/9 entered).`;
+                idInput.className = 'demo-input error';
+                idIcon.textContent = '❌';
+                idIcon.style.color = '#f43f5e';
+            }
+        });
+    </script>
+</body>
+</html>

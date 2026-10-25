@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>Topic 07: CSS Validation Pseudo-classes — HTML · CSS · JS Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-cyan: #38bdf8;
+            --accent-indigo: #818cf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-rose: #f43f5e;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main) !important;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(129, 140, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(192, 132, 252, 0.12) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1050px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-cyan);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .nav-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-indigo);
+            background: rgba(129, 140, 248, 0.15);
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            padding: 5px 12px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .topic-title-group h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(129, 140, 248, 0.15);
+            color: var(--accent-indigo);
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            font-weight: 600;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            line-height: 1.55;
+            text-wrap: pretty;
+        }
+
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.05fr;
+            gap: 22px;
+        }
+
+        @media (max-width: 900px) {
+            .split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: var(--accent-indigo);
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: color 0.2s;
+        }
+
+        .copy-btn:hover {
+            color: var(--text-primary);
+        }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            color: #e2e8f0;
+            padding: 18px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .token-selector { color: #818cf8; font-weight: 600; }
+        .token-prop { color: #38bdf8; }
+        .token-val { color: #34d399; }
+        .token-comment { color: #64748b; font-style: italic; }
+
+        /* Interactive Canvas */
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+        }
+
+        .interactive-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent-indigo);
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .css-demo-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .css-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .css-field label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .css-field input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #334155;
+            background: rgba(9, 13, 22, 0.9);
+            color: #ffffff;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        /* :focus — applied when the input has keyboard focus */
+        .css-field input:focus {
+          border-color: #38bdf8;
+          box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+          outline: none;
+        }
+
+        /* :valid — applied when the value passes all HTML5 validation */
+        .css-field input:valid {
+          border-color: #10b981;
+        }
+
+        /* :invalid — applied when the value fails validation */
+        .css-field input:invalid {
+          border-color: #ef4444;
+        }
+
+        /* :placeholder-shown combined with :invalid / :valid */
+        .css-field input:invalid:not(:placeholder-shown) {
+          border-color: #ef4444;
+          background: rgba(239, 68, 68, 0.1);
+          box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+        }
+
+        .css-field input:valid:not(:placeholder-shown) {
+          border-color: #10b981;
+          background: rgba(16, 185, 129, 0.1);
+          box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .hint-note {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="navbar">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back to Week 6_1
+            </a>
+            <span class="nav-badge">Topic 07</span>
+        </div>
+
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title-group">
+                    <h2>CSS Validation Pseudo-classes</h2>
+                </div>
+                <span class="topic-rule-badge">:valid · :invalid · :not(:placeholder-shown)</span>
+            </div>
+
+            <p class="topic-desc">
+                CSS matches inputs dynamically based on their validation state without requiring JavaScript event listeners:
+            </p>
+
+            <div class="split-grid">
+                <!-- Left: Code Box -->
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label"><span class="code-lang-dot"></span> CSS</span>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-box').querySelector('code').innerText); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy', 1500);">Copy</button>
+                    </div>
+                    <pre><code><span class="token-comment">/* :focus — keyboard focus ring */</span>
+<span class="token-selector">input:focus</span> {
+  <span class="token-prop">border-color</span>: <span class="token-val">#1a56db</span>;
+  <span class="token-prop">box-shadow</span>: <span class="token-val">0 0 0 3px rgba(26, 86, 219, 0.2)</span>;
+  <span class="token-prop">outline</span>: <span class="token-val">none</span>;
+}
+
+<span class="token-comment">/* :valid — passes validation */</span>
+<span class="token-selector">input:valid</span> {
+  <span class="token-prop">border-color</span>: <span class="token-val">#16a34a</span>;
+}
+
+<span class="token-comment">/* :invalid — fails validation */</span>
+<span class="token-selector">input:invalid</span> {
+  <span class="token-prop">border-color</span>: <span class="token-val">#dc2626</span>;
+}
+
+<span class="token-comment">/* Combined with :placeholder-shown */</span>
+<span class="token-selector">input:invalid:not(:placeholder-shown)</span> {
+  <span class="token-prop">border-color</span>: <span class="token-val">#dc2626</span>;
+  <span class="token-prop">background</span>: <span class="token-val">#fee2e2</span>;
+}
+
+<span class="token-selector">input:valid:not(:placeholder-shown)</span> {
+  <span class="token-prop">border-color</span>: <span class="token-val">#16a34a</span>;
+  <span class="token-prop">background</span>: <span class="token-val">#dcfce7</span>;
+}</code></pre>
+                </div>
+
+                <!-- Right: Interactive Canvas -->
+                <div class="interactive-box">
+                    <div class="interactive-label">
+                        <span>Interactive Output</span>
+                        <span style="color: var(--accent-indigo);">Type to Test</span>
+                    </div>
+
+                    <form class="css-demo-form" onsubmit="event.preventDefault();">
+                        <div class="css-field">
+                            <label for="c-email">Email Address (type="email", required)</label>
+                            <input type="email" id="c-email" placeholder="name@example.com" required>
+                            <span class="hint-note">Stays neutral until typing begins, then turns green or red!</span>
+                        </div>
+
+                        <div class="css-field">
+                            <label for="c-sid">Korean Student ID (pattern="\d{9}", required)</label>
+                            <input type="text" id="c-sid" pattern="\d{9}" placeholder="9 digits (e.g. 202112345)" required>
+                            <span class="hint-note">Must be exactly 9 numeric digits to turn green.</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- SOURCE CODE DISPLAY SCRIPT -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('source-code-display')) return;
+        const container = document.createElement('div');
+        container.id = 'source-code-display';
+        container.style.cssText = 'width: 100%; flex: 1 1 100%; order: 9999; margin-top: 60px; background: #0d1117; border-top: 1px solid #30363d; font-family: sans-serif; box-sizing: border-box; clear: both; box-shadow: 0 -4px 15px rgba(0,0,0,0.1);';
+        
+        const header = document.createElement('div');
+        header.style.cssText = 'background: #161b22; padding: 12px 20px; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 10px;';
+        header.innerHTML = '<div style="display:flex;gap:6px;margin-right:10px;"><div style="width:12px;height:12px;border-radius:50%;background:#ff5f56;"></div><div style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;"></div><div style="width:12px;height:12px;border-radius:50%;background:#27c93f;"></div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg><h3 style="margin:0; color:#c9d1d9; font-size:14px; font-weight:600; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif;">Source Code for this Output</h3><span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: bold; margin-left: auto; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(99,102,241,0.3);">Lecturer View</span>';
+        
+        const pre = document.createElement('pre');
+        pre.style.cssText = 'overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; color: #e6edf3; margin: 0; padding: 20px; background: #0d1117; line-height: 1.6;';
+        
+        let htmlContent = document.documentElement.outerHTML;
+        htmlContent = htmlContent.replace(new RegExp('<!-- SOURCE CODE DISPLAY SCRIPT -->[\\s\\S]*?<\\/script>', 'i'), '');
+        htmlContent = htmlContent.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        
+        pre.innerHTML = '<code>' + htmlContent + '</code>';
+        
+        container.appendChild(header);
+        container.appendChild(pre);
+        document.body.appendChild(container);
+    });
+</script>
+</body>
+</html>

@@ -60,7 +60,7 @@
 
         .topbar {
             width: 100%;
-            max-width: 860px;
+            max-width: 1200px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -128,10 +128,23 @@
 
         .main-container {
             width: 100%;
-            max-width: 860px;
+            max-width: 1200px;
             display: flex;
             flex-direction: column;
             gap: 24px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 960px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Homework Card */
@@ -161,7 +174,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-width: 580px;
+            max-width: 860px;
         }
 
         .hero-tag {
@@ -288,6 +301,12 @@
             flex-shrink: 0;
         }
 
+        .exercise-num {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: #60a5fa;
+        }
+
         .item-text {
             display: flex;
             flex-direction: column;
@@ -346,53 +365,185 @@
             </a>
         </div>
 
-        <!-- Practice Exercises -->
-        <div class="section-card">
-            <div class="section-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                Practice Exercises
+        <!-- Two Column Section: Lecture Topics (Left) & Practice Exercises (Right) -->
+        <div class="content-grid">
+
+            <!-- Left: Lecture Topics -->
+            <div class="section-card">
+                <div class="section-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    Lecture Topics (Core Concepts &amp; Interactive Demos)
+                </div>
+
+                <ul class="exercises-list">
+                    <li>
+                        <a href="topic-1.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">01</span>
+                                <div class="item-text">
+                                    <span class="item-title">Why JavaScript Validation?</span>
+                                    <span class="item-desc">Client vs server validation layers, UX benefits, and when HTML5 constraints are not enough.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-2.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">02</span>
+                                <div class="item-text">
+                                    <span class="item-title">event.preventDefault()</span>
+                                    <span class="item-desc">Intercept form submission, prevent automatic page reloads, and hand control over to JavaScript.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-3.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">03</span>
+                                <div class="item-text">
+                                    <span class="item-title">checkValidity()</span>
+                                    <span class="item-desc">Programmatic validation check on single inputs or entire forms without triggering browser tooltips.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-4.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">04</span>
+                                <div class="item-text">
+                                    <span class="item-title">The validity Object</span>
+                                    <span class="item-desc">Detailed ValidityState boolean properties (valueMissing, typeMismatch, tooShort, patternMismatch, etc.).</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-5.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">05</span>
+                                <div class="item-text">
+                                    <span class="item-title">setCustomValidity()</span>
+                                    <span class="item-desc">Attach custom error messages to inputs and trigger native browser validation bubbles.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-6.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">06</span>
+                                <div class="item-text">
+                                    <span class="item-title">Real-time Feedback with the "input" Event</span>
+                                    <span class="item-desc">Instant keystroke validation, reactive green/red input styling, and instant error message updates.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-7.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">07</span>
+                                <div class="item-text">
+                                    <span class="item-title">Regex Patterns in JavaScript</span>
+                                    <span class="item-desc">RegExp syntax, ^ and $ anchors, regex.test() method, and common patterns (ID, email, phone, password).</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-8.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">08</span>
+                                <div class="item-text">
+                                    <span class="item-title">Password Confirmation</span>
+                                    <span class="item-desc">Multi-field validation, comparing password and confirmation values with setCustomValidity synchronization.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-9.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">09</span>
+                                <div class="item-text">
+                                    <span class="item-title">ARIA &amp; Accessibility</span>
+                                    <span class="item-desc">Accessible error states using aria-describedby, aria-invalid, and aria-live="polite" for screen readers.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
             </div>
 
-            <ul class="exercises-list">
-                <li>
-                    <a href="e1-custom-error.html" class="exercise-item">
-                        <div class="item-left">
-                            <span class="item-num">E1</span>
-                            <div class="item-text">
-                                <span class="item-title">Prevent Submit &amp; Show Custom Error</span>
-                                <span class="item-desc">Intercept submit event, call preventDefault, and show custom error or welcome message.</span>
-                            </div>
-                        </div>
-                        <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </a>
-                </li>
+            <!-- Right: Practice Exercises -->
+            <div class="section-card">
+                <div class="section-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Practice Exercises
+                </div>
 
-                <li>
-                    <a href="e2-realtime-email.html" class="exercise-item">
-                        <div class="item-left">
-                            <span class="item-num">E2</span>
-                            <div class="item-text">
-                                <span class="item-title">Real-time Email Validation</span>
-                                <span class="item-desc">Input event listener checking validity.typeMismatch and toggling valid-ok / valid-err classes.</span>
+                <ul class="exercises-list">
+                    <li>
+                        <a href="e1-custom-error.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E1</span>
+                                <div class="item-text">
+                                    <span class="item-title">Prevent Submit &amp; Show Custom Error</span>
+                                    <span class="item-desc">Intercept submit event, call preventDefault, and show custom error or welcome message.</span>
+                                </div>
                             </div>
-                        </div>
-                        <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </a>
-                </li>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="e3-password-aria.html" class="exercise-item">
-                        <div class="item-left">
-                            <span class="item-num">E3</span>
-                            <div class="item-text">
-                                <span class="item-title">Password Confirmation with ARIA</span>
-                                <span class="item-desc">Real-time password match validation with setCustomValidity(), aria-describedby, and aria-invalid.</span>
+                    <li>
+                        <a href="e2-realtime-email.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E2</span>
+                                <div class="item-text">
+                                    <span class="item-title">Real-time Email Validation</span>
+                                    <span class="item-desc">Input event listener checking validity.typeMismatch and toggling valid-ok / valid-err classes.</span>
+                                </div>
                             </div>
-                        </div>
-                        <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </a>
-                </li>
-            </ul>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="e3-password-aria.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E3</span>
+                                <div class="item-text">
+                                    <span class="item-title">Password Confirmation with ARIA</span>
+                                    <span class="item-desc">Real-time password match validation with setCustomValidity(), aria-describedby, and aria-invalid.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
         </div>
 
     </div>
