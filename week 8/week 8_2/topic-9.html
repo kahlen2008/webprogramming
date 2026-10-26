@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
-    <title>Topic 06: Real-time Feedback with the "input" Event — HTML · CSS · JS Guide</title>
+    <title>Topic 09: ARIA &amp; Accessibility — HTML · CSS · JS Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -212,9 +212,10 @@
             line-height: 1.55;
         }
 
-        .token-keyword { color: #f43f5e; font-weight: 600; }
-        .token-function { color: #38bdf8; }
-        .token-string { color: #34d399; }
+        .token-tag { color: #f43f5e; font-weight: 600; }
+        .token-attr { color: #38bdf8; }
+        .token-val { color: #34d399; }
+        .token-keyword { color: #c084fc; font-weight: 600; }
         .token-comment { color: #64748b; font-style: italic; }
 
         .interactive-box {
@@ -266,46 +267,65 @@
             color: var(--text-secondary);
         }
 
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
         .demo-input {
             width: 100%;
-            padding: 10px 38px 10px 14px;
+            padding: 10px 14px;
             background: rgba(0, 0, 0, 0.35);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: var(--radius-sm);
             color: #ffffff;
             font-size: 0.9rem;
             outline: none;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
 
-        .demo-input.ok {
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        .demo-input[aria-invalid="true"] {
+            border-color: #f43f5e;
+            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.15);
         }
 
-        .demo-input.error {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        .demo-input[aria-invalid="false"] {
+            border-color: #34d399;
+            box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
         }
 
-        .input-icon {
-            position: absolute;
-            right: 12px;
-            font-size: 1rem;
-            pointer-events: none;
-        }
-
-        .err-msg {
+        .err-span {
             font-size: 0.78rem;
             font-weight: 600;
             color: #f87171;
             min-height: 18px;
+        }
+
+        .live-dom-inspector {
+            background: #060911;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            line-height: 1.55;
+            color: #e2e8f0;
+        }
+
+        .screen-reader-box {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .sr-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .sr-text {
+            font-size: 0.84rem;
+            color: #bae6fd;
+            line-height: 1.45;
         }
 
         .key-points-card {
@@ -357,19 +377,19 @@
         <div class="navbar">
             <a href="index.html" class="back-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back to Week 6_2
+                Back to Week 8_2
             </a>
-            <span class="nav-badge">Topic 06</span>
+            <span class="nav-badge">Topic 09</span>
         </div>
 
         <div class="topic-card">
             <div class="topic-header">
                 <div class="topic-title-group">
-                    <h2>Real-time Feedback with the "input" Event</h2>
+                    <h2>ARIA &amp; Accessibility</h2>
                 </div>
-                <span class="topic-rule-badge">Live Keystroke UX</span>
+                <span class="topic-rule-badge">Accessible Error States</span>
             </div>
-            <p class="topic-desc">The <code>'input'</code> event fires on every keystroke as the field's value changes. Combined with a function checking validity, this provides instantaneous visual feedback, dynamic green/red border states, and instant error removal.</p>
+            <p class="topic-desc">When JavaScript inserts error messages dynamically into the DOM, screen readers do not automatically detect them. ARIA attributes (<code>aria-describedby</code>, <code>aria-invalid</code>, and <code>aria-live="polite"</code>) announce dynamic validation states to assistive technologies.</p>
 
             <div class="split-grid">
                 <!-- Left: Code Box -->
@@ -377,27 +397,29 @@
                     <div class="code-box-header">
                         <span class="code-lang-label">
                             <span class="code-lang-dot"></span>
-                            JavaScript
+                            HTML + JavaScript
                         </span>
                         <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
                     </div>
-                    <pre><code id="code-content"><span class="token-keyword">const</span> emailInput = document.<span class="token-function">querySelector</span>(<span class="token-string">'#email'</span>);
-<span class="token-keyword">const</span> emailError = document.<span class="token-function">querySelector</span>(<span class="token-string">'#email-error'</span>);
+                    <pre><code id="code-content"><span class="token-comment">&lt;!-- 1. Link error span to input --&gt;</span>
+<span class="token-tag">&lt;div&gt;</span>
+  <span class="token-tag">&lt;label</span> <span class="token-attr">for</span>=<span class="token-val">"email"</span><span class="token-tag">&gt;</span>Email<span class="token-tag">&lt;/label&gt;</span>
+  <span class="token-tag">&lt;input</span> <span class="token-attr">type</span>=<span class="token-val">"email"</span> <span class="token-attr">id</span>=<span class="token-val">"email"</span>
+         <span class="token-attr">aria-describedby</span>=<span class="token-val">"email-error"</span>
+         <span class="token-attr">aria-required</span>=<span class="token-val">"true"</span><span class="token-tag">&gt;</span>
+  <span class="token-tag">&lt;span</span> <span class="token-attr">id</span>=<span class="token-val">"email-error"</span> <span class="token-attr">role</span>=<span class="token-val">"alert"</span> <span class="token-attr">aria-live</span>=<span class="token-val">"polite"</span><span class="token-tag">&gt;&lt;/span&gt;</span>
+<span class="token-tag">&lt;/div&gt;</span>
 
-emailInput.<span class="token-function">addEventListener</span>(<span class="token-string">'input'</span>, () =&gt; {
-  <span class="token-keyword">const</span> v = emailInput.validity;
+<span class="token-comment">// 2. Toggle aria-invalid with JS</span>
+<span class="token-keyword">function</span> <span class="token-function">showError</span>(input, errorEl, msg) {
+  errorEl.textContent = msg;
+  input.<span class="token-function">setAttribute</span>(<span class="token-string">'aria-invalid'</span>, <span class="token-string">'true'</span>);
+}
 
-  <span class="token-keyword">if</span> (v.valid) {
-    emailError.textContent = <span class="token-string">''</span>;          <span class="token-comment">// clear error</span>
-    emailInput.classList.<span class="token-function">remove</span>(<span class="token-string">'error'</span>);
-    emailInput.classList.<span class="token-function">add</span>(<span class="token-string">'ok'</span>);
-  } <span class="token-keyword">else</span> {
-    <span class="token-keyword">if</span> (v.valueMissing) emailError.textContent = <span class="token-string">'Email is required.'</span>;
-    <span class="token-keyword">if</span> (v.typeMismatch) emailError.textContent = <span class="token-string">'Not a valid email format.'</span>;
-    emailInput.classList.<span class="token-function">add</span>(<span class="token-string">'error'</span>);
-    emailInput.classList.<span class="token-function">remove</span>(<span class="token-string">'ok'</span>);
-  }
-});</code></pre>
+<span class="token-keyword">function</span> <span class="token-function">clearError</span>(input, errorEl) {
+  errorEl.textContent = <span class="token-string">''</span>;
+  input.<span class="token-function">setAttribute</span>(<span class="token-string">'aria-invalid'</span>, <span class="token-string">'false'</span>);
+}</code></pre>
                 </div>
 
                 <!-- Right: Interactive Box -->
@@ -405,27 +427,33 @@ emailInput.<span class="token-function">addEventListener</span>(<span class="tok
                     <div class="interactive-header">
                         <span class="interactive-title">
                             <span class="pulse-dot"></span>
-                            Live Demo — Real-time Validation
+                            Live Accessibility Inspector
                         </span>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">Type to see reactive states</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Try typing</span>
                     </div>
 
                     <div class="field-group">
-                        <label for="rt-email">Email Address (type="email" required):</label>
-                        <div class="input-wrapper">
-                            <input type="email" id="rt-email" class="demo-input" placeholder="Type an email address...">
-                            <span class="input-icon" id="email-icon"></span>
-                        </div>
-                        <span class="err-msg" id="rt-email-err"></span>
+                        <label for="aria-email">Email Address (aria-required="true"):</label>
+                        <input type="email" id="aria-email" class="demo-input"
+                               aria-describedby="aria-email-error"
+                               aria-required="true"
+                               aria-invalid="false"
+                               placeholder="Type to trigger ARIA states..."
+                               oninput="handleAriaValidation()">
+                        <span id="aria-email-error" class="err-span" role="alert" aria-live="polite"></span>
                     </div>
 
-                    <div class="field-group">
-                        <label for="rt-id">Student ID (pattern="^\d{9}$"):</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="rt-id" class="demo-input" placeholder="e.g. 202112345" maxlength="9">
-                            <span class="input-icon" id="id-icon"></span>
+                    <div class="live-dom-inspector" id="dom-view">
+                        &lt;input id="email" aria-describedby="email-error" aria-invalid="false"&gt;<br>
+                        &lt;span id="email-error" role="alert" aria-live="polite"&gt;""&lt;/span&gt;
+                    </div>
+
+                    <div class="screen-reader-box">
+                        <span class="sr-icon">🔊</span>
+                        <div class="sr-text" id="sr-speech">
+                            <strong>Screen Reader Announcement:</strong><br>
+                            <em>"Email, edit text, required."</em>
                         </div>
-                        <span class="err-msg" id="rt-id-err"></span>
                     </div>
                 </div>
             </div>
@@ -437,69 +465,48 @@ emailInput.<span class="token-function">addEventListener</span>(<span class="tok
                     Key Points
                 </div>
                 <ul class="key-points-list">
-                    <li><code>'input'</code> fires immediately on every keystroke — use it for dynamic, responsive feedback.</li>
-                    <li><code>'change'</code> fires only when focus leaves the field (blur) — better for slower, less aggressive checks.</li>
-                    <li>Only show error highlights after the user has started interacting with the field; don't flash empty inputs red immediately.</li>
-                    <li>Standard pattern: read <code>input.validity</code> → update error span text → toggle <code>.ok</code> / <code>.error</code> classes.</li>
+                    <li><code>aria-describedby="error-id"</code> connects the error container to the input so screen readers read the error when focusing the field.</li>
+                    <li><code>aria-invalid="true"</code> informs assistive technology that the entered value currently fails validation.</li>
+                    <li><code>aria-live="polite"</code> (or <code>role="alert"</code>) prompts the screen reader to speak the new error message without interrupting the user mid-sentence.</li>
+                    <li>Set <code>aria-invalid="false"</code> or remove it when the field passes validation.</li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script>
-        const emailInput = document.getElementById('rt-email');
-        const emailErr = document.getElementById('rt-email-err');
-        const emailIcon = document.getElementById('email-icon');
+        const input = document.getElementById('aria-email');
+        const errSpan = document.getElementById('aria-email-error');
+        const domView = document.getElementById('dom-view');
+        const srSpeech = document.getElementById('sr-speech');
 
-        const idInput = document.getElementById('rt-id');
-        const idErr = document.getElementById('rt-id-err');
-        const idIcon = document.getElementById('id-icon');
+        function showError(inp, el, msg) {
+            el.textContent = msg;
+            inp.setAttribute('aria-invalid', 'true');
+            srSpeech.innerHTML = `<strong>Screen Reader Announcement:</strong><br><span style="color: #f87171;">"Alert: ${msg}. Email field invalid."</span>`;
+        }
 
-        emailInput.addEventListener('input', () => {
-            const v = emailInput.validity;
-            if (!emailInput.value) {
-                emailErr.textContent = '';
-                emailInput.className = 'demo-input';
-                emailIcon.textContent = '';
-                return;
-            }
+        function clearError(inp, el) {
+            el.textContent = '';
+            inp.setAttribute('aria-invalid', 'false');
+            srSpeech.innerHTML = `<strong>Screen Reader Announcement:</strong><br><span style="color: #34d399;">"Email, edit text, valid."</span>`;
+        }
 
-            if (v.valid) {
-                emailErr.textContent = '';
-                emailInput.className = 'demo-input ok';
-                emailIcon.textContent = '✓';
-                emailIcon.style.color = '#34d399';
-            } else {
-                if (v.typeMismatch) emailErr.textContent = 'Please include an @ and valid domain (e.g. user@gachon.ac.kr)';
-                else emailErr.textContent = 'Invalid email address.';
-                emailInput.className = 'demo-input error';
-                emailIcon.textContent = '❌';
-                emailIcon.style.color = '#f43f5e';
-            }
-        });
-
-        idInput.addEventListener('input', () => {
-            const val = idInput.value;
+        function handleAriaValidation() {
+            const val = input.value.trim();
             if (!val) {
-                idErr.textContent = '';
-                idInput.className = 'demo-input';
-                idIcon.textContent = '';
-                return;
+                clearError(input, errSpan);
+                srSpeech.innerHTML = `<strong>Screen Reader Announcement:</strong><br><em>"Email, edit text, required."</em>`;
+            } else if (!val.includes('@') || !val.includes('.')) {
+                showError(input, errSpan, 'Please enter a valid email address with an @ and domain.');
+            } else {
+                clearError(input, errSpan);
             }
 
-            const is9Digits = /^\d{9}$/.test(val);
-            if (is9Digits) {
-                idErr.textContent = '';
-                idInput.className = 'demo-input ok';
-                idIcon.textContent = '✓';
-                idIcon.style.color = '#34d399';
-            } else {
-                idErr.textContent = `Must be exactly 9 numeric digits (${val.length}/9 entered).`;
-                idInput.className = 'demo-input error';
-                idIcon.textContent = '❌';
-                idIcon.style.color = '#f43f5e';
-            }
-        });
+            const isInv = input.getAttribute('aria-invalid');
+            domView.innerHTML = `&lt;input id="email" aria-describedby="email-error" <strong style="color: ${isInv === 'true' ? '#f43f5e' : '#34d399'}">aria-invalid="${isInv}"</strong>&gt;<br>` +
+                                `&lt;span id="email-error" role="alert" aria-live="polite"&gt;"${errSpan.textContent}"&lt;/span&gt;`;
+        }
     </script>
 </body>
 </html>

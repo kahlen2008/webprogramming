@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
-    <title>Topic 03: checkValidity() — HTML · CSS · JS Guide</title>
+    <title>Topic 06: Real-time Feedback with the "input" Event — HTML · CSS · JS Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -204,12 +204,12 @@
 
         pre code {
             font-family: 'Fira Code', monospace;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             color: #e2e8f0;
-            padding: 18px;
+            padding: 16px;
             display: block;
             overflow-x: auto;
-            line-height: 1.6;
+            line-height: 1.55;
         }
 
         .token-keyword { color: #f43f5e; font-weight: 600; }
@@ -260,76 +260,52 @@
             gap: 6px;
         }
 
-        .field-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .field-header label {
+        .field-group label {
             font-size: 0.82rem;
             font-weight: 600;
             color: var(--text-secondary);
         }
 
-        .validity-tag {
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 999px;
-            text-transform: uppercase;
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
-
-        .valid-true { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
-        .valid-false { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
 
         .demo-input {
             width: 100%;
-            padding: 10px 14px;
+            padding: 10px 38px 10px 14px;
             background: rgba(0, 0, 0, 0.35);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: var(--radius-sm);
             color: #ffffff;
             font-size: 0.9rem;
             outline: none;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
 
-        .demo-input:focus { border-color: var(--accent-purple); }
-
-        .action-btn-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+        .demo-input.ok {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
         }
 
-        .action-btn {
-            background: rgba(168, 85, 247, 0.15);
-            color: #c084fc;
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            padding: 8px 14px;
-            border-radius: var(--radius-sm);
-            font-family: 'Fira Code', monospace;
-            font-size: 0.8rem;
+        .demo-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 12px;
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .err-msg {
+            font-size: 0.78rem;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .action-btn:hover {
-            background: rgba(168, 85, 247, 0.25);
-            border-color: #c084fc;
-        }
-
-        .status-display {
-            background: #060911;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-sm);
-            padding: 12px 14px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.82rem;
-            color: #e2e8f0;
-            line-height: 1.5;
+            color: #f87171;
+            min-height: 18px;
         }
 
         .key-points-card {
@@ -381,19 +357,19 @@
         <div class="navbar">
             <a href="index.html" class="back-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back to Week 6_2
+                Back to Week 8_2
             </a>
-            <span class="nav-badge">Topic 03</span>
+            <span class="nav-badge">Topic 06</span>
         </div>
 
         <div class="topic-card">
             <div class="topic-header">
                 <div class="topic-title-group">
-                    <h2>checkValidity()</h2>
+                    <h2>Real-time Feedback with the "input" Event</h2>
                 </div>
-                <span class="topic-rule-badge">Constraint Checking</span>
+                <span class="topic-rule-badge">Live Keystroke UX</span>
             </div>
-            <p class="topic-desc"><code>checkValidity()</code> is a browser built-in method that programmatically evaluates all HTML5 validation rules. Call it on an individual input to check just that field, or on the whole form to check every field at once.</p>
+            <p class="topic-desc">The <code>'input'</code> event fires on every keystroke as the field's value changes. Combined with a function checking validity, this provides instantaneous visual feedback, dynamic green/red border states, and instant error removal.</p>
 
             <div class="split-grid">
                 <!-- Left: Code Box -->
@@ -406,23 +382,22 @@
                         <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
                     </div>
                     <pre><code id="code-content"><span class="token-keyword">const</span> emailInput = document.<span class="token-function">querySelector</span>(<span class="token-string">'#email'</span>);
-<span class="token-keyword">const</span> form = document.<span class="token-function">querySelector</span>(<span class="token-string">'#my-form'</span>);
+<span class="token-keyword">const</span> emailError = document.<span class="token-function">querySelector</span>(<span class="token-string">'#email-error'</span>);
 
-<span class="token-comment">// Check a single field</span>
-<span class="token-keyword">if</span> (!emailInput.<span class="token-function">checkValidity</span>()) {
-  console.<span class="token-function">log</span>(<span class="token-string">'Email is invalid'</span>);
-  console.<span class="token-function">log</span>(emailInput.validity.valid);        <span class="token-comment">// false</span>
-  console.<span class="token-function">log</span>(emailInput.validity.valueMissing); <span class="token-comment">// true if empty + required</span>
-  console.<span class="token-function">log</span>(emailInput.validity.typeMismatch); <span class="token-comment">// true if bad email format</span>
-}
+emailInput.<span class="token-function">addEventListener</span>(<span class="token-string">'input'</span>, () =&gt; {
+  <span class="token-keyword">const</span> v = emailInput.validity;
 
-<span class="token-comment">// Check the entire form (returns false if ANY field is invalid)</span>
-<span class="token-keyword">if</span> (!form.<span class="token-function">checkValidity</span>()) {
-  console.<span class="token-function">log</span>(<span class="token-string">'Form has errors'</span>);
-}
-
-<span class="token-comment">// The .validity property is always there — no need to call checkValidity() first</span>
-console.<span class="token-function">log</span>(emailInput.validity.valid);  <span class="token-comment">// true or false right now</span></code></pre>
+  <span class="token-keyword">if</span> (v.valid) {
+    emailError.textContent = <span class="token-string">''</span>;          <span class="token-comment">// clear error</span>
+    emailInput.classList.<span class="token-function">remove</span>(<span class="token-string">'error'</span>);
+    emailInput.classList.<span class="token-function">add</span>(<span class="token-string">'ok'</span>);
+  } <span class="token-keyword">else</span> {
+    <span class="token-keyword">if</span> (v.valueMissing) emailError.textContent = <span class="token-string">'Email is required.'</span>;
+    <span class="token-keyword">if</span> (v.typeMismatch) emailError.textContent = <span class="token-string">'Not a valid email format.'</span>;
+    emailInput.classList.<span class="token-function">add</span>(<span class="token-string">'error'</span>);
+    emailInput.classList.<span class="token-function">remove</span>(<span class="token-string">'ok'</span>);
+  }
+});</code></pre>
                 </div>
 
                 <!-- Right: Interactive Box -->
@@ -430,36 +405,27 @@ console.<span class="token-function">log</span>(emailInput.validity.valid);  <sp
                     <div class="interactive-header">
                         <span class="interactive-title">
                             <span class="pulse-dot"></span>
-                            Live Demo — check validity as you type
+                            Live Demo — Real-time Validation
                         </span>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">Interactive fields</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Type to see reactive states</span>
                     </div>
 
-                    <form id="demo-form" onsubmit="event.preventDefault();" style="display: flex; flex-direction: column; gap: 12px;">
-                        <div class="field-group">
-                            <div class="field-header">
-                                <label for="test-email">Email (type="email" required):</label>
-                                <span class="validity-tag valid-false" id="email-validity-tag">validity.valid: false</span>
-                            </div>
-                            <input type="email" id="test-email" class="demo-input" required placeholder="Type an email..." oninput="updateFieldState()">
+                    <div class="field-group">
+                        <label for="rt-email">Email Address (type="email" required):</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="rt-email" class="demo-input" placeholder="Type an email address...">
+                            <span class="input-icon" id="email-icon"></span>
                         </div>
-
-                        <div class="field-group">
-                            <div class="field-header">
-                                <label for="test-name">Name (minlength="3" required):</label>
-                                <span class="validity-tag valid-false" id="name-validity-tag">validity.valid: false</span>
-                            </div>
-                            <input type="text" id="test-name" class="demo-input" required minlength="3" placeholder="At least 3 chars..." oninput="updateFieldState()">
-                        </div>
-                    </form>
-
-                    <div class="action-btn-row">
-                        <button class="action-btn" onclick="testEmailCheck()">emailInput.checkValidity()</button>
-                        <button class="action-btn" onclick="testFormCheck()">form.checkValidity()</button>
+                        <span class="err-msg" id="rt-email-err"></span>
                     </div>
 
-                    <div class="status-display" id="output-box">
-                        › Click a button above to run checkValidity() programmatically.
+                    <div class="field-group">
+                        <label for="rt-id">Student ID (pattern="^\d{9}$"):</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="rt-id" class="demo-input" placeholder="e.g. 202112345" maxlength="9">
+                            <span class="input-icon" id="id-icon"></span>
+                        </div>
+                        <span class="err-msg" id="rt-id-err"></span>
                     </div>
                 </div>
             </div>
@@ -471,60 +437,69 @@ console.<span class="token-function">log</span>(emailInput.validity.valid);  <sp
                     Key Points
                 </div>
                 <ul class="key-points-list">
-                    <li><code>input.checkValidity()</code> returns a clean boolean (<code>true</code> or <code>false</code>).</li>
-                    <li><code>input.validity</code> is a <code>ValidityState</code> object containing detailed boolean flags.</li>
-                    <li><code>input.validity.valid</code> gives a quick check: is the entire input valid right now?</li>
-                    <li><code>form.checkValidity()</code> checks <strong>ALL</strong> fields in the form and returns <code>false</code> if even one is invalid.</li>
-                    <li>Calling <code>checkValidity()</code> does <strong>NOT</strong> display any browser UI or tooltips — it only returns a boolean.</li>
+                    <li><code>'input'</code> fires immediately on every keystroke — use it for dynamic, responsive feedback.</li>
+                    <li><code>'change'</code> fires only when focus leaves the field (blur) — better for slower, less aggressive checks.</li>
+                    <li>Only show error highlights after the user has started interacting with the field; don't flash empty inputs red immediately.</li>
+                    <li>Standard pattern: read <code>input.validity</code> → update error span text → toggle <code>.ok</code> / <code>.error</code> classes.</li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script>
-        const emailInput = document.getElementById('test-email');
-        const nameInput = document.getElementById('test-name');
-        const form = document.getElementById('demo-form');
-        const emailTag = document.getElementById('email-validity-tag');
-        const nameTag = document.getElementById('name-validity-tag');
-        const outBox = document.getElementById('output-box');
+        const emailInput = document.getElementById('rt-email');
+        const emailErr = document.getElementById('rt-email-err');
+        const emailIcon = document.getElementById('email-icon');
 
-        function updateFieldState() {
-            if (emailInput.validity.valid) {
-                emailTag.textContent = 'validity.valid: true';
-                emailTag.className = 'validity-tag valid-true';
-            } else {
-                emailTag.textContent = 'validity.valid: false';
-                emailTag.className = 'validity-tag valid-false';
-            }
+        const idInput = document.getElementById('rt-id');
+        const idErr = document.getElementById('rt-id-err');
+        const idIcon = document.getElementById('id-icon');
 
-            if (nameInput.validity.valid) {
-                nameTag.textContent = 'validity.valid: true';
-                nameTag.className = 'validity-tag valid-true';
-            } else {
-                nameTag.textContent = 'validity.valid: false';
-                nameTag.className = 'validity-tag valid-false';
-            }
-        }
-
-        function testEmailCheck() {
-            const res = emailInput.checkValidity();
+        emailInput.addEventListener('input', () => {
             const v = emailInput.validity;
-            outBox.innerHTML = `› <strong>emailInput.checkValidity():</strong> <span style="color: ${res ? '#34d399' : '#f43f5e'}; font-weight: bold;">${res}</span><br>` +
-                               `  • validity.valid: ${v.valid}<br>` +
-                               `  • validity.valueMissing: ${v.valueMissing}<br>` +
-                               `  • validity.typeMismatch: ${v.typeMismatch}`;
-        }
+            if (!emailInput.value) {
+                emailErr.textContent = '';
+                emailInput.className = 'demo-input';
+                emailIcon.textContent = '';
+                return;
+            }
 
-        function testFormCheck() {
-            const res = form.checkValidity();
-            outBox.innerHTML = `› <strong>form.checkValidity():</strong> <span style="color: ${res ? '#34d399' : '#f43f5e'}; font-weight: bold;">${res}</span><br>` +
-                               `  • Email input passes: ${emailInput.checkValidity()}<br>` +
-                               `  • Name input passes: ${nameInput.checkValidity()}<br>` +
-                               `  ${res ? '✓ Entire form is ready for submit!' : '❌ Form has errors in one or more inputs.'}`;
-        }
+            if (v.valid) {
+                emailErr.textContent = '';
+                emailInput.className = 'demo-input ok';
+                emailIcon.textContent = '✓';
+                emailIcon.style.color = '#34d399';
+            } else {
+                if (v.typeMismatch) emailErr.textContent = 'Please include an @ and valid domain (e.g. user@gachon.ac.kr)';
+                else emailErr.textContent = 'Invalid email address.';
+                emailInput.className = 'demo-input error';
+                emailIcon.textContent = '❌';
+                emailIcon.style.color = '#f43f5e';
+            }
+        });
 
-        updateFieldState();
+        idInput.addEventListener('input', () => {
+            const val = idInput.value;
+            if (!val) {
+                idErr.textContent = '';
+                idInput.className = 'demo-input';
+                idIcon.textContent = '';
+                return;
+            }
+
+            const is9Digits = /^\d{9}$/.test(val);
+            if (is9Digits) {
+                idErr.textContent = '';
+                idInput.className = 'demo-input ok';
+                idIcon.textContent = '✓';
+                idIcon.style.color = '#34d399';
+            } else {
+                idErr.textContent = `Must be exactly 9 numeric digits (${val.length}/9 entered).`;
+                idInput.className = 'demo-input error';
+                idIcon.textContent = '❌';
+                idIcon.style.color = '#f43f5e';
+            }
+        });
     </script>
 </body>
 </html>

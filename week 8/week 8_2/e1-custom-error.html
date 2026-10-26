@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark light">
-    <title>E3: Style Valid/Invalid States with CSS — Week 6</title>
+    <title>E1: Prevent Submit & Custom Error — Week 8_2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,8 +14,6 @@
             --card-bg: rgba(18, 24, 38, 0.9);
             --border: rgba(255, 255, 255, 0.09);
             --blue: #3b82f6;
-            --green: #10b981;
-            --red: #ef4444;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
             --text-dim: #64748b;
@@ -33,8 +31,8 @@
             font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-body);
             background-image: 
-                radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.1) 0%, transparent 45%),
-                radial-gradient(circle at 85% 20%, rgba(59, 130, 246, 0.12) 0%, transparent 45%);
+                radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 20%, rgba(129, 140, 248, 0.1) 0%, transparent 45%);
             background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
@@ -46,7 +44,7 @@
 
         .topbar {
             width: 100%;
-            max-width: 440px;
+            max-width: 420px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -81,18 +79,18 @@
             letter-spacing: 0.06em;
             padding: 6px 12px;
             border-radius: 999px;
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #34d399;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
         }
 
         .card {
             width: 100%;
-            max-width: 440px;
+            max-width: 420px;
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: var(--radius-card);
-            padding: 34px 32px;
+            padding: 34px 30px;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
@@ -109,112 +107,79 @@
         .card-subtitle {
             color: var(--text-sub);
             font-size: 0.88rem;
-            margin-bottom: 18px;
+            margin-bottom: 22px;
             line-height: 1.5;
             text-wrap: pretty;
         }
-
-        .legend-box {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 18px;
-            padding: 10px 14px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            font-size: 0.78rem;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-sub);
-        }
-
-        .dot-green { width: 8px; height: 8px; border-radius: 50%; background: #10b981; }
-        .dot-red { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; }
-        .dot-blue { width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; }
 
         label {
             font-size: 13px;
             font-weight: 600;
             display: block;
-            margin-bottom: 5px;
-            margin-top: 14px;
+            margin-bottom: 6px;
             color: #cbd5e1;
         }
 
         input {
             width: 100%;
             padding: 11px 14px;
-            font-size: 14px;
             border: 2px solid #334155;
             background: rgba(15, 23, 42, 0.6);
-            color: #f8fafc;
             border-radius: 8px;
+            font-size: 14px;
+            color: #f8fafc;
+            margin-bottom: 6px;
             outline: none;
             transition: all 0.2s ease;
             font-family: inherit;
         }
 
-        /* ======================================================== */
-        /* ADD YOUR CSS VALIDATION STYLES BELOW                     */
-        /* Uses :valid, :invalid, :placeholder-shown, :focus        */
-        /* ======================================================== */
-
-        /* Fields turn green border when valid (but not while empty) */
-        input:not(:placeholder-shown):valid {
-            border-color: #10b981;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
-        }
-
-        /* Fields turn red border when invalid (but not while empty) */
-        input:not(:placeholder-shown):invalid {
-            border-color: #ef4444;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.25);
-        }
-
-        /* Fields show a blue outline on focus */
         input:focus {
-            border-color: #1a56db;
-            outline: 2px solid #3b82f6;
-            outline-offset: 1px;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            background: rgba(15, 23, 42, 0.9);
         }
 
-        button[type="submit"] {
-            margin-top: 22px;
+        .error {
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: 600;
+            min-height: 18px;
+            display: block;
+        }
+
+        .success {
+            color: #10b981;
+            font-size: 15px;
+            font-weight: 700;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            display: none;
+        }
+
+        button {
             width: 100%;
             background: linear-gradient(135deg, #1a56db 0%, #2563eb 100%);
-            color: white;
+            color: #fff;
             border: none;
             padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
             font-size: 14px;
+            margin-top: 14px;
             font-family: inherit;
             transition: all 0.2s ease;
             box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
         }
 
-        button[type="submit"]:hover {
+        button:hover {
             transform: translateY(-1px);
             box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
             background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-        }
-
-        .toast-msg {
-            display: none;
-            margin-top: 18px;
-            padding: 12px 14px;
-            border-radius: 8px;
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.35);
-            color: #34d399;
-            font-size: 0.88rem;
-            font-weight: 600;
-            text-align: center;
         }
     </style>
 </head>
@@ -223,48 +188,52 @@
     <div class="topbar">
         <a href="index.html" class="back-link">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Week 6_1
+            Week 8_2
         </a>
-        <span class="badge">Exercise E3</span>
+        <span class="badge">Exercise E1</span>
     </div>
 
     <div class="card">
-        <h2>Validation Styles Demo</h2>
-        <p class="card-subtitle">Real-time dynamic CSS states based on field validity and placeholder visibility.</p>
+        <h2>Login Demo</h2>
+        <p class="card-subtitle">Task: Intercept submit event, call preventDefault, and show custom error or welcome message.</p>
 
-        <div class="legend-box">
-            <div class="legend-item"><span class="dot-green"></span> Valid (green)</div>
-            <div class="legend-item"><span class="dot-red"></span> Invalid (red)</div>
-            <div class="legend-item"><span class="dot-blue"></span> Focus (blue outline)</div>
-        </div>
-
-        <form onsubmit="event.preventDefault(); showSuccess();">
-            <label for="v-email">Email (required)</label>
-            <input type="email" id="v-email" required placeholder="name@example.com">
-
-            <label for="v-pw">Password (min 8 chars)</label>
-            <input type="password" id="v-pw" required minlength="8" placeholder="At least 8 characters">
-
-            <label for="v-age">Age (18–65)</label>
-            <input type="number" id="v-age" required min="18" max="65" placeholder="Your age">
-
-            <button type="submit">Check Validation</button>
+        <form id="login-form">
+            <label for="uname">Username</label>
+            <input type="text" id="uname" placeholder="Enter username">
+            <span class="error" id="uname-error"></span>
+            <button type="submit">Log In</button>
         </form>
 
-        <div id="toast" class="toast-msg">
-            ✓ All form fields are valid and passed check!
-        </div>
+        <div class="success" id="success-msg"></div>
     </div>
 
     <script>
-        function showSuccess() {
-            const toast = document.getElementById('toast');
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3500);
-        }
-    </script>
+        // 1. Select #login-form, #uname, #uname-error, #success-msg
+        const loginForm = document.querySelector('#login-form');
+        const unameInput = document.querySelector('#uname');
+        const unameError = document.querySelector('#uname-error');
+        const successMsg = document.querySelector('#success-msg');
 
+        // 2. Add 'submit' listener to the form
+        loginForm.addEventListener('submit', (e) => {
+            // 3. Call e.preventDefault()
+            e.preventDefault();
+
+            const username = unameInput.value.trim();
+
+            // 4. If #uname.value.trim() is empty: show error, clear success
+            if (username === '') {
+                unameError.textContent = 'Username is required';
+                successMsg.textContent = '';
+                successMsg.style.display = 'none';
+                unameInput.focus();
+            } else {
+                // 5. Otherwise: show success message, clear error
+                unameError.textContent = '';
+                successMsg.textContent = `Welcome, ${username}!`;
+                successMsg.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>

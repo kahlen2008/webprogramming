@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
-    <title>Topic 07: Regex Patterns in JavaScript — HTML · CSS · JS Guide</title>
+    <title>Topic 03: checkValidity() — HTML · CSS · JS Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -204,18 +204,17 @@
 
         pre code {
             font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             color: #e2e8f0;
-            padding: 16px;
+            padding: 18px;
             display: block;
             overflow-x: auto;
-            line-height: 1.55;
+            line-height: 1.6;
         }
 
         .token-keyword { color: #f43f5e; font-weight: 600; }
         .token-function { color: #38bdf8; }
         .token-string { color: #34d399; }
-        .token-regex { color: #fbbf24; }
         .token-comment { color: #64748b; font-style: italic; }
 
         .interactive-box {
@@ -255,29 +254,34 @@
             box-shadow: 0 0 8px #a855f7;
         }
 
-        .sample-buttons {
+        .field-group {
             display: flex;
+            flex-direction: column;
             gap: 6px;
-            flex-wrap: wrap;
         }
 
-        .btn-sample {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-            font-size: 0.74rem;
+        .field-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .field-header label {
+            font-size: 0.82rem;
             font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 999px;
-            cursor: pointer;
-            transition: all 0.2s;
+            color: var(--text-secondary);
         }
 
-        .btn-sample:hover {
-            background: rgba(168, 85, 247, 0.2);
-            color: #ffffff;
-            border-color: rgba(168, 85, 247, 0.4);
+        .validity-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
         }
+
+        .valid-true { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+        .valid-false { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
 
         .demo-input {
             width: 100%;
@@ -286,59 +290,47 @@
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: var(--radius-sm);
             color: #ffffff;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             outline: none;
             transition: all 0.2s;
         }
 
         .demo-input:focus { border-color: var(--accent-purple); }
 
-        .patterns-list {
+        .action-btn-row {
             display: flex;
-            flex-direction: column;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .pattern-card {
-            background: rgba(255, 255, 255, 0.025);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+        .action-btn {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 8px 14px;
             border-radius: var(--radius-sm);
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.2s;
         }
 
-        .pattern-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+        .action-btn:hover {
+            background: rgba(168, 85, 247, 0.25);
+            border-color: #c084fc;
         }
 
-        .pattern-title {
-            font-size: 0.84rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .pattern-code {
+        .status-display {
+            background: #060911;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
             font-family: 'Fira Code', monospace;
-            font-size: 0.72rem;
-            color: #94a3b8;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            line-height: 1.5;
         }
-
-        .match-badge {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 999px;
-            text-transform: uppercase;
-        }
-
-        .match-yes { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
-        .match-no { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
 
         .key-points-card {
             margin-top: 24px;
@@ -389,19 +381,19 @@
         <div class="navbar">
             <a href="index.html" class="back-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back to Week 6_2
+                Back to Week 8_2
             </a>
-            <span class="nav-badge">Topic 07</span>
+            <span class="nav-badge">Topic 03</span>
         </div>
 
         <div class="topic-card">
             <div class="topic-header">
                 <div class="topic-title-group">
-                    <h2>Regex Patterns in JavaScript</h2>
+                    <h2>checkValidity()</h2>
                 </div>
-                <span class="topic-rule-badge">RegExp Syntax &amp; test()</span>
+                <span class="topic-rule-badge">Constraint Checking</span>
             </div>
-            <p class="topic-desc">Regular expressions describe string search patterns. In JavaScript, create them with literal <code>/pattern/flags</code> syntax and call <code>regex.test(string)</code> to return <code>true</code> or <code>false</code>. Regex in JS allows logical OR, lookaheads, and combined checks.</p>
+            <p class="topic-desc"><code>checkValidity()</code> is a browser built-in method that programmatically evaluates all HTML5 validation rules. Call it on an individual input to check just that field, or on the whole form to check every field at once.</p>
 
             <div class="split-grid">
                 <!-- Left: Code Box -->
@@ -413,20 +405,24 @@
                         </span>
                         <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
                     </div>
-                    <pre><code id="code-content"><span class="token-comment">// Korean student ID: exactly 9 digits</span>
-<span class="token-keyword">const</span> studentIdRegex = <span class="token-regex">/^\d{9}$/</span>;
-studentIdRegex.<span class="token-function">test</span>(<span class="token-string">'202112345'</span>);   <span class="token-comment">// true</span>
-studentIdRegex.<span class="token-function">test</span>(<span class="token-string">'20211234'</span>);    <span class="token-comment">// false (8 digits)</span>
-studentIdRegex.<span class="token-function">test</span>(<span class="token-string">'2021abc12'</span>);   <span class="token-comment">// false (letters)</span>
+                    <pre><code id="code-content"><span class="token-keyword">const</span> emailInput = document.<span class="token-function">querySelector</span>(<span class="token-string">'#email'</span>);
+<span class="token-keyword">const</span> form = document.<span class="token-function">querySelector</span>(<span class="token-string">'#my-form'</span>);
 
-<span class="token-comment">// Email pattern</span>
-<span class="token-keyword">const</span> emailRegex = <span class="token-regex">/^[^\s@]+@[^\s@]+\.[^\s@]+$/</span>;
+<span class="token-comment">// Check a single field</span>
+<span class="token-keyword">if</span> (!emailInput.<span class="token-function">checkValidity</span>()) {
+  console.<span class="token-function">log</span>(<span class="token-string">'Email is invalid'</span>);
+  console.<span class="token-function">log</span>(emailInput.validity.valid);        <span class="token-comment">// false</span>
+  console.<span class="token-function">log</span>(emailInput.validity.valueMissing); <span class="token-comment">// true if empty + required</span>
+  console.<span class="token-function">log</span>(emailInput.validity.typeMismatch); <span class="token-comment">// true if bad email format</span>
+}
 
-<span class="token-comment">// Korean phone: 010-XXXX-XXXX or 02-XXX-XXXX</span>
-<span class="token-keyword">const</span> phoneRegex = <span class="token-regex">/^(010|011|016|017|018|019)-\d{3,4}-\d{4}$/</span>;
+<span class="token-comment">// Check the entire form (returns false if ANY field is invalid)</span>
+<span class="token-keyword">if</span> (!form.<span class="token-function">checkValidity</span>()) {
+  console.<span class="token-function">log</span>(<span class="token-string">'Form has errors'</span>);
+}
 
-<span class="token-comment">// Password strength: 8+ chars, 1 uppercase, 1 digit</span>
-<span class="token-keyword">const</span> strongPw = <span class="token-regex">/^(?=.*[A-Z])(?=.*\d).{8,}$/</span>;</code></pre>
+<span class="token-comment">// The .validity property is always there — no need to call checkValidity() first</span>
+console.<span class="token-function">log</span>(emailInput.validity.valid);  <span class="token-comment">// true or false right now</span></code></pre>
                 </div>
 
                 <!-- Right: Interactive Box -->
@@ -434,54 +430,36 @@ studentIdRegex.<span class="token-function">test</span>(<span class="token-strin
                     <div class="interactive-header">
                         <span class="interactive-title">
                             <span class="pulse-dot"></span>
-                            Interactive Regex Tester
+                            Live Demo — check validity as you type
                         </span>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">Real-time test()</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Interactive fields</span>
                     </div>
 
-                    <div class="sample-buttons">
-                        <button class="btn-sample" onclick="setTestVal('202112345')">202112345</button>
-                        <button class="btn-sample" onclick="setTestVal('010-1234-5678')">010-1234-5678</button>
-                        <button class="btn-sample" onclick="setTestVal('user@gachon.ac.kr')">user@gachon.ac.kr</button>
-                        <button class="btn-sample" onclick="setTestVal('Secret99!')">Secret99!</button>
+                    <form id="demo-form" onsubmit="event.preventDefault();" style="display: flex; flex-direction: column; gap: 12px;">
+                        <div class="field-group">
+                            <div class="field-header">
+                                <label for="test-email">Email (type="email" required):</label>
+                                <span class="validity-tag valid-false" id="email-validity-tag">validity.valid: false</span>
+                            </div>
+                            <input type="email" id="test-email" class="demo-input" required placeholder="Type an email..." oninput="updateFieldState()">
+                        </div>
+
+                        <div class="field-group">
+                            <div class="field-header">
+                                <label for="test-name">Name (minlength="3" required):</label>
+                                <span class="validity-tag valid-false" id="name-validity-tag">validity.valid: false</span>
+                            </div>
+                            <input type="text" id="test-name" class="demo-input" required minlength="3" placeholder="At least 3 chars..." oninput="updateFieldState()">
+                        </div>
+                    </form>
+
+                    <div class="action-btn-row">
+                        <button class="action-btn" onclick="testEmailCheck()">emailInput.checkValidity()</button>
+                        <button class="action-btn" onclick="testFormCheck()">form.checkValidity()</button>
                     </div>
 
-                    <div>
-                        <input type="text" id="regex-input" class="demo-input" placeholder="Type anything to test all 4 patterns..." oninput="runRegexTester()">
-                    </div>
-
-                    <div class="patterns-list">
-                        <div class="pattern-card">
-                            <div class="pattern-info">
-                                <span class="pattern-title">Student ID (9 Digits)</span>
-                                <span class="pattern-code">/^\d{9}$/</span>
-                            </div>
-                            <span class="match-badge match-no" id="res-id">NO MATCH</span>
-                        </div>
-
-                        <div class="pattern-card">
-                            <div class="pattern-info">
-                                <span class="pattern-title">Email Format</span>
-                                <span class="pattern-code">/^[^\s@]+@[^\s@]+\.[^\s@]+$/</span>
-                            </div>
-                            <span class="match-badge match-no" id="res-email">NO MATCH</span>
-                        </div>
-
-                        <div class="pattern-card">
-                            <div class="pattern-info">
-                                <span class="pattern-title">Korean Phone</span>
-                                <span class="pattern-code">/^(010|011|...)-\d{3,4}-\d{4}$/</span>
-                            </div>
-                            <span class="match-badge match-no" id="res-phone">NO MATCH</span>
-                        </div>
-
-                        <div class="pattern-card">
-                            <div class="pattern-info">
-                                <span class="pattern-title">Strong Password</span>
-                                <span class="pattern-code">/^(?=.*[A-Z])(?=.*\d).{8,}$/</span>
-                            </div>
-                            <span class="match-badge match-no" id="res-pw">NO MATCH</span>
-                        </div>
+                    <div class="status-display" id="output-box">
+                        › Click a button above to run checkValidity() programmatically.
                     </div>
                 </div>
             </div>
@@ -493,45 +471,60 @@ studentIdRegex.<span class="token-function">test</span>(<span class="token-strin
                     Key Points
                 </div>
                 <ul class="key-points-list">
-                    <li><code>/^pattern$/</code> anchors — <code>^</code> (start) and <code>$</code> (end) guarantee the full string matches, preventing partial matches.</li>
-                    <li><code>\d{9}</code> matches exactly nine numeric digits (0–9).</li>
-                    <li><code>regex.test(string)</code> returns a fast, clean boolean (<code>true</code> / <code>false</code>).</li>
-                    <li>In the HTML <code>pattern="..."</code> attribute, write regex <strong>WITHOUT</strong> leading/trailing slashes <code>/ /</code>; in JavaScript code, enclose inside <code>/pattern/</code>.</li>
+                    <li><code>input.checkValidity()</code> returns a clean boolean (<code>true</code> or <code>false</code>).</li>
+                    <li><code>input.validity</code> is a <code>ValidityState</code> object containing detailed boolean flags.</li>
+                    <li><code>input.validity.valid</code> gives a quick check: is the entire input valid right now?</li>
+                    <li><code>form.checkValidity()</code> checks <strong>ALL</strong> fields in the form and returns <code>false</code> if even one is invalid.</li>
+                    <li>Calling <code>checkValidity()</code> does <strong>NOT</strong> display any browser UI or tooltips — it only returns a boolean.</li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script>
-        const input = document.getElementById('regex-input');
-        const patterns = {
-            id: /^\d{9}$/,
-            email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            phone: /^(010|011|016|017|018|019)-\d{3,4}-\d{4}$/,
-            pw: /^(?=.*[A-Z])(?=.*\d).{8,}$/
-        };
+        const emailInput = document.getElementById('test-email');
+        const nameInput = document.getElementById('test-name');
+        const form = document.getElementById('demo-form');
+        const emailTag = document.getElementById('email-validity-tag');
+        const nameTag = document.getElementById('name-validity-tag');
+        const outBox = document.getElementById('output-box');
 
-        function setTestVal(val) {
-            input.value = val;
-            runRegexTester();
-        }
+        function updateFieldState() {
+            if (emailInput.validity.valid) {
+                emailTag.textContent = 'validity.valid: true';
+                emailTag.className = 'validity-tag valid-true';
+            } else {
+                emailTag.textContent = 'validity.valid: false';
+                emailTag.className = 'validity-tag valid-false';
+            }
 
-        function runRegexTester() {
-            const val = input.value;
-            for (const key in patterns) {
-                const el = document.getElementById(`res-${key}`);
-                const isMatch = val.length > 0 && patterns[key].test(val);
-                if (isMatch) {
-                    el.textContent = 'MATCH (true)';
-                    el.className = 'match-badge match-yes';
-                } else {
-                    el.textContent = 'NO MATCH (false)';
-                    el.className = 'match-badge match-no';
-                }
+            if (nameInput.validity.valid) {
+                nameTag.textContent = 'validity.valid: true';
+                nameTag.className = 'validity-tag valid-true';
+            } else {
+                nameTag.textContent = 'validity.valid: false';
+                nameTag.className = 'validity-tag valid-false';
             }
         }
 
-        setTestVal('202112345');
+        function testEmailCheck() {
+            const res = emailInput.checkValidity();
+            const v = emailInput.validity;
+            outBox.innerHTML = `› <strong>emailInput.checkValidity():</strong> <span style="color: ${res ? '#34d399' : '#f43f5e'}; font-weight: bold;">${res}</span><br>` +
+                               `  • validity.valid: ${v.valid}<br>` +
+                               `  • validity.valueMissing: ${v.valueMissing}<br>` +
+                               `  • validity.typeMismatch: ${v.typeMismatch}`;
+        }
+
+        function testFormCheck() {
+            const res = form.checkValidity();
+            outBox.innerHTML = `› <strong>form.checkValidity():</strong> <span style="color: ${res ? '#34d399' : '#f43f5e'}; font-weight: bold;">${res}</span><br>` +
+                               `  • Email input passes: ${emailInput.checkValidity()}<br>` +
+                               `  • Name input passes: ${nameInput.checkValidity()}<br>` +
+                               `  ${res ? '✓ Entire form is ready for submit!' : '❌ Form has errors in one or more inputs.'}`;
+        }
+
+        updateFieldState();
     </script>
 </body>
 </html>

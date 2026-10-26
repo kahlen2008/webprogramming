@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
-    <title>Topic 01: Why JavaScript Validation? — HTML · CSS · JS Guide</title>
+    <title>Topic 07: Regex Patterns in JavaScript — HTML · CSS · JS Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -204,17 +204,18 @@
 
         pre code {
             font-family: 'Fira Code', monospace;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             color: #e2e8f0;
-            padding: 18px;
+            padding: 16px;
             display: block;
             overflow-x: auto;
-            line-height: 1.6;
+            line-height: 1.55;
         }
 
         .token-keyword { color: #f43f5e; font-weight: 600; }
         .token-function { color: #38bdf8; }
         .token-string { color: #34d399; }
+        .token-regex { color: #fbbf24; }
         .token-comment { color: #64748b; font-style: italic; }
 
         .interactive-box {
@@ -254,63 +255,90 @@
             box-shadow: 0 0 8px #a855f7;
         }
 
-        .layers-card {
+        .sample-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-sample {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.74rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-sample:hover {
+            background: rgba(168, 85, 247, 0.2);
+            color: #ffffff;
+            border-color: rgba(168, 85, 247, 0.4);
+        }
+
+        .demo-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-sm);
+            color: #ffffff;
+            font-size: 0.92rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .demo-input:focus { border-color: var(--accent-purple); }
+
+        .patterns-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
-        .layer-row {
-            background: rgba(255, 255, 255, 0.03);
+        .pattern-card {
+            background: rgba(255, 255, 255, 0.025);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: var(--radius-sm);
-            padding: 14px 16px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .layer-row:hover, .layer-row.active {
-            border-color: rgba(168, 85, 247, 0.5);
-            background: rgba(168, 85, 247, 0.08);
-        }
-
-        .layer-title {
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: #ffffff;
+            padding: 10px 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 4px;
+            transition: all 0.2s;
         }
 
-        .layer-tag {
+        .pattern-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .pattern-title {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .pattern-code {
+            font-family: 'Fira Code', monospace;
             font-size: 0.72rem;
-            padding: 2px 8px;
+            color: #94a3b8;
+        }
+
+        .match-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
             border-radius: 999px;
-            font-weight: 600;
             text-transform: uppercase;
         }
 
-        .tag-html5 { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
-        .tag-js { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
-        .tag-server { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-
-        .layer-desc {
-            font-size: 0.82rem;
-            color: var(--text-secondary);
-            line-height: 1.4;
-        }
-
-        .detail-display {
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            border-radius: var(--radius-sm);
-            padding: 14px;
-            font-size: 0.86rem;
-            color: #e2e8f0;
-            line-height: 1.45;
-        }
+        .match-yes { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+        .match-no { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
 
         .key-points-card {
             margin-top: 24px;
@@ -361,87 +389,99 @@
         <div class="navbar">
             <a href="index.html" class="back-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back to Week 6_2
+                Back to Week 8_2
             </a>
-            <span class="nav-badge">Topic 01</span>
+            <span class="nav-badge">Topic 07</span>
         </div>
 
         <div class="topic-card">
             <div class="topic-header">
                 <div class="topic-title-group">
-                    <h2>Why JavaScript Form Validation?</h2>
+                    <h2>Regex Patterns in JavaScript</h2>
                 </div>
-                <span class="topic-rule-badge">Architecture &amp; UX Core</span>
+                <span class="topic-rule-badge">RegExp Syntax &amp; test()</span>
             </div>
-            <p class="topic-desc">HTML5 validation attributes (required, pattern, min/max) are great for basic guardrails, but JavaScript is essential for real-world web applications: real-time feedback as the user types, multi-field comparisons, custom accessible error tooltips, and preventDefault submit interception.</p>
+            <p class="topic-desc">Regular expressions describe string search patterns. In JavaScript, create them with literal <code>/pattern/flags</code> syntax and call <code>regex.test(string)</code> to return <code>true</code> or <code>false</code>. Regex in JS allows logical OR, lookaheads, and combined checks.</p>
 
             <div class="split-grid">
-                <!-- Left: Code / Architecture Concept -->
+                <!-- Left: Code Box -->
                 <div class="code-box">
                     <div class="code-box-header">
                         <span class="code-lang-label">
                             <span class="code-lang-dot"></span>
-                            Concept Breakdown
+                            JavaScript
                         </span>
-                        <button class="copy-btn" onclick="navigator.clipboard.writeText('Why JS Form Validation: Immediate Feedback, Multi-field Logic, Custom Tooltips, Security Layers')">Copy</button>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
                     </div>
-                    <pre><code><span class="token-comment">// 3 Distinct Validation Layers in Web Apps:</span>
+                    <pre><code id="code-content"><span class="token-comment">// Korean student ID: exactly 9 digits</span>
+<span class="token-keyword">const</span> studentIdRegex = <span class="token-regex">/^\d{9}$/</span>;
+studentIdRegex.<span class="token-function">test</span>(<span class="token-string">'202112345'</span>);   <span class="token-comment">// true</span>
+studentIdRegex.<span class="token-function">test</span>(<span class="token-string">'20211234'</span>);    <span class="token-comment">// false (8 digits)</span>
+studentIdRegex.<span class="token-function">test</span>(<span class="token-string">'2021abc12'</span>);   <span class="token-comment">// false (letters)</span>
 
-<span class="token-comment">// 1. HTML5 Browser Validation</span>
-<span class="token-keyword">&lt;input</span> <span class="token-function">type</span>=<span class="token-string">"email"</span> <span class="token-function">required</span><span class="token-keyword">&gt;</span>
-<span class="token-comment">→ Built-in, declarative, zero JS.
-→ Limitation: Generic bubbles, no multi-field checks.</span>
+<span class="token-comment">// Email pattern</span>
+<span class="token-keyword">const</span> emailRegex = <span class="token-regex">/^[^\s@]+@[^\s@]+\.[^\s@]+$/</span>;
 
-<span class="token-comment">// 2. JavaScript Client Validation</span>
-<span class="token-keyword">form</span>.<span class="token-function">addEventListener</span>(<span class="token-string">'submit'</span>, (e) =&gt; {
-  e.<span class="token-function">preventDefault</span>(); <span class="token-comment">// Take control!</span>
-  <span class="token-comment">// Live typing feedback ('input' event)</span>
-  <span class="token-comment">// Cross-field checks (Password === Confirm)</span>
-  <span class="token-comment">// Accessible error states (ARIA attributes)</span>
-});
+<span class="token-comment">// Korean phone: 010-XXXX-XXXX or 02-XXX-XXXX</span>
+<span class="token-keyword">const</span> phoneRegex = <span class="token-regex">/^(010|011|016|017|018|019)-\d{3,4}-\d{4}$/</span>;
 
-<span class="token-comment">// 3. Server-side Validation</span>
-<span class="token-comment">→ Mandatory final defense (JS can be bypassed).</span></code></pre>
+<span class="token-comment">// Password strength: 8+ chars, 1 uppercase, 1 digit</span>
+<span class="token-keyword">const</span> strongPw = <span class="token-regex">/^(?=.*[A-Z])(?=.*\d).{8,}$/</span>;</code></pre>
                 </div>
 
-                <!-- Right: Interactive Architecture Comparison -->
+                <!-- Right: Interactive Box -->
                 <div class="interactive-box">
                     <div class="interactive-header">
                         <span class="interactive-title">
                             <span class="pulse-dot"></span>
-                            Interactive Validation Matrix
+                            Interactive Regex Tester
                         </span>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">Click a layer</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Real-time test()</span>
                     </div>
 
-                    <div class="layers-card">
-                        <div class="layer-row active" onclick="selectLayer('html5', this)">
-                            <div class="layer-title">
-                                <span>Layer 1: HTML5 Attributes</span>
-                                <span class="layer-tag tag-html5">Browser Built-in</span>
-                            </div>
-                            <div class="layer-desc">Instant browser-native enforcement via required, minlength, type="email". Zero scripts required.</div>
-                        </div>
-
-                        <div class="layer-row" onclick="selectLayer('js', this)">
-                            <div class="layer-title">
-                                <span>Layer 2: JavaScript Validation</span>
-                                <span class="layer-tag tag-js">Client UX Core</span>
-                            </div>
-                            <div class="layer-desc">Real-time typing feedback, multi-field matching (password confirmation), custom messages, and ARIA updates.</div>
-                        </div>
-
-                        <div class="layer-row" onclick="selectLayer('server', this)">
-                            <div class="layer-title">
-                                <span>Layer 3: Backend / Server</span>
-                                <span class="layer-tag tag-server">Security Guarantee</span>
-                            </div>
-                            <div class="layer-desc">Final verification against malicious requests, database uniqueness checks, and secure authorization.</div>
-                        </div>
+                    <div class="sample-buttons">
+                        <button class="btn-sample" onclick="setTestVal('202112345')">202112345</button>
+                        <button class="btn-sample" onclick="setTestVal('010-1234-5678')">010-1234-5678</button>
+                        <button class="btn-sample" onclick="setTestVal('user@gachon.ac.kr')">user@gachon.ac.kr</button>
+                        <button class="btn-sample" onclick="setTestVal('Secret99!')">Secret99!</button>
                     </div>
 
-                    <div class="detail-display" id="detail-box">
-                        <strong>Layer 1 — HTML5 Attributes:</strong> Provides fast baseline validation before form submission. Cannot compare two fields, cannot dynamically translate messages, and tooltips cannot be fully styled with custom CSS across different operating systems.
+                    <div>
+                        <input type="text" id="regex-input" class="demo-input" placeholder="Type anything to test all 4 patterns..." oninput="runRegexTester()">
+                    </div>
+
+                    <div class="patterns-list">
+                        <div class="pattern-card">
+                            <div class="pattern-info">
+                                <span class="pattern-title">Student ID (9 Digits)</span>
+                                <span class="pattern-code">/^\d{9}$/</span>
+                            </div>
+                            <span class="match-badge match-no" id="res-id">NO MATCH</span>
+                        </div>
+
+                        <div class="pattern-card">
+                            <div class="pattern-info">
+                                <span class="pattern-title">Email Format</span>
+                                <span class="pattern-code">/^[^\s@]+@[^\s@]+\.[^\s@]+$/</span>
+                            </div>
+                            <span class="match-badge match-no" id="res-email">NO MATCH</span>
+                        </div>
+
+                        <div class="pattern-card">
+                            <div class="pattern-info">
+                                <span class="pattern-title">Korean Phone</span>
+                                <span class="pattern-code">/^(010|011|...)-\d{3,4}-\d{4}$/</span>
+                            </div>
+                            <span class="match-badge match-no" id="res-phone">NO MATCH</span>
+                        </div>
+
+                        <div class="pattern-card">
+                            <div class="pattern-info">
+                                <span class="pattern-title">Strong Password</span>
+                                <span class="pattern-code">/^(?=.*[A-Z])(?=.*\d).{8,}$/</span>
+                            </div>
+                            <span class="match-badge match-no" id="res-pw">NO MATCH</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -450,29 +490,48 @@
             <div class="key-points-card">
                 <div class="key-points-title">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Key Takeaways
+                    Key Points
                 </div>
                 <ul class="key-points-list">
-                    <li>Client-side JavaScript validation is designed to maximize <strong>User Experience (UX)</strong> by catching mistakes immediately.</li>
-                    <li>Always combine HTML5 declarative constraints with JavaScript event listeners (<code>'input'</code>, <code>'submit'</code>).</li>
-                    <li>Never rely solely on client-side validation for security — backend validation remains strictly mandatory.</li>
+                    <li><code>/^pattern$/</code> anchors — <code>^</code> (start) and <code>$</code> (end) guarantee the full string matches, preventing partial matches.</li>
+                    <li><code>\d{9}</code> matches exactly nine numeric digits (0–9).</li>
+                    <li><code>regex.test(string)</code> returns a fast, clean boolean (<code>true</code> / <code>false</code>).</li>
+                    <li>In the HTML <code>pattern="..."</code> attribute, write regex <strong>WITHOUT</strong> leading/trailing slashes <code>/ /</code>; in JavaScript code, enclose inside <code>/pattern/</code>.</li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script>
-        const details = {
-            html5: "<strong>Layer 1 — HTML5 Attributes:</strong> Provides fast baseline validation before form submission. Cannot compare two fields, cannot dynamically translate messages, and tooltips cannot be fully styled with custom CSS across different operating systems.",
-            js: "<strong>Layer 2 — JavaScript Validation:</strong> Catches errors before request leaves the browser. Stops reload via e.preventDefault(), checks ValidityState flags, tests Regex expressions, coordinates password confirmation, and announces errors to screen readers with ARIA.",
-            server: "<strong>Layer 3 — Backend / Server:</strong> The ultimate source of truth. Validates request headers, prevents SQL injection/XSS, checks database constraints (e.g. 'Is this username taken?'), and guarantees integrity even if JS is disabled."
+        const input = document.getElementById('regex-input');
+        const patterns = {
+            id: /^\d{9}$/,
+            email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            phone: /^(010|011|016|017|018|019)-\d{3,4}-\d{4}$/,
+            pw: /^(?=.*[A-Z])(?=.*\d).{8,}$/
         };
 
-        function selectLayer(key, el) {
-            document.querySelectorAll('.layer-row').forEach(row => row.classList.remove('active'));
-            el.classList.add('active');
-            document.getElementById('detail-box').innerHTML = details[key];
+        function setTestVal(val) {
+            input.value = val;
+            runRegexTester();
         }
+
+        function runRegexTester() {
+            const val = input.value;
+            for (const key in patterns) {
+                const el = document.getElementById(`res-${key}`);
+                const isMatch = val.length > 0 && patterns[key].test(val);
+                if (isMatch) {
+                    el.textContent = 'MATCH (true)';
+                    el.className = 'match-badge match-yes';
+                } else {
+                    el.textContent = 'NO MATCH (false)';
+                    el.className = 'match-badge match-no';
+                }
+            }
+        }
+
+        setTestVal('202112345');
     </script>
 </body>
 </html>

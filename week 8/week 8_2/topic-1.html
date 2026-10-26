@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
-    <title>Topic 09: ARIA &amp; Accessibility — HTML · CSS · JS Guide</title>
+    <title>Topic 01: Why JavaScript Validation? — HTML · CSS · JS Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -204,18 +204,17 @@
 
         pre code {
             font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             color: #e2e8f0;
-            padding: 16px;
+            padding: 18px;
             display: block;
             overflow-x: auto;
-            line-height: 1.55;
+            line-height: 1.6;
         }
 
-        .token-tag { color: #f43f5e; font-weight: 600; }
-        .token-attr { color: #38bdf8; }
-        .token-val { color: #34d399; }
-        .token-keyword { color: #c084fc; font-weight: 600; }
+        .token-keyword { color: #f43f5e; font-weight: 600; }
+        .token-function { color: #38bdf8; }
+        .token-string { color: #34d399; }
         .token-comment { color: #64748b; font-style: italic; }
 
         .interactive-box {
@@ -255,76 +254,61 @@
             box-shadow: 0 0 8px #a855f7;
         }
 
-        .field-group {
+        .layers-card {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 12px;
         }
 
-        .field-group label {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .demo-input {
-            width: 100%;
-            padding: 10px 14px;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+        .layer-row {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .layer-row:hover, .layer-row.active {
+            border-color: rgba(168, 85, 247, 0.5);
+            background: rgba(168, 85, 247, 0.08);
+        }
+
+        .layer-title {
+            font-size: 0.92rem;
+            font-weight: 700;
             color: #ffffff;
-            font-size: 0.9rem;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .demo-input[aria-invalid="true"] {
-            border-color: #f43f5e;
-            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.15);
-        }
-
-        .demo-input[aria-invalid="false"] {
-            border-color: #34d399;
-            box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
-        }
-
-        .err-span {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: #f87171;
-            min-height: 18px;
-        }
-
-        .live-dom-inspector {
-            background: #060911;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-sm);
-            padding: 12px 14px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.78rem;
-            line-height: 1.55;
-            color: #e2e8f0;
-        }
-
-        .screen-reader-box {
-            background: rgba(56, 189, 248, 0.08);
-            border: 1px solid rgba(56, 189, 248, 0.25);
-            border-radius: var(--radius-sm);
-            padding: 12px 14px;
             display: flex;
-            align-items: flex-start;
-            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
         }
 
-        .sr-icon {
-            font-size: 1.2rem;
-            line-height: 1;
+        .layer-tag {
+            font-size: 0.72rem;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .sr-text {
-            font-size: 0.84rem;
-            color: #bae6fd;
+        .tag-html5 { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+        .tag-js { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+        .tag-server { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+
+        .layer-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .detail-display {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            font-size: 0.86rem;
+            color: #e2e8f0;
             line-height: 1.45;
         }
 
@@ -377,83 +361,87 @@
         <div class="navbar">
             <a href="index.html" class="back-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back to Week 6_2
+                Back to Week 8_2
             </a>
-            <span class="nav-badge">Topic 09</span>
+            <span class="nav-badge">Topic 01</span>
         </div>
 
         <div class="topic-card">
             <div class="topic-header">
                 <div class="topic-title-group">
-                    <h2>ARIA &amp; Accessibility</h2>
+                    <h2>Why JavaScript Form Validation?</h2>
                 </div>
-                <span class="topic-rule-badge">Accessible Error States</span>
+                <span class="topic-rule-badge">Architecture &amp; UX Core</span>
             </div>
-            <p class="topic-desc">When JavaScript inserts error messages dynamically into the DOM, screen readers do not automatically detect them. ARIA attributes (<code>aria-describedby</code>, <code>aria-invalid</code>, and <code>aria-live="polite"</code>) announce dynamic validation states to assistive technologies.</p>
+            <p class="topic-desc">HTML5 validation attributes (required, pattern, min/max) are great for basic guardrails, but JavaScript is essential for real-world web applications: real-time feedback as the user types, multi-field comparisons, custom accessible error tooltips, and preventDefault submit interception.</p>
 
             <div class="split-grid">
-                <!-- Left: Code Box -->
+                <!-- Left: Code / Architecture Concept -->
                 <div class="code-box">
                     <div class="code-box-header">
                         <span class="code-lang-label">
                             <span class="code-lang-dot"></span>
-                            HTML + JavaScript
+                            Concept Breakdown
                         </span>
-                        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText('Why JS Form Validation: Immediate Feedback, Multi-field Logic, Custom Tooltips, Security Layers')">Copy</button>
                     </div>
-                    <pre><code id="code-content"><span class="token-comment">&lt;!-- 1. Link error span to input --&gt;</span>
-<span class="token-tag">&lt;div&gt;</span>
-  <span class="token-tag">&lt;label</span> <span class="token-attr">for</span>=<span class="token-val">"email"</span><span class="token-tag">&gt;</span>Email<span class="token-tag">&lt;/label&gt;</span>
-  <span class="token-tag">&lt;input</span> <span class="token-attr">type</span>=<span class="token-val">"email"</span> <span class="token-attr">id</span>=<span class="token-val">"email"</span>
-         <span class="token-attr">aria-describedby</span>=<span class="token-val">"email-error"</span>
-         <span class="token-attr">aria-required</span>=<span class="token-val">"true"</span><span class="token-tag">&gt;</span>
-  <span class="token-tag">&lt;span</span> <span class="token-attr">id</span>=<span class="token-val">"email-error"</span> <span class="token-attr">role</span>=<span class="token-val">"alert"</span> <span class="token-attr">aria-live</span>=<span class="token-val">"polite"</span><span class="token-tag">&gt;&lt;/span&gt;</span>
-<span class="token-tag">&lt;/div&gt;</span>
+                    <pre><code><span class="token-comment">// 3 Distinct Validation Layers in Web Apps:</span>
 
-<span class="token-comment">// 2. Toggle aria-invalid with JS</span>
-<span class="token-keyword">function</span> <span class="token-function">showError</span>(input, errorEl, msg) {
-  errorEl.textContent = msg;
-  input.<span class="token-function">setAttribute</span>(<span class="token-string">'aria-invalid'</span>, <span class="token-string">'true'</span>);
-}
+<span class="token-comment">// 1. HTML5 Browser Validation</span>
+<span class="token-keyword">&lt;input</span> <span class="token-function">type</span>=<span class="token-string">"email"</span> <span class="token-function">required</span><span class="token-keyword">&gt;</span>
+<span class="token-comment">→ Built-in, declarative, zero JS.
+→ Limitation: Generic bubbles, no multi-field checks.</span>
 
-<span class="token-keyword">function</span> <span class="token-function">clearError</span>(input, errorEl) {
-  errorEl.textContent = <span class="token-string">''</span>;
-  input.<span class="token-function">setAttribute</span>(<span class="token-string">'aria-invalid'</span>, <span class="token-string">'false'</span>);
-}</code></pre>
+<span class="token-comment">// 2. JavaScript Client Validation</span>
+<span class="token-keyword">form</span>.<span class="token-function">addEventListener</span>(<span class="token-string">'submit'</span>, (e) =&gt; {
+  e.<span class="token-function">preventDefault</span>(); <span class="token-comment">// Take control!</span>
+  <span class="token-comment">// Live typing feedback ('input' event)</span>
+  <span class="token-comment">// Cross-field checks (Password === Confirm)</span>
+  <span class="token-comment">// Accessible error states (ARIA attributes)</span>
+});
+
+<span class="token-comment">// 3. Server-side Validation</span>
+<span class="token-comment">→ Mandatory final defense (JS can be bypassed).</span></code></pre>
                 </div>
 
-                <!-- Right: Interactive Box -->
+                <!-- Right: Interactive Architecture Comparison -->
                 <div class="interactive-box">
                     <div class="interactive-header">
                         <span class="interactive-title">
                             <span class="pulse-dot"></span>
-                            Live Accessibility Inspector
+                            Interactive Validation Matrix
                         </span>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">Try typing</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Click a layer</span>
                     </div>
 
-                    <div class="field-group">
-                        <label for="aria-email">Email Address (aria-required="true"):</label>
-                        <input type="email" id="aria-email" class="demo-input"
-                               aria-describedby="aria-email-error"
-                               aria-required="true"
-                               aria-invalid="false"
-                               placeholder="Type to trigger ARIA states..."
-                               oninput="handleAriaValidation()">
-                        <span id="aria-email-error" class="err-span" role="alert" aria-live="polite"></span>
-                    </div>
-
-                    <div class="live-dom-inspector" id="dom-view">
-                        &lt;input id="email" aria-describedby="email-error" aria-invalid="false"&gt;<br>
-                        &lt;span id="email-error" role="alert" aria-live="polite"&gt;""&lt;/span&gt;
-                    </div>
-
-                    <div class="screen-reader-box">
-                        <span class="sr-icon">🔊</span>
-                        <div class="sr-text" id="sr-speech">
-                            <strong>Screen Reader Announcement:</strong><br>
-                            <em>"Email, edit text, required."</em>
+                    <div class="layers-card">
+                        <div class="layer-row active" onclick="selectLayer('html5', this)">
+                            <div class="layer-title">
+                                <span>Layer 1: HTML5 Attributes</span>
+                                <span class="layer-tag tag-html5">Browser Built-in</span>
+                            </div>
+                            <div class="layer-desc">Instant browser-native enforcement via required, minlength, type="email". Zero scripts required.</div>
                         </div>
+
+                        <div class="layer-row" onclick="selectLayer('js', this)">
+                            <div class="layer-title">
+                                <span>Layer 2: JavaScript Validation</span>
+                                <span class="layer-tag tag-js">Client UX Core</span>
+                            </div>
+                            <div class="layer-desc">Real-time typing feedback, multi-field matching (password confirmation), custom messages, and ARIA updates.</div>
+                        </div>
+
+                        <div class="layer-row" onclick="selectLayer('server', this)">
+                            <div class="layer-title">
+                                <span>Layer 3: Backend / Server</span>
+                                <span class="layer-tag tag-server">Security Guarantee</span>
+                            </div>
+                            <div class="layer-desc">Final verification against malicious requests, database uniqueness checks, and secure authorization.</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-display" id="detail-box">
+                        <strong>Layer 1 — HTML5 Attributes:</strong> Provides fast baseline validation before form submission. Cannot compare two fields, cannot dynamically translate messages, and tooltips cannot be fully styled with custom CSS across different operating systems.
                     </div>
                 </div>
             </div>
@@ -462,50 +450,28 @@
             <div class="key-points-card">
                 <div class="key-points-title">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Key Points
+                    Key Takeaways
                 </div>
                 <ul class="key-points-list">
-                    <li><code>aria-describedby="error-id"</code> connects the error container to the input so screen readers read the error when focusing the field.</li>
-                    <li><code>aria-invalid="true"</code> informs assistive technology that the entered value currently fails validation.</li>
-                    <li><code>aria-live="polite"</code> (or <code>role="alert"</code>) prompts the screen reader to speak the new error message without interrupting the user mid-sentence.</li>
-                    <li>Set <code>aria-invalid="false"</code> or remove it when the field passes validation.</li>
+                    <li>Client-side JavaScript validation is designed to maximize <strong>User Experience (UX)</strong> by catching mistakes immediately.</li>
+                    <li>Always combine HTML5 declarative constraints with JavaScript event listeners (<code>'input'</code>, <code>'submit'</code>).</li>
+                    <li>Never rely solely on client-side validation for security — backend validation remains strictly mandatory.</li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script>
-        const input = document.getElementById('aria-email');
-        const errSpan = document.getElementById('aria-email-error');
-        const domView = document.getElementById('dom-view');
-        const srSpeech = document.getElementById('sr-speech');
+        const details = {
+            html5: "<strong>Layer 1 — HTML5 Attributes:</strong> Provides fast baseline validation before form submission. Cannot compare two fields, cannot dynamically translate messages, and tooltips cannot be fully styled with custom CSS across different operating systems.",
+            js: "<strong>Layer 2 — JavaScript Validation:</strong> Catches errors before request leaves the browser. Stops reload via e.preventDefault(), checks ValidityState flags, tests Regex expressions, coordinates password confirmation, and announces errors to screen readers with ARIA.",
+            server: "<strong>Layer 3 — Backend / Server:</strong> The ultimate source of truth. Validates request headers, prevents SQL injection/XSS, checks database constraints (e.g. 'Is this username taken?'), and guarantees integrity even if JS is disabled."
+        };
 
-        function showError(inp, el, msg) {
-            el.textContent = msg;
-            inp.setAttribute('aria-invalid', 'true');
-            srSpeech.innerHTML = `<strong>Screen Reader Announcement:</strong><br><span style="color: #f87171;">"Alert: ${msg}. Email field invalid."</span>`;
-        }
-
-        function clearError(inp, el) {
-            el.textContent = '';
-            inp.setAttribute('aria-invalid', 'false');
-            srSpeech.innerHTML = `<strong>Screen Reader Announcement:</strong><br><span style="color: #34d399;">"Email, edit text, valid."</span>`;
-        }
-
-        function handleAriaValidation() {
-            const val = input.value.trim();
-            if (!val) {
-                clearError(input, errSpan);
-                srSpeech.innerHTML = `<strong>Screen Reader Announcement:</strong><br><em>"Email, edit text, required."</em>`;
-            } else if (!val.includes('@') || !val.includes('.')) {
-                showError(input, errSpan, 'Please enter a valid email address with an @ and domain.');
-            } else {
-                clearError(input, errSpan);
-            }
-
-            const isInv = input.getAttribute('aria-invalid');
-            domView.innerHTML = `&lt;input id="email" aria-describedby="email-error" <strong style="color: ${isInv === 'true' ? '#f43f5e' : '#34d399'}">aria-invalid="${isInv}"</strong>&gt;<br>` +
-                                `&lt;span id="email-error" role="alert" aria-live="polite"&gt;"${errSpan.textContent}"&lt;/span&gt;`;
+        function selectLayer(key, el) {
+            document.querySelectorAll('.layer-row').forEach(row => row.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('detail-box').innerHTML = details[key];
         }
     </script>
 </body>

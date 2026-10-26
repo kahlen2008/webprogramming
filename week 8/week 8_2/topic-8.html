@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
-    <title>Topic 05: setCustomValidity() — HTML · CSS · JS Guide</title>
+    <title>Topic 08: Password Confirmation — HTML · CSS · JS Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -204,12 +204,12 @@
 
         pre code {
             font-family: 'Fira Code', monospace;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             color: #e2e8f0;
-            padding: 18px;
+            padding: 16px;
             display: block;
             overflow-x: auto;
-            line-height: 1.6;
+            line-height: 1.55;
         }
 
         .token-keyword { color: #f43f5e; font-weight: 600; }
@@ -257,10 +257,16 @@
         .field-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
-        .field-group label {
+        .field-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .field-label-row label {
             font-size: 0.82rem;
             font-weight: 600;
             color: var(--text-secondary);
@@ -280,6 +286,24 @@
 
         .demo-input:focus { border-color: var(--accent-purple); }
 
+        .err-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #f87171;
+            min-height: 18px;
+        }
+
+        .match-status-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        .badge-match { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+        .badge-mismatch { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
+
         .btn-submit {
             background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
             color: white;
@@ -295,29 +319,6 @@
         .btn-submit:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
-        }
-
-        .status-inspector {
-            background: #060911;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--radius-sm);
-            padding: 12px 14px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.8rem;
-            line-height: 1.55;
-            color: #e2e8f0;
-        }
-
-        .alert-box {
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            border-radius: var(--radius-sm);
-            padding: 10px 14px;
-            font-size: 0.82rem;
-            color: #fde68a;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
         }
 
         .key-points-card {
@@ -369,19 +370,19 @@
         <div class="navbar">
             <a href="index.html" class="back-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back to Week 6_2
+                Back to Week 8_2
             </a>
-            <span class="nav-badge">Topic 05</span>
+            <span class="nav-badge">Topic 08</span>
         </div>
 
         <div class="topic-card">
             <div class="topic-header">
                 <div class="topic-title-group">
-                    <h2>setCustomValidity()</h2>
+                    <h2>Password Confirmation</h2>
                 </div>
-                <span class="topic-rule-badge">Custom Tooltip Messages</span>
+                <span class="topic-rule-badge">Multi-Field Synchronization</span>
             </div>
-            <p class="topic-desc"><code>setCustomValidity(message)</code> attaches a custom error string to an input element, immediately marking it as invalid regardless of its value. Passing an empty string <code>''</code> clears the error and restores natural validity.</p>
+            <p class="topic-desc">Comparing two fields is a classic JavaScript task that HTML5 cannot perform alone. The pattern listens on the confirm field's <code>'input'</code> event, compares values, re-checks when the primary password changes, and sets custom validity.</p>
 
             <div class="split-grid">
                 <!-- Left: Code Box -->
@@ -393,21 +394,32 @@
                         </span>
                         <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
                     </div>
-                    <pre><code id="code-content"><span class="token-keyword">const</span> passwordInput = document.<span class="token-function">querySelector</span>(<span class="token-string">'#password'</span>);
-<span class="token-keyword">const</span> confirmInput  = document.<span class="token-function">querySelector</span>(<span class="token-string">'#confirm'</span>);
+                    <pre><code id="code-content"><span class="token-keyword">const</span> pw     = document.<span class="token-function">querySelector</span>(<span class="token-string">'#password'</span>);
+<span class="token-keyword">const</span> confirm = document.<span class="token-function">querySelector</span>(<span class="token-string">'#confirm'</span>);
+<span class="token-keyword">const</span> pwErr   = document.<span class="token-function">querySelector</span>(<span class="token-string">'#pw-error'</span>);
+<span class="token-keyword">const</span> cfmErr  = document.<span class="token-function">querySelector</span>(<span class="token-string">'#cfm-error'</span>);
 
-confirmInput.<span class="token-function">addEventListener</span>(<span class="token-string">'input'</span>, () =&gt; {
-  <span class="token-keyword">if</span> (confirmInput.value !== passwordInput.value) {
-    <span class="token-comment">// Mark the field as invalid with a custom message</span>
-    confirmInput.<span class="token-function">setCustomValidity</span>(<span class="token-string">'Passwords do not match.'</span>);
+<span class="token-comment">// Validate password length & re-check confirm if typed</span>
+pw.<span class="token-function">addEventListener</span>(<span class="token-string">'input'</span>, () =&gt; {
+  <span class="token-keyword">if</span> (pw.value.length &lt; 8) {
+    pwErr.textContent = <span class="token-string">'Password must be at least 8 characters.'</span>;
   } <span class="token-keyword">else</span> {
-    <span class="token-comment">// Clear the custom error (field becomes valid again)</span>
-    confirmInput.<span class="token-function">setCustomValidity</span>(<span class="token-string">''</span>);
+    pwErr.textContent = <span class="token-string">''</span>;
   }
+  <span class="token-keyword">if</span> (confirm.value) <span class="token-function">checkConfirm</span>();
 });
 
-<span class="token-comment">// After setCustomValidity('...'), validity.customError is true</span>
-<span class="token-comment">// and validity.valid is false — until you clear it with ''</span></code></pre>
+<span class="token-keyword">function</span> <span class="token-function">checkConfirm</span>() {
+  <span class="token-keyword">if</span> (confirm.value !== pw.value) {
+    confirm.<span class="token-function">setCustomValidity</span>(<span class="token-string">'Passwords do not match.'</span>);
+    cfmErr.textContent = <span class="token-string">'Passwords do not match.'</span>;
+  } <span class="token-keyword">else</span> {
+    confirm.<span class="token-function">setCustomValidity</span>(<span class="token-string">''</span>);
+    cfmErr.textContent = <span class="token-string">''</span>;
+  }
+}
+
+confirm.<span class="token-function">addEventListener</span>(<span class="token-string">'input'</span>, checkConfirm);</code></pre>
                 </div>
 
                 <!-- Right: Interactive Box -->
@@ -415,37 +427,31 @@ confirmInput.<span class="token-function">addEventListener</span>(<span class="t
                     <div class="interactive-header">
                         <span class="interactive-title">
                             <span class="pulse-dot"></span>
-                            Live Demo — Tooltip &amp; ValidityState
+                            Live Demo — Password Confirmation
                         </span>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">Type to test</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Try matching passwords</span>
                     </div>
 
-                    <form id="pw-demo-form" onsubmit="handleFormSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+                    <form id="confirm-demo-form" onsubmit="handleDemoSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
                         <div class="field-group">
-                            <label for="demo-pw">Password:</label>
-                            <input type="password" id="demo-pw" class="demo-input" required placeholder="Enter password" oninput="verifyMatch()">
+                            <div class="field-label-row">
+                                <label for="input-pw">Password (min 8 chars):</label>
+                            </div>
+                            <input type="password" id="input-pw" class="demo-input" placeholder="At least 8 characters">
+                            <span class="err-label" id="err-pw"></span>
                         </div>
 
                         <div class="field-group">
-                            <label for="demo-cfm">Confirm Password:</label>
-                            <input type="password" id="demo-cfm" class="demo-input" required placeholder="Repeat password" oninput="verifyMatch()">
+                            <div class="field-label-row">
+                                <label for="input-cfm">Confirm Password:</label>
+                                <span class="match-status-badge badge-mismatch" id="match-badge">Awaiting Input</span>
+                            </div>
+                            <input type="password" id="input-cfm" class="demo-input" placeholder="Repeat your password">
+                            <span class="err-label" id="err-cfm"></span>
                         </div>
 
-                        <button type="submit" class="btn-submit">Submit Form (Trigger Browser Tooltip)</button>
+                        <button type="submit" class="btn-submit">Submit Registration</button>
                     </form>
-
-                    <div class="status-inspector" id="status-box">
-                        › confirmInput.validationMessage: ""<br>
-                        › validity.customError: false<br>
-                        › validity.valid: false (empty field)
-                    </div>
-
-                    <div class="alert-box">
-                        <span style="font-size: 1.1rem; line-height: 1;">⚠️</span>
-                        <div>
-                            <strong>Always clear it!</strong> If you set a custom validity message and the user later fixes the input, you must call <code>setCustomValidity('')</code>. Otherwise, the field stays invalid forever!
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -456,46 +462,67 @@ confirmInput.<span class="token-function">addEventListener</span>(<span class="t
                     Key Points
                 </div>
                 <ul class="key-points-list">
-                    <li><code>input.setCustomValidity('message')</code> marks the field as invalid and sets the native browser tooltip message.</li>
-                    <li><code>input.setCustomValidity('')</code> clears the custom error, allowing the field to return to natural validity.</li>
-                    <li>When custom validity is set, <code>validity.customError</code> is <code>true</code> and <code>validity.valid</code> is <code>false</code>.</li>
-                    <li>The browser displays this custom message inside its native pop-up bubble upon form submission.</li>
+                    <li>Always listen on the confirm field <strong>AND</strong> re-validate when the original password field changes.</li>
+                    <li>Synchronize <code>setCustomValidity('...')</code> so native form submission stops the user with browser tooltips.</li>
+                    <li>Always display clear in-page visual error text in your own UI element, not just the temporary browser popup.</li>
+                    <li>Clear the custom error with <code>setCustomValidity('')</code> as soon as strings match.</li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script>
-        const pwInput = document.getElementById('demo-pw');
-        const cfmInput = document.getElementById('demo-cfm');
-        const statusBox = document.getElementById('status-box');
+        const pw = document.getElementById('input-pw');
+        const confirm = document.getElementById('input-cfm');
+        const pwErr = document.getElementById('err-pw');
+        const cfmErr = document.getElementById('err-cfm');
+        const matchBadge = document.getElementById('match-badge');
 
-        function verifyMatch() {
-            if (cfmInput.value && cfmInput.value !== pwInput.value) {
-                cfmInput.setCustomValidity('Passwords do not match.');
+        pw.addEventListener('input', () => {
+            if (pw.value.length > 0 && pw.value.length < 8) {
+                pwErr.textContent = `Password must be at least 8 characters (${pw.value.length}/8).`;
             } else {
-                cfmInput.setCustomValidity('');
+                pwErr.textContent = '';
             }
-            updateInspector();
+            if (confirm.value) checkConfirm();
+        });
+
+        function checkConfirm() {
+            if (!confirm.value) {
+                matchBadge.textContent = 'Awaiting Input';
+                matchBadge.className = 'match-status-badge badge-mismatch';
+                cfmErr.textContent = '';
+                confirm.setCustomValidity('');
+                return;
+            }
+
+            if (confirm.value !== pw.value) {
+                confirm.setCustomValidity('Passwords do not match.');
+                cfmErr.textContent = 'Passwords do not match.';
+                matchBadge.textContent = 'MISMATCH';
+                matchBadge.className = 'match-status-badge badge-mismatch';
+            } else {
+                confirm.setCustomValidity('');
+                cfmErr.textContent = '';
+                matchBadge.textContent = 'MATCHES ✓';
+                matchBadge.className = 'match-status-badge badge-match';
+            }
         }
 
-        function updateInspector() {
-            const v = cfmInput.validity;
-            const msg = cfmInput.validationMessage || '(empty string - valid)';
-            const colorCustom = v.customError ? '#f43f5e' : '#34d399';
-            const colorValid = v.valid ? '#34d399' : '#f43f5e';
+        confirm.addEventListener('input', checkConfirm);
 
-            statusBox.innerHTML = `› <strong>confirmInput.validationMessage:</strong> "${cfmInput.validationMessage}"<br>` +
-                                  `› <strong>validity.customError:</strong> <span style="color: ${colorCustom}; font-weight: bold;">${v.customError}</span><br>` +
-                                  `› <strong>validity.valid:</strong> <span style="color: ${colorValid}; font-weight: bold;">${v.valid}</span>`;
-        }
-
-        function handleFormSubmit(e) {
+        function handleDemoSubmit(e) {
             e.preventDefault();
-            alert('✓ Form successfully submitted! Both passwords match cleanly.');
+            if (pw.value.length < 8) {
+                alert('❌ Please enter a password with at least 8 characters.');
+                return;
+            }
+            if (confirm.value !== pw.value) {
+                alert('❌ Passwords do not match!');
+                return;
+            }
+            alert('✓ Success! Password confirmation validated.');
         }
-
-        updateInspector();
     </script>
 </body>
 </html>
