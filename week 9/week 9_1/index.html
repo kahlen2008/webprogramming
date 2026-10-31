@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Week 9 (Monday) — Web Accessibility &amp; Lighthouse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.35);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.25);
+            --purple: #a855f7;
+            --green: #10b981;
+            --amber: #fbbf24;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 22px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background-color: var(--bg-body);
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px 20px 80px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--blue);
+            background: rgba(59, 130, 246, 0.15);
+            transform: translateX(-2px);
+        }
+
+        .session-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+        }
+
+        header.header-title {
+            text-align: center;
+            max-width: 860px;
+            margin-bottom: 34px;
+        }
+
+        header.header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffffff 30%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header.header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.5;
+            text-wrap: pretty;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 960px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 30px 32px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .exercises-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            gap: 16px;
+        }
+
+        .exercise-item:hover {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.35);
+            transform: translateX(4px);
+        }
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .item-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: #60a5fa;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .topic-num {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: #c084fc;
+        }
+
+        .item-text {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .item-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .item-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            text-wrap: pretty;
+        }
+
+        .item-arrow {
+            color: var(--text-dim);
+            transition: transform 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .exercise-item:hover .item-arrow {
+            color: #60a5fa;
+            transform: translateX(3px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="../../index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Course Hub
+        </a>
+        <div class="session-badge">WEEK 9_1 · MONDAY</div>
+    </div>
+
+    <header class="header-title">
+        <h1>Web Accessibility &amp; Lighthouse</h1>
+        <p>Interactive exercises and core lecture topics covering semantic HTML, button accessibility, alt text guidelines, ARIA attributes, and keyboard navigation.</p>
+    </header>
+
+    <div class="main-container">
+
+        <!-- Content Grid: Lecture Topics (Left) & Practice Exercises (Right) -->
+        <div class="content-grid">
+
+            <!-- Lecture Topics (Left) -->
+            <div class="section-card">
+                <div class="section-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    Lecture Topics (Core Concepts &amp; Interactive Demos)
+                </div>
+
+                <ul class="exercises-list">
+                    <li>
+                        <a href="topic-1.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">01</span>
+                                <div class="item-text">
+                                    <span class="item-title">Semantic HTML</span>
+                                    <span class="item-desc">Meaning over visual appearance, landmark navigation, header/nav/main/footer, and heading hierarchy.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-2.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">02</span>
+                                <div class="item-text">
+                                    <span class="item-title">The &lt;button&gt; vs &lt;div&gt; Problem</span>
+                                    <span class="item-desc">Why div onclick breaks keyboard Tab/Enter/Space, ARIA roles, and native button benefits.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-3.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">03</span>
+                                <div class="item-text">
+                                    <span class="item-title">alt Text Deep Dive</span>
+                                    <span class="item-desc">Decision tree for decorative (alt=""), informational, linked logos, and complex charts with captions.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-4.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">04</span>
+                                <div class="item-text">
+                                    <span class="item-title">ARIA Attributes</span>
+                                    <span class="item-desc">First rule of ARIA, aria-label, aria-describedby, aria-hidden, aria-live, and role="alert".</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-5.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num topic-num">05</span>
+                                <div class="item-text">
+                                    <span class="item-title">Keyboard Navigation</span>
+                                    <span class="item-desc">WCAG 2.1.1 requirements, Tab/Enter/Space, :focus-visible outlines, tabindex, and skip links.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Practice Exercises (Right) -->
+            <div class="section-card">
+                <div class="section-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Practice Exercises
+                </div>
+
+                <ul class="exercises-list">
+                    <li>
+                        <a href="e1-div-button.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">E1</span>
+                                <div class="item-text">
+                                    <span class="item-title">Fix a div-button to a real &lt;button&gt;</span>
+                                    <span class="item-desc">Replace outer &lt;div class="btn"&gt; with &lt;button type="button"&gt;, add visible :focus-visible style, and test keyboard accessibility.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="e2-alt-text.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">E2</span>
+                                <div class="item-text">
+                                    <span class="item-title">Add Proper alt Text to Images</span>
+                                    <span class="item-desc">Configure alt descriptions across 4 scenarios: informative campus photo, decorative wave divider, linked logo, and data chart.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="e3-lighthouse-fixes.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">E3</span>
+                                <div class="item-text">
+                                    <span class="item-title">Run Lighthouse &amp; Fix 2 Issues</span>
+                                    <span class="item-desc">Resolve audit failures: add accessible name to icon button, pair input with explicit &lt;label&gt;, provide text marker for errors, and fix generic link alt text.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

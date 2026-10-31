@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>Topic 05: Keyboard Navigation — User Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-cyan: #38bdf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main) !important;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(52, 211, 153, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-cyan);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .nav-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #c084fc;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 5px 14px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 24px;
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .topic-title-group h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #ffffff 40%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 6px;
+            background: rgba(168, 85, 247, 0.12);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            font-weight: 600;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            align-items: stretch;
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 960px) {
+            .split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: var(--accent-cyan);
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: color 0.2s;
+        }
+
+        .copy-btn:hover {
+            color: var(--text-primary);
+        }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            padding: 18px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.55;
+            flex-grow: 1;
+        }
+
+        .token-tag { color: #f43f5e; }
+        .token-attr { color: #38bdf8; }
+        .token-val { color: #34d399; }
+        .token-comment { color: #64748b; font-style: italic; }
+
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .hud-status {
+            background: #090d16;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            color: var(--accent-cyan);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-test-zone {
+            background: #090d16;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 20px 18px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skip-link-demo {
+            position: absolute;
+            top: 10px;
+            left: 12px;
+            background: #2563eb;
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            z-index: 10;
+            transform: translateY(-200%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .skip-link-demo:focus {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            outline: 3px solid #38bdf8 !important;
+            outline-offset: 2px !important;
+        }
+
+        .demo-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .demo-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .demo-btn {
+            background: #1a7f5a;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+        }
+
+        /* Focus modes */
+        .focus-enabled :focus-visible {
+            outline: 3px solid #38bdf8 !important;
+            outline-offset: 3px !important;
+        }
+
+        .focus-disabled *:focus {
+            outline: none !important;
+        }
+
+        /* Essentials Cards */
+        .essentials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .essential-card {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .essential-title {
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .essential-body {
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        .key-points-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 22px 26px;
+            margin-top: 24px;
+        }
+
+        .key-points-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-points-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .key-points-list li {
+            position: relative;
+            padding-left: 24px;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+
+        .key-points-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-emerald);
+            font-weight: 800;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+
+        .btn-page {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-page:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(56, 189, 248, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="navbar">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back to Week 9_1
+            </a>
+            <span class="nav-badge">Topic 05 / 05</span>
+        </div>
+
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title-group">
+                    <h2>Keyboard Navigation</h2>
+                </div>
+                <span class="topic-rule-badge">WCAG 2.1.1 (Level A)</span>
+            </div>
+
+            <p class="topic-desc">
+                Many users cannot use a mouse — they navigate with keyboard devices alone. Your entire website must be fully usable with just <kbd style="background:#1e293b;padding:2px 6px;border-radius:4px;border:1px solid #334155;color:#f8fafc">Tab</kbd>, <kbd style="background:#1e293b;padding:2px 6px;border-radius:4px;border:1px solid #334155;color:#f8fafc">Shift+Tab</kbd>, <kbd style="background:#1e293b;padding:2px 6px;border-radius:4px;border:1px solid #334155;color:#f8fafc">Enter</kbd>, <kbd style="background:#1e293b;padding:2px 6px;border-radius:4px;border:1px solid #334155;color:#f8fafc">Space</kbd>, and arrow keys.
+            </p>
+
+            <div class="split-grid">
+                <!-- Left: Code Box -->
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label"><span class="code-lang-dot"></span> CSS &amp; HTML Patterns</span>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-box').querySelector('code').innerText); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy', 1500);">Copy</button>
+                    </div>
+                    <pre><code><span class="token-comment">/* ✅ :focus-visible — shows focus ring for keyboard, not mouse clicks */</span>
+<span class="token-tag">:focus-visible</span> {
+  <span class="token-attr">outline</span>: <span class="token-val">3px solid #1a7f5a</span>;
+  <span class="token-attr">outline-offset</span>: <span class="token-val">3px</span>;
+  <span class="token-attr">border-radius</span>: <span class="token-val">4px</span>;
+}
+
+<span class="token-comment">/* ❌ Never do this — removes focus for keyboard users! */</span>
+<span class="token-tag">*:focus</span> { <span class="token-attr">outline</span>: <span class="token-val">none</span>; }
+
+<span class="token-comment">&lt;!-- tabindex="0" — adds element to natural tab order --&gt;</span>
+<span class="token-tag">&lt;div</span> <span class="token-attr">role</span>=<span class="token-val">"button"</span> <span class="token-attr">tabindex</span>=<span class="token-val">"0"</span><span class="token-tag">&gt;</span>Custom widget<span class="token-tag">&lt;/div&gt;</span>
+
+<span class="token-comment">&lt;!-- Skip navigation link --&gt;</span>
+<span class="token-tag">&lt;a</span> <span class="token-attr">href</span>=<span class="token-val">"#main"</span> <span class="token-attr">class</span>=<span class="token-val">"skip-link"</span><span class="token-tag">&gt;</span>Skip to content<span class="token-tag">&lt;/a&gt;</span></code></pre>
+                </div>
+
+                <!-- Right: Interactive Canvas -->
+                <div class="interactive-box">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted)">Live Focus Laboratory</span>
+                        <button type="button" id="toggle-focus-style" class="demo-btn" style="background:#2563eb; font-size:0.75rem; padding:4px 10px;" onclick="toggleFocusRing()">
+                            Focus Ring: ON
+                        </button>
+                    </div>
+
+                    <div class="hud-status" id="key-hud">
+                        <span>Last Key: <strong>None</strong></span>
+                        <span id="active-elem">Active: &lt;body&gt;</span>
+                    </div>
+
+                    <div class="nav-test-zone focus-enabled" id="test-zone">
+                        <a href="#test-content" class="skip-link-demo">Skip to main content &darr;</a>
+
+                        <div style="display:flex; gap:10px;">
+                            <a href="#" style="color:var(--accent-cyan); font-size:0.85rem;">Header Link</a>
+                            <a href="#" style="color:var(--accent-cyan); font-size:0.85rem;">Nav Link</a>
+                        </div>
+
+                        <input type="text" placeholder="Tab stops here (input field)" class="demo-input">
+
+                        <div class="demo-actions" id="test-content">
+                            <button type="button" class="demo-btn" onclick="alert('Primary action activated!')">Submit Action</button>
+                            <a href="#" style="color:var(--text-secondary); font-size:0.85rem;">Cancel Link</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <a href="topic-4.html" class="btn-page">&larr; Topic 04: ARIA Attributes</a>
+                <a href="index.html" class="btn-page">Back to Overview &uarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let focusRingOn = true;
+
+        function toggleFocusRing() {
+            focusRingOn = !focusRingOn;
+            const zone = document.getElementById('test-zone');
+            const btn = document.getElementById('toggle-focus-style');
+            if (focusRingOn) {
+                zone.className = 'nav-test-zone focus-enabled';
+                btn.textContent = 'Focus Ring: ON';
+                btn.style.background = '#2563eb';
+            } else {
+                zone.className = 'nav-test-zone focus-disabled';
+                btn.textContent = 'Focus Ring: OFF (Broken)';
+                btn.style.background = '#dc2626';
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            const keyHud = document.getElementById('key-hud');
+            const activeElem = document.getElementById('active-elem');
+            keyHud.children[0].innerHTML = `Last Key: <strong>${e.key}</strong> ${e.shiftKey ? '(+Shift)' : ''}`;
+            setTimeout(() => {
+                const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : 'body';
+                activeElem.textContent = `Active: <${tag}>`;
+            }, 50);
+        });
+    </script>
+
+<!-- SOURCE CODE DISPLAY SCRIPT -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('source-code-display')) return;
+        const container = document.createElement('div');
+        container.id = 'source-code-display';
+        container.style.cssText = 'width: 100%; flex: 1 1 100%; order: 9999; margin-top: 60px; background: #0d1117; border-top: 1px solid #30363d; font-family: sans-serif; box-sizing: border-box; clear: both; box-shadow: 0 -4px 15px rgba(0,0,0,0.1);';
+        
+        const header = document.createElement('div');
+        header.style.cssText = 'background: #161b22; padding: 12px 20px; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 10px;';
+        header.innerHTML = '<div style="display:flex;gap:6px;margin-right:10px;"><div style="width:12px;height:12px;border-radius:50%;background:#ff5f56;"></div><div style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;"></div><div style="width:12px;height:12px;border-radius:50%;background:#27c93f;"></div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg><h3 style="margin:0; color:#c9d1d9; font-size:14px; font-weight:600; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif;">Source Code for this Output</h3><span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #ffffff; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: bold; margin-left: auto; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(99,102,241,0.3);">Lecturer View</span>';
+        
+        const pre = document.createElement('pre');
+        pre.style.cssText = 'overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; color: #e6edf3; margin: 0; padding: 20px; background: #0d1117; line-height: 1.6;';
+        
+        let htmlContent = document.documentElement.outerHTML;
+        htmlContent = htmlContent.replace(new RegExp('<!-- SOURCE CODE DISPLAY SCRIPT -->[\\s\\S]*?<\\/script>', 'i'), '');
+        htmlContent = htmlContent.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        
+        pre.innerHTML = '<code>' + htmlContent + '</code>';
+        
+        container.appendChild(header);
+        container.appendChild(pre);
+        document.body.appendChild(container);
+    });
+</script>
+</body>
+</html>
+

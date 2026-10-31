@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>E1: Fix div-button to a real button — Week 9</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.9);
+            --border: rgba(255, 255, 255, 0.09);
+            --border-hover: rgba(16, 185, 129, 0.4);
+            --green: #10b981;
+            --green-glow: rgba(16, 185, 129, 0.3);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 20% 15%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 45%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 60px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--green);
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 520px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 36px 32px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .card-subtitle {
+            color: var(--text-sub);
+            font-size: 0.88rem;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .instructions-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 24px;
+            font-size: 0.84rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .instructions-box ol {
+            padding-left: 18px;
+            margin-top: 6px;
+        }
+
+        .instructions-box li {
+            margin-bottom: 4px;
+        }
+
+        /* Original Exercise Styles with Focus Additions */
+        .btn {
+            display: inline-block;
+            background: #1a7f5a;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            transition: background 0.15s ease;
+        }
+
+        .btn:hover {
+            background: #156d4c;
+        }
+
+        /* Added :focus-visible rules */
+        .btn:focus-visible {
+            outline: 3px solid #38bdf8;
+            outline-offset: 3px;
+        }
+
+        .close-btn:focus-visible {
+            outline: 3px solid #f8fafc;
+            outline-offset: 3px;
+        }
+
+        .interactive-zone {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            margin-top: 10px;
+        }
+
+        #result {
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #34d399;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <a href="index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Week 9 Overview
+        </a>
+        <div class="badge">Exercise 1</div>
+    </div>
+
+    <div class="card">
+        <h2>Fix a div-button to a real &lt;button&gt;</h2>
+        <p class="card-subtitle">Ensure button elements are accessible via keyboard and screen readers.</p>
+
+        <div class="instructions-box">
+            <strong>Key Requirements:</strong>
+            <ol>
+                <li>Replaced <code>&lt;div class="btn"&gt;</code> with <code>&lt;button type="button" class="btn"&gt;</code></li>
+                <li>Added <code>:focus-visible</code> outline for keyboard tab navigation</li>
+                <li>Added <code>aria-label="Close"</code> to the ✕ icon button</li>
+            </ol>
+        </div>
+
+        <p style="font-size: 14px; color: var(--text-sub); margin-bottom: 12px;">Try pressing <kbd style="background:#1e293b;padding:2px 6px;border-radius:4px;border:1px solid #334155;color:#f8fafc">Tab</kbd> then <kbd style="background:#1e293b;padding:2px 6px;border-radius:4px;border:1px solid #334155;color:#f8fafc">Enter</kbd>:</p>
+
+        <div class="interactive-zone">
+            <!-- ✅ FIXED: changed div to button type="button" -->
+            <button type="button" class="btn" onclick="alert('Clicked!')">
+                Submit form
+            </button>
+
+            <!-- ✅ FIXED: added aria-label for accessibility -->
+            <button type="button" class="close-btn" aria-label="Close" style="
+                margin-left: 16px; background: #dc2626; color: white;
+                border: none; border-radius: 50%; width: 36px; height: 36px;
+                font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;"
+                onclick="alert('Closed')">
+                ✕
+            </button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Log when each button is activated (click or keyboard)
+        document.querySelectorAll('button, .btn').forEach(el => {
+            el.addEventListener('click', () => {
+                document.getElementById('result').textContent =
+                    '✅ Activated! (works by keyboard and mouse)';
+            });
+        });
+    </script>
+</body>
+</html>
