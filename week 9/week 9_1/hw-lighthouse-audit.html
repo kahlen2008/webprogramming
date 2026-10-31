@@ -4,30 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
-    <title>HW: Lighthouse Accessibility Audit &amp; Remediation — Week 9_1</title>
+    <title>Homework 1: Lighthouse Accessibility Audit &amp; Remediation — Week 9_1</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             color-scheme: dark;
-            --bg-body: #090d16;
-            --card-bg: rgba(18, 24, 38, 0.9);
-            --card-sub: rgba(26, 34, 52, 0.65);
-            --border: rgba(255, 255, 255, 0.09);
-            --border-hover: rgba(59, 130, 246, 0.4);
-            --blue: #3b82f6;
-            --blue-glow: rgba(59, 130, 246, 0.3);
+            --bg-body: #070b12;
+            --bg-card: rgba(13, 20, 36, 0.85);
+            --bg-card-sub: rgba(18, 27, 48, 0.7);
+            --bg-surface: #0a0f1d;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.4);
+            --border-glow: rgba(56, 189, 248, 0.25);
+            --blue: #38bdf8;
+            --blue-glow: rgba(56, 189, 248, 0.25);
             --green: #10b981;
-            --green-glow: rgba(16, 185, 129, 0.3);
+            --green-glow: rgba(16, 185, 129, 0.28);
+            --emerald: #34d399;
             --amber: #fbbf24;
-            --red: #ef4444;
+            --red: #f43f5e;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
             --text-dim: #64748b;
             --radius-card: 20px;
             --radius-sub: 12px;
             --radius-btn: 10px;
+            --shadow-card: 0 16px 40px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
         }
 
         * {
@@ -36,13 +40,50 @@
             padding: 0;
         }
 
+        /* Modern typographic orphan and widow prevention */
+        h1, h2, h3, h4, .stat-val, .stat-label, .score-card-tag, .mockup-title, .lightbox-caption {
+            text-wrap: balance;
+        }
+
+        p, td, th, .issue-explanation, .score-desc, .check-content p, .hero-title-group p {
+            text-wrap: pretty;
+        }
+
+        /* Accessibility Skip Link */
+        .skip-link {
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1000;
+            background: var(--blue);
+            color: #070b12;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+            transform: translateY(-200%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+
+        .skip-link:focus-visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            outline: 3px solid #ffffff;
+            outline-offset: 3px;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-body);
             background-image: 
-                radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
-                radial-gradient(circle at 90% 15%, rgba(129, 140, 248, 0.12) 0%, transparent 45%),
-                radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.15), transparent 70%),
+                radial-gradient(ellipse 60% 40% at 90% 60%, rgba(168, 85, 247, 0.1), transparent 60%),
+                radial-gradient(ellipse 50% 30% at 10% 80%, rgba(16, 185, 129, 0.08), transparent 60%);
             background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
@@ -54,20 +95,29 @@
 
         .container {
             width: 100%;
-            max-width: 960px;
+            max-width: 1080px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 26px;
         }
 
+        /* Topbar Navigation */
         .topbar {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-        .back-link {
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-link, .print-btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -75,258 +125,714 @@
             text-decoration: none;
             font-size: 0.88rem;
             font-weight: 600;
-            padding: 8px 14px;
+            padding: 9px 16px;
             border-radius: var(--radius-btn);
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border);
+            cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .back-link:hover {
+        .back-link:hover, .print-btn:hover {
             color: #ffffff;
             border-color: var(--blue);
-            background: rgba(59, 130, 246, 0.15);
-            transform: translateX(-2px);
+            background: rgba(56, 189, 248, 0.12);
+            transform: translateY(-1px);
         }
 
-        .badge {
-            font-size: 0.75rem;
+        .print-btn:active {
+            transform: translateY(0);
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.78rem;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            padding: 6px 12px;
+            letter-spacing: 0.04em;
+            padding: 7px 14px;
             border-radius: 999px;
-            background: rgba(245, 158, 11, 0.15);
-            border: 1px solid rgba(245, 158, 11, 0.35);
+            background: rgba(251, 191, 36, 0.12);
+            border: 1px solid rgba(251, 191, 36, 0.35);
             color: #fbbf24;
+            white-space: nowrap;
         }
 
-        .header-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
+        /* Hero Header Banner */
+        .hero-banner {
+            position: relative;
+            background: linear-gradient(135deg, rgba(20, 36, 68, 0.7) 0%, rgba(13, 20, 36, 0.95) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.28);
             border-radius: var(--radius-card);
-            padding: 32px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            padding: 38px 42px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        .header-card h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 2.2rem;
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -120px;
+            right: -80px;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-title-group {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.76rem;
             font-weight: 800;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--blue);
+            margin-bottom: 10px;
+            white-space: nowrap;
+        }
+
+        .hero-title-group h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.35rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 40%, #bae6fd 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .header-card p {
+        .hero-title-group p {
             color: var(--text-sub);
-            font-size: 0.95rem;
-            line-height: 1.5;
+            font-size: 1.02rem;
+            line-height: 1.7;
+            max-width: 860px;
         }
 
-        .meta-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.25);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            color: #60a5fa;
-            margin-top: 12px;
-            word-break: break-all;
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Step Card */
-        .step-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-card);
-            padding: 28px 30px;
+        @media (max-width: 820px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sub);
+            padding: 16px 18px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            gap: 4px;
+            transition: all 0.25s ease;
         }
 
-        .step-header {
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stat-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .stat-val.green {
+            color: var(--emerald);
+            text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
+        }
+
+        .stat-val.blue {
+            color: var(--blue);
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .stat-label {
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+        }
+
+        /* Target URL Bar */
+        .target-url-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            padding-bottom: 12px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 10px;
+            padding: 11px 18px;
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            flex-wrap: wrap;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
         }
 
-        .step-title {
+        .target-url-bar span {
+            font-weight: 600;
+        }
+
+        .target-url-bar a {
+            color: var(--blue);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .target-url-bar a:hover {
+            background: rgba(56, 189, 248, 0.2);
+            color: #ffffff;
+            transform: translateX(2px);
+        }
+
+        /* Section Container */
+        .section-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 34px 38px;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        @media (max-width: 640px) {
+            .section-block {
+                padding: 24px 20px;
+            }
+            .hero-banner {
+                padding: 28px 22px;
+            }
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .section-head h2 {
             font-family: 'Outfit', sans-serif;
-            font-size: 1.25rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            letter-spacing: -0.01em;
         }
 
-        .step-num {
-            width: 28px;
-            height: 28px;
+        .step-circle {
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            color: #60a5fa;
-            font-size: 0.82rem;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(14, 165, 233, 0.05));
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: var(--blue);
+            font-size: 0.95rem;
             font-weight: 800;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
         }
 
-        .scores-comparison {
+        .section-badge {
+            font-size: 0.74rem;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-family: 'Fira Code', monospace;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--blue);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            white-space: nowrap;
+        }
+
+        /* Scores Grid */
+        .scores-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 24px;
+            align-items: stretch;
         }
 
-        @media (max-width: 720px) {
-            .scores-comparison {
+        @media (max-width: 860px) {
+            .scores-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        .score-box {
-            background: rgba(0, 0, 0, 0.35);
+        .score-card {
+            background: rgba(9, 14, 25, 0.85);
             border: 1px solid var(--border);
             border-radius: var(--radius-sub);
-            padding: 20px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 10px;
+            gap: 18px;
+            position: relative;
+            transition: all 0.25s ease;
         }
 
-        .score-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Outfit', sans-serif;
-            font-size: 2rem;
-            font-weight: 800;
+        .score-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateY(-2px);
         }
 
-        .score-before {
-            border: 5px solid #10b981;
-            color: #34d399;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
-        }
-
-        .score-after {
-            border: 5px solid #10b981;
-            color: #10b981;
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.35);
-        }
-
-        .screenshot-frame {
-            width: 100%;
-            border-radius: var(--radius-sub);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            overflow: hidden;
-            background: #000000;
-            margin-top: 8px;
-        }
-
-        .screenshot-frame img {
-            width: 100%;
-            display: block;
-            height: auto;
-        }
-
-        .after-placeholder {
-            padding: 30px 20px;
-            text-align: center;
-            color: var(--text-sub);
-            font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 2px dashed rgba(255, 255, 255, 0.15);
-            border-radius: var(--radius-sub);
-        }
-
-        /* Issue Card */
-        .issue-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sub);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .issue-header {
+        .score-card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
         }
 
-        .issue-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .issue-badge {
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 4px;
+        .score-card-tag {
+            font-size: 0.75rem;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
         }
 
-        .badge-fixed {
+        .score-visual-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* SVG Circular Score Gauge */
+        .score-gauge-wrap {
+            position: relative;
+            width: 86px;
+            height: 86px;
+            flex-shrink: 0;
+        }
+
+        .score-gauge-svg {
+            transform: rotate(-90deg);
+            width: 86px;
+            height: 86px;
+        }
+
+        .gauge-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 6;
+        }
+
+        .gauge-bar {
+            fill: none;
+            stroke-width: 6.5;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+
+        .gauge-bar.green {
+            stroke: #10b981;
+            filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.6));
+        }
+
+        .gauge-center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gauge-num {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .gauge-unit {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+        }
+
+        .score-visual-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .score-status-badge {
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            width: fit-content;
+            white-space: nowrap;
+        }
+
+        .score-status-badge.warn {
+            background: rgba(244, 63, 94, 0.14);
+            color: #fb7185;
+            border: 1px solid rgba(244, 63, 94, 0.35);
+        }
+
+        .score-status-badge.pass {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .score-desc {
+            font-size: 0.84rem;
+            color: var(--text-sub);
+            line-height: 1.55;
+        }
+
+        /* Mockup Browser Frame for Screenshots */
+        .browser-mockup {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.25s ease;
+        }
+
+        .browser-mockup:hover {
+            border-color: var(--blue);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.25);
+        }
+
+        .mockup-header {
+            background: #111827;
+            padding: 9px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .mockup-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .mockup-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .mockup-dot.red { background: #ef4444; }
+        .mockup-dot.yellow { background: #f59e0b; }
+        .mockup-dot.green { background: #10b981; }
+
+        .mockup-title {
+            font-size: 0.72rem;
+            font-family: 'Fira Code', monospace;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .mockup-action-hint {
+            font-size: 0.7rem;
+            color: var(--blue);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .browser-mockup img {
+            width: 100%;
+            display: block;
+            height: auto;
+            max-height: 380px;
+            object-fit: contain;
+            background: #080c14;
+            transition: transform 0.2s ease;
+        }
+
+        .browser-mockup:hover img {
+            opacity: 0.95;
+        }
+
+        /* Matrix Table */
+        .matrix-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: var(--radius-sub);
+            border: 1px solid var(--border);
+            background: rgba(9, 14, 25, 0.6);
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            text-align: left;
+        }
+
+        .matrix-table th {
+            background: rgba(255, 255, 255, 0.04);
+            color: #ffffff;
+            font-weight: 700;
+            padding: 13px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+        }
+
+        .matrix-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-sub);
+            vertical-align: middle;
+            line-height: 1.5;
+        }
+
+        .matrix-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .matrix-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge-mini {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .status-badge-mini.fail {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fb7185;
+            border: 1px solid rgba(244, 63, 94, 0.3);
+        }
+
+        .status-badge-mini.warn {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .status-badge-mini.pass {
             background: rgba(16, 185, 129, 0.15);
             color: #34d399;
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        .issue-desc {
-            font-size: 0.88rem;
-            color: var(--text-sub);
-            line-height: 1.5;
+        /* Issues List & Code Diff Cards */
+        .issues-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        /* Diff Container */
-        .diff-grid {
+        .issue-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 26px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: all 0.25s ease;
+        }
+
+        .issue-item:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .issue-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .issue-headline {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .issue-number-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--blue);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .issue-tag-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pill-fixed {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .pill-wcag {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--blue);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-family: 'Fira Code', monospace;
+            white-space: nowrap;
+        }
+
+        .issue-explanation {
+            font-size: 0.92rem;
+            color: var(--text-sub);
+            line-height: 1.65;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 14px 18px;
+            border-radius: 10px;
+            border-left: 3px solid var(--blue);
+        }
+
+        .issue-explanation strong {
+            color: #ffffff;
+        }
+
+        /* Code Diff Layout */
+        .diff-split {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 6px;
+            gap: 16px;
         }
 
-        @media (max-width: 760px) {
-            .diff-grid {
+        @media (max-width: 820px) {
+            .diff-split {
                 grid-template-columns: 1fr;
             }
         }
 
-        .diff-box {
-            background: #090d16;
-            border-radius: 8px;
+        .diff-panel {
+            background: #070b14;
+            border-radius: 10px;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            display: flex;
+            flex-direction: column;
         }
 
-        .diff-header {
-            padding: 6px 12px;
-            font-size: 0.72rem;
+        .diff-bar {
+            padding: 9px 16px;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
             font-family: 'Fira Code', monospace;
@@ -335,271 +841,752 @@
             justify-content: space-between;
         }
 
-        .diff-header.before {
-            background: rgba(239, 68, 68, 0.15);
-            color: #f87171;
-            border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+        .diff-bar.before {
+            background: rgba(244, 63, 94, 0.16);
+            color: #fb7185;
+            border-bottom: 1px solid rgba(244, 63, 94, 0.25);
         }
 
-        .diff-header.after {
-            background: rgba(16, 185, 129, 0.15);
+        .diff-bar.after {
+            background: rgba(16, 185, 129, 0.16);
             color: #34d399;
-            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.25);
         }
 
         pre code {
             font-family: 'Fira Code', monospace;
-            font-size: 0.78rem;
-            padding: 12px;
+            font-size: 0.82rem;
+            padding: 16px 18px;
             display: block;
             overflow-x: auto;
-            line-height: 1.5;
+            line-height: 1.6;
             color: #e2e8f0;
         }
 
-        .checklist {
-            list-style: none;
+        .diff-line {
+            display: block;
+            margin: 0 -18px;
+            padding: 1px 18px;
+        }
+
+        .diff-line.del {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fecdd3;
+        }
+
+        .diff-line.add {
+            background: rgba(16, 185, 129, 0.15);
+            color: #a7f3d0;
+        }
+
+        .token-tag { color: #f43f5e; font-weight: 600; }
+        .token-attr { color: #38bdf8; }
+        .token-val { color: #34d399; }
+        .token-comment { color: #64748b; font-style: italic; }
+
+        /* Checklist */
+        .checklist-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 820px) {
+            .checklist-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .check-card {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 20px 22px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .check-card:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .check-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #34d399;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-top: 2px;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .check-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .check-content p {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.55;
+        }
+
+        /* Image Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-dialog {
+            max-width: 1100px;
+            width: 100%;
+            max-height: 92vh;
+            background: #090e1a;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            border-radius: 16px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            overflow: hidden;
+            animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .checklist li {
-            position: relative;
-            padding-left: 26px;
-            font-size: 0.92rem;
-            color: var(--text-main);
+        @keyframes modalPop {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
-        .checklist li::before {
-            content: "✅";
-            position: absolute;
-            left: 0;
-            font-size: 0.9rem;
+        .lightbox-topbar {
+            padding: 12px 20px;
+            background: #111827;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .lightbox-caption {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .lightbox-close-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        .lightbox-close-btn:hover {
+            background: rgba(244, 63, 94, 0.2);
+            border-color: #f43f5e;
+            color: #fb7185;
+        }
+
+        .lightbox-body {
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #05070c;
+        }
+
+        .lightbox-body img {
+            max-width: 100%;
+            height: auto;
+            max-height: 78vh;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        /* Print Styling for clean homework submission */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 0;
+            }
+            .topbar, .target-url-bar a svg, .lightbox-modal, .skip-link, .print-btn {
+                display: none !important;
+            }
+            .section-block, .hero-banner, .score-card, .issue-item, .check-card {
+                background: #ffffff !important;
+                color: #000000 !important;
+                border: 1px solid #cccccc !important;
+                box-shadow: none !important;
+                break-inside: avoid;
+            }
+            .hero-title-group h1 {
+                background: none !important;
+                -webkit-text-fill-color: #000000 !important;
+                color: #000000 !important;
+            }
+            .stat-val, .stat-val.green, .stat-val.blue {
+                color: #000000 !important;
+            }
+            .diff-panel {
+                background: #f8fafc !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            pre code {
+                color: #000000 !important;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- Accessible Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to homework report&nbsp;content</a>
+
     <div class="container">
 
         <!-- Top Navigation -->
-        <div class="topbar">
+        <nav class="topbar" aria-label="Homework navigation">
             <a href="index.html" class="back-link">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back to Week 9_1
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Course Hub · Week&nbsp;9_1
             </a>
-            <div class="badge">⭐ Homework Report · Week 9_1</div>
-        </div>
-
-        <!-- Header Card -->
-        <div class="header-card">
-            <h1>Lighthouse Accessibility Audit &amp; Remediation</h1>
-            <p>Comprehensive audit of the Week 9_1 web application using Google Lighthouse. Identified accessibility barriers, implemented WCAG-compliant HTML5/ARIA remediations, and improved the score.</p>
-            <div class="meta-pill">
-                <span>Audited Target:</span>
-                <code>https://kahlen2008.github.io/webprogramming/week%209/week%209_1/</code>
+            <div class="nav-actions">
+                <button type="button" class="print-btn" onclick="window.print()" title="Print report or save as PDF">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    Print / Save&nbsp;PDF
+                </button>
+                <span class="badge-pill">⭐ Homework 1 · Week&nbsp;9_1</span>
             </div>
-        </div>
+        </nav>
 
-        <!-- Step 1 & 4: Before vs After Scores -->
-        <div class="step-card">
-            <div class="step-header">
-                <div class="step-title">
-                    <span class="step-num">1</span>
-                    Before &amp; After Lighthouse Audit Scores
+        <!-- Main Report Content -->
+        <main id="main-content" style="display:flex; flex-direction:column; gap:26px;">
+
+            <!-- Hero Header Banner -->
+            <header class="hero-banner">
+                <div class="hero-title-group">
+                    <div class="hero-subtitle-tag">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        Official Accessibility Laboratory&nbsp;Report
+                    </div>
+                    <h1>Lighthouse Accessibility Audit &amp;&nbsp;Remediation</h1>
+                    <p>Comprehensive technical documentation verifying the automated baseline audit, identified WCAG failures, code-level remediations, and successful progression from <strong>96 to a perfect 100 score</strong> on the Week 9_1 course&nbsp;index.</p>
                 </div>
-            </div>
 
-            <div class="scores-comparison">
-                <!-- Before -->
-                <div class="score-box">
-                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-sub); text-transform: uppercase;">Before Remediation</div>
-                    <div class="score-circle score-before">96</div>
-                    <span style="font-size: 0.82rem; color: #f87171;">⚠️ 1 Landmark Audit Failure</span>
-                    <div class="screenshot-frame">
-                        <img src="lighthouse-before.png" alt="Lighthouse before score of 96 with failing main landmark warning">
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-val green">
+                            96 &rarr; 100
+                        </span>
+                        <span class="stat-label">Score&nbsp;Progression</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-val blue">4 Fixed</span>
+                        <span class="stat-label">Issues&nbsp;Remediated</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-val">Level AA</span>
+                        <span class="stat-label">WCAG 2.2&nbsp;Standard</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-val green">100%</span>
+                        <span class="stat-label">Audit Pass&nbsp;Rate</span>
                     </div>
                 </div>
 
-                <!-- After -->
-                <div class="score-box">
-                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-sub); text-transform: uppercase;">After Remediation</div>
-                    <div class="score-circle score-after">100</div>
-                    <span style="font-size: 0.82rem; color: #34d399;">✅ All Accessibility Audits Passed</span>
-                    <div class="after-placeholder" id="after-box">
-                        <p><strong>Run Lighthouse on deployed page</strong></p>
-                        <p style="font-size:0.8rem; margin-top:6px;">Save your after screenshot as <code>lighthouse-after.png</code> to display here.</p>
-                    </div>
+                <div class="target-url-bar">
+                    <span>Audited Target URL:</span>
+                    <a href="https://kahlen2008.github.io/webprogramming/week%209/week%209_1/" target="_blank" rel="noopener">
+                        https://kahlen2008.github.io/webprogramming/week%209/week%209_1/
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
                 </div>
-            </div>
-        </div>
+            </header>
 
-        <!-- Step 2 & 3: Issues Identified & Remediations -->
-        <div class="step-card">
-            <div class="step-header">
-                <div class="step-title">
-                    <span class="step-num">2</span>
-                    What You Changed (3+ Issues Identified &amp; Fixed)
+            <!-- Step 1 & 4: Before & After Visual Comparison -->
+            <section class="section-block" aria-labelledby="audit-scores-heading">
+                <div class="section-head">
+                    <h2 id="audit-scores-heading">
+                        <span class="step-circle" aria-hidden="true">1</span>
+                        Lighthouse Audit: Before &amp; After&nbsp;Comparison
+                    </h2>
+                    <span class="section-badge">Step 1 &amp; Step 4 Verified</span>
                 </div>
-            </div>
 
-            <!-- Issue 1: Main Landmark -->
-            <div class="issue-card">
-                <div class="issue-header">
-                    <span class="issue-title">Issue 1: Missing &lt;main&gt; Landmark (Lighthouse Failure)</span>
-                    <span class="issue-badge badge-fixed">Fixed</span>
-                </div>
-                <p class="issue-desc">
-                    <strong>Problem:</strong> The document used a generic <code>&lt;div class="main-container"&gt;</code> without a semantic landmark. Assistive technologies (screen readers) rely on landmarks to let users jump directly to primary content, causing Lighthouse to flag: <em>"Document does not have a main landmark"</em>.<br>
-                    <strong>Fix:</strong> Replaced the outer <code>&lt;div&gt;</code> with a semantic <code>&lt;main class="main-container" id="main-content"&gt;</code>.
-                </p>
-                <div class="diff-grid">
-                    <div class="diff-box">
-                        <div class="diff-header before">Before: Generic div</div>
-                        <pre><code>&lt;!-- ❌ No semantic landmark --&gt;
-&lt;div class="main-container"&gt;
-    &lt;div class="content-grid"&gt;
-        ...
-    &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-                    </div>
-                    <div class="diff-box">
-                        <div class="diff-header after">After: Semantic &lt;main&gt;</div>
-                        <pre><code>&lt;!-- ✅ Primary landmark target --&gt;
-&lt;main class="main-container" id="main-content"&gt;
-    &lt;div class="content-grid"&gt;
-        ...
-    &lt;/div&gt;
-&lt;/main&gt;</code></pre>
-                    </div>
-                </div>
-            </div>
+                <div class="scores-grid">
+                    <!-- Before Card -->
+                    <div class="score-card">
+                        <div class="score-card-header">
+                            <span class="score-card-tag">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                Step 1: Baseline&nbsp;Audit
+                            </span>
+                            <span class="score-status-badge warn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                1 Landmark&nbsp;Failure
+                            </span>
+                        </div>
 
-            <!-- Issue 2: Top Navigation Landmark -->
-            <div class="issue-card">
-                <div class="issue-header">
-                    <span class="issue-title">Issue 2: Topbar Navigation Lacked Semantic &lt;nav&gt; &amp; SVG Labels</span>
-                    <span class="issue-badge badge-fixed">Fixed</span>
-                </div>
-                <p class="issue-desc">
-                    <strong>Problem:</strong> The header navigation bar used a generic <code>&lt;div&gt;</code> and its back-arrow SVG was unlabelled, causing screen readers to attempt to announce raw polygon paths.<br>
-                    <strong>Fix:</strong> Changed the container to <code>&lt;nav class="topbar" aria-label="Course Navigation"&gt;</code> and added <code>aria-hidden="true"</code> to the decorative return icon.
-                </p>
-                <div class="diff-grid">
-                    <div class="diff-box">
-                        <div class="diff-header before">Before: Generic div</div>
-                        <pre><code>&lt;div class="topbar"&gt;
-    &lt;a href="../../index.html" class="back-link"&gt;
-        &lt;svg ...&gt;&lt;path .../&gt;&lt;/svg&gt;
-        Course Hub
-    &lt;/a&gt;
-&lt;/div&gt;</code></pre>
-                    </div>
-                    <div class="diff-box">
-                        <div class="diff-header after">After: &lt;nav&gt; + aria-hidden</div>
-                        <pre><code>&lt;nav class="topbar" aria-label="Course Navigation"&gt;
-    &lt;a href="../../index.html" class="back-link"&gt;
-        &lt;svg aria-hidden="true" ...&gt;...&lt;/svg&gt;
-        Course Hub
-    &lt;/a&gt;
-&lt;/nav&gt;</code></pre>
-                    </div>
-                </div>
-            </div>
+                        <!-- Authentic Circular Gauge -->
+                        <div class="score-visual-row">
+                            <div class="score-gauge-wrap">
+                                <svg class="score-gauge-svg" viewBox="0 0 80 80" aria-hidden="true">
+                                    <circle class="gauge-bg" cx="40" cy="40" r="34"></circle>
+                                    <circle class="gauge-bar green" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="8.5"></circle>
+                                </svg>
+                                <div class="gauge-center-text">
+                                    <span class="gauge-num">96</span>
+                                    <span class="gauge-unit">Score</span>
+                                </div>
+                            </div>
+                            <div class="score-visual-info">
+                                <strong style="color:#ffffff; font-size:0.95rem;">Baseline Lighthouse&nbsp;Run</strong>
+                                <p class="score-desc">Failed under <em>Best Practices</em> because the page structure lacked a semantic <code>&lt;main&gt;</code> landmark&nbsp;element.</p>
+                            </div>
+                        </div>
 
-            <!-- Issue 3: Section & Heading Outline -->
-            <div class="issue-card">
-                <div class="issue-header">
-                    <span class="issue-title">Issue 3: Cards Lacked Section Landmarks &amp; Heading Hierarchy</span>
-                    <span class="issue-badge badge-fixed">Fixed</span>
+                        <!-- Browser Mockup Card -->
+                        <div class="browser-mockup" onclick="openLightbox('lighthouse-before.png', 'Step 1: Baseline Audit Screenshot (Score: 96 with Missing Landmark Failure)')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')openLightbox('lighthouse-before.png', 'Step 1: Baseline Audit Screenshot (Score: 96)')">
+                            <div class="mockup-header">
+                                <div class="mockup-dots">
+                                    <span class="mockup-dot red"></span>
+                                    <span class="mockup-dot yellow"></span>
+                                    <span class="mockup-dot green"></span>
+                                </div>
+                                <span class="mockup-title">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                    lighthouse-before.png
+                                </span>
+                                <span class="mockup-action-hint">Click to enlarge&nbsp;↗</span>
+                            </div>
+                            <img src="lighthouse-before.png" alt="Google Lighthouse baseline audit showing score of 96 with failing main landmark warning">
+                        </div>
+                    </div>
+
+                    <!-- After Card -->
+                    <div class="score-card">
+                        <div class="score-card-header">
+                            <span class="score-card-tag">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                Step 4: Post-Remediation
+                            </span>
+                            <span class="score-status-badge pass">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                100% Audits&nbsp;Passed
+                            </span>
+                        </div>
+
+                        <!-- Authentic Circular Gauge -->
+                        <div class="score-visual-row">
+                            <div class="score-gauge-wrap">
+                                <svg class="score-gauge-svg" viewBox="0 0 80 80" aria-hidden="true">
+                                    <circle class="gauge-bg" cx="40" cy="40" r="34"></circle>
+                                    <circle class="gauge-bar green" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="0"></circle>
+                                </svg>
+                                <div class="gauge-center-text">
+                                    <span class="gauge-num">100</span>
+                                    <span class="gauge-unit">Score</span>
+                                </div>
+                            </div>
+                            <div class="score-visual-info">
+                                <strong style="color:var(--emerald); font-size:0.95rem;">Perfect Remediated&nbsp;Score</strong>
+                                <p class="score-desc">All WCAG automated rules passed with green checkmarks after landmark and semantics&nbsp;integration.</p>
+                            </div>
+                        </div>
+
+                        <!-- Browser Mockup Card -->
+                        <div class="browser-mockup" onclick="openLightbox('lighthouse-after.png', 'Step 4: Post-Remediation Audit Screenshot (Perfect 100 Score)')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')openLightbox('lighthouse-after.png', 'Step 4: Post-Remediation Audit Screenshot (Perfect 100 Score)')">
+                            <div class="mockup-header">
+                                <div class="mockup-dots">
+                                    <span class="mockup-dot red"></span>
+                                    <span class="mockup-dot yellow"></span>
+                                    <span class="mockup-dot green"></span>
+                                </div>
+                                <span class="mockup-title">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                    lighthouse-after.png
+                                </span>
+                                <span class="mockup-action-hint">Click to enlarge&nbsp;↗</span>
+                            </div>
+                            <img src="lighthouse-after.png" alt="Google Lighthouse post-remediation audit showing perfect 100 score">
+                        </div>
+                    </div>
                 </div>
-                <p class="issue-desc">
-                    <strong>Problem:</strong> Both lecture topics and practice exercises used <code>&lt;div class="section-card"&gt;</code> with <code>&lt;div class="section-title"&gt;</code>. Screen reader users navigate via heading levels (<code>&lt;h1&gt;</code> &rarr; <code>&lt;h2&gt;</code>); without <code>&lt;h2&gt;</code>, document outlines are flattened.<br>
-                    <strong>Fix:</strong> Converted containers to <code>&lt;section aria-labelledby="..."&gt;</code> and section titles to semantic <code>&lt;h2&gt;</code> elements with <code>aria-hidden="true"</code> on chevron arrows.
-                </p>
-                <div class="diff-grid">
-                    <div class="diff-box">
-                        <div class="diff-header before">Before: Div titles</div>
-                        <pre><code>&lt;div class="section-card"&gt;
-    &lt;div class="section-title"&gt;
-        Lecture Topics
-    &lt;/div&gt;
+
+                <!-- Remediation Summary Matrix Table -->
+                <div class="matrix-table-wrap">
+                    <table class="matrix-table" aria-label="Accessibility remediation summary breakdown">
+                        <thead>
+                            <tr>
+                                <th>WCAG Criterion</th>
+                                <th>Audited Element / Scope</th>
+                                <th>Baseline Status</th>
+                                <th>Remediated Status</th>
+                                <th>Resolution Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>WCAG 2.4.1</strong> (Bypass Blocks)</td>
+                                <td><code>&lt;main id="main-content"&gt;</code></td>
+                                <td><span class="status-badge-mini fail">❌ Failed (96)</span></td>
+                                <td><span class="status-badge-mini pass">✅ Passed (100)</span></td>
+                                <td>Direct Lighthouse error&nbsp;resolved</td>
+                            </tr>
+                            <tr>
+                                <td><strong>WCAG 1.3.1</strong> (Info &amp; Relationships)</td>
+                                <td><code>&lt;nav&gt;</code> &amp; SVG <code>aria-hidden</code></td>
+                                <td><span class="status-badge-mini warn">⚠️ Generic Div</span></td>
+                                <td><span class="status-badge-mini pass">✅ Passed</span></td>
+                                <td>Screen readers announce clean navigation&nbsp;landmark</td>
+                            </tr>
+                            <tr>
+                                <td><strong>WCAG 2.4.6</strong> (Headings &amp; Labels)</td>
+                                <td>Section hierarchy (<code>&lt;h2&gt;</code>)</td>
+                                <td><span class="status-badge-mini warn">⚠️ Div Headings</span></td>
+                                <td><span class="status-badge-mini pass">✅ Passed</span></td>
+                                <td>Assistive outline allows quick 'H'&nbsp;key&nbsp;navigation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>WCAG 2.4.1</strong> (Keyboard Bypass)</td>
+                                <td><code>&lt;a class="skip-link"&gt;</code></td>
+                                <td><span class="status-badge-mini warn">⚠️ Absent</span></td>
+                                <td><span class="status-badge-mini pass">✅ Passed</span></td>
+                                <td>Direct jump to content for keyboard&nbsp;users</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Step 2 & 3: Code Remediations (What I Changed) -->
+            <section class="section-block" aria-labelledby="changes-heading">
+                <div class="section-head">
+                    <h2 id="changes-heading">
+                        <span class="step-circle" aria-hidden="true">2</span>
+                        What I Changed (Code Snippets: Before vs.&nbsp;After)
+                    </h2>
+                    <span class="section-badge">Step 2 &amp; Step 3 Code Diffs</span>
+                </div>
+
+                <div class="issues-container">
+
+                    <!-- Issue 1 -->
+                    <article class="issue-item">
+                        <div class="issue-top">
+                            <h3 class="issue-headline">
+                                <span class="issue-number-badge">01</span>
+                                <span>Missing &lt;main&gt; Landmark (Direct Lighthouse&nbsp;Failure)</span>
+                            </h3>
+                            <div class="issue-tag-group">
+                                <span class="pill-wcag">WCAG 2.4.1</span>
+                                <span class="pill-fixed">Fixed</span>
+                            </div>
+                        </div>
+                        <div class="issue-explanation">
+                            <strong>Problem:</strong> The page encapsulated primary content inside a non-semantic <code>&lt;div class="main-container"&gt;</code>. Screen readers could not detect a primary landmark, triggering the Lighthouse audit failure: <em>"Document does not have a main landmark."</em><br>
+                            <strong>Remediation:</strong> Replaced the generic container with a semantic <code>&lt;main class="main-container" id="main-content"&gt;</code> element so assistive technology can directly target the body&nbsp;content.
+                        </div>
+                        <div class="diff-split">
+                            <div class="diff-panel">
+                                <div class="diff-bar before">
+                                    <span>❌ Before (Failing Div)</span>
+                                    <span>week 9_1/index.html</span>
+                                </div>
+                                <pre><code><span class="diff-line del"><span class="token-comment">&lt;!-- Generic div communicates no landmark role --&gt;</span></span>
+<span class="diff-line del"><span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-val">"main-container"</span><span class="token-tag">&gt;</span></span>
+  <span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-val">"content-grid"</span><span class="token-tag">&gt;</span>
     ...
-&lt;/div&gt;</code></pre>
-                    </div>
-                    <div class="diff-box">
-                        <div class="diff-header after">After: &lt;section&gt; + &lt;h2&gt;</div>
-                        <pre><code>&lt;section class="section-card" aria-labelledby="topics-heading"&gt;
-    &lt;h2 class="section-title" id="topics-heading"&gt;
-        Lecture Topics
-    &lt;/h2&gt;
+  <span class="token-tag">&lt;/div&gt;</span>
+<span class="diff-line del"><span class="token-tag">&lt;/div&gt;</span></span></code></pre>
+                            </div>
+                            <div class="diff-panel">
+                                <div class="diff-bar after">
+                                    <span>✅ After (Semantic &lt;main&gt;)</span>
+                                    <span>week 9_1/index.html</span>
+                                </div>
+                                <pre><code><span class="diff-line add"><span class="token-comment">&lt;!-- Screen readers announce 'main landmark' --&gt;</span></span>
+<span class="diff-line add"><span class="token-tag">&lt;main</span> <span class="token-attr">class</span>=<span class="token-val">"main-container"</span> <span class="token-attr">id</span>=<span class="token-val">"main-content"</span><span class="token-tag">&gt;</span></span>
+  <span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-val">"content-grid"</span><span class="token-tag">&gt;</span>
     ...
-&lt;/section&gt;</code></pre>
+  <span class="token-tag">&lt;/div&gt;</span>
+<span class="diff-line add"><span class="token-tag">&lt;/main&gt;</span></span></code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Issue 2 -->
+                    <article class="issue-item">
+                        <div class="issue-top">
+                            <h3 class="issue-headline">
+                                <span class="issue-number-badge">02</span>
+                                <span>Navigation Landmark &amp; Decorative Vector&nbsp;Hiding</span>
+                            </h3>
+                            <div class="issue-tag-group">
+                                <span class="pill-wcag">WCAG 1.3.1</span>
+                                <span class="pill-fixed">Fixed</span>
+                            </div>
+                        </div>
+                        <div class="issue-explanation">
+                            <strong>Problem:</strong> The top bar was rendered as an untyped <code>&lt;div class="topbar"&gt;</code> without a landmark navigation role. Furthermore, inline SVG graphics had no accessible names or decorative suppression, causing screen readers to announce unlabelled graphic&nbsp;paths.<br>
+                            <strong>Remediation:</strong> Upgraded to <code>&lt;nav class="topbar" aria-label="Course Navigation"&gt;</code> and marked decorative SVGs with <code>aria-hidden="true"</code>.
+                        </div>
+                        <div class="diff-split">
+                            <div class="diff-panel">
+                                <div class="diff-bar before">
+                                    <span>❌ Before</span>
+                                    <span>week 9_1/index.html</span>
+                                </div>
+                                <pre><code><span class="diff-line del"><span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-val">"topbar"</span><span class="token-tag">&gt;</span></span>
+  <span class="token-tag">&lt;a</span> <span class="token-attr">href</span>=<span class="token-val">"../../index.html"</span> <span class="token-attr">class</span>=<span class="token-val">"back-link"</span><span class="token-tag">&gt;</span>
+<span class="diff-line del">    <span class="token-tag">&lt;svg</span> <span class="token-attr">width</span>=<span class="token-val">"18"</span><span class="token-tag">&gt;</span>...<span class="token-tag">&lt;/svg&gt;</span> Course Hub</span>
+  <span class="token-tag">&lt;/a&gt;</span>
+<span class="diff-line del"><span class="token-tag">&lt;/div&gt;</span></span></code></pre>
+                            </div>
+                            <div class="diff-panel">
+                                <div class="diff-bar after">
+                                    <span>✅ After</span>
+                                    <span>week 9_1/index.html</span>
+                                </div>
+                                <pre><code><span class="diff-line add"><span class="token-tag">&lt;nav</span> <span class="token-attr">class</span>=<span class="token-val">"topbar"</span> <span class="token-attr">aria-label</span>=<span class="token-val">"Course Navigation"</span><span class="token-tag">&gt;</span></span>
+  <span class="token-tag">&lt;a</span> <span class="token-attr">href</span>=<span class="token-val">"../../index.html"</span> <span class="token-attr">class</span>=<span class="token-val">"back-link"</span><span class="token-tag">&gt;</span>
+<span class="diff-line add">    <span class="token-tag">&lt;svg</span> <span class="token-attr">aria-hidden</span>=<span class="token-val">"true"</span><span class="token-tag">&gt;</span>...<span class="token-tag">&lt;/svg&gt;</span> Course Hub</span>
+  <span class="token-tag">&lt;/a&gt;</span>
+<span class="diff-line add"><span class="token-tag">&lt;/nav&gt;</span></span></code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Issue 3 -->
+                    <article class="issue-item">
+                        <div class="issue-top">
+                            <h3 class="issue-headline">
+                                <span class="issue-number-badge">03</span>
+                                <span>Section Groupings &amp; Heading Hierarchy</span>
+                            </h3>
+                            <div class="issue-tag-group">
+                                <span class="pill-wcag">WCAG 1.3.1 / 2.4.6</span>
+                                <span class="pill-fixed">Fixed</span>
+                            </div>
+                        </div>
+                        <div class="issue-explanation">
+                            <strong>Problem:</strong> Lecture Topics and Practice Exercise sections used non-semantic <code>&lt;div class="section-card"&gt;</code> containers with generic <code>&lt;div class="section-title"&gt;</code> styling. Users relying on screen readers skim pages by cycling through <code>&lt;h1&gt;</code>&nbsp;&rarr;&nbsp;<code>&lt;h2&gt;</code>&nbsp;tags.<br>
+                            <strong>Remediation:</strong> Wrapped both columns in semantic <code>&lt;section aria-labelledby="..."&gt;</code> landmarks and upgraded their titles to formal&nbsp;<code>&lt;h2&gt;</code>&nbsp;headings.
+                        </div>
+                        <div class="diff-split">
+                            <div class="diff-panel">
+                                <div class="diff-bar before">
+                                    <span>❌ Before</span>
+                                    <span>week 9_1/index.html</span>
+                                </div>
+                                <pre><code><span class="diff-line del"><span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-val">"section-card"</span><span class="token-tag">&gt;</span></span>
+<span class="diff-line del">  <span class="token-tag">&lt;div</span> <span class="token-attr">class</span>=<span class="token-val">"section-title"</span><span class="token-tag">&gt;</span>Practice Exercises<span class="token-tag">&lt;/div&gt;</span></span>
+  ...
+<span class="diff-line del"><span class="token-tag">&lt;/div&gt;</span></span></code></pre>
+                            </div>
+                            <div class="diff-panel">
+                                <div class="diff-bar after">
+                                    <span>✅ After</span>
+                                    <span>week 9_1/index.html</span>
+                                </div>
+                                <pre><code><span class="diff-line add"><span class="token-tag">&lt;section</span> <span class="token-attr">class</span>=<span class="token-val">"section-card"</span> <span class="token-attr">aria-labelledby</span>=<span class="token-val">"ex-head"</span><span class="token-tag">&gt;</span></span>
+<span class="diff-line add">  <span class="token-tag">&lt;h2</span> <span class="token-attr">class</span>=<span class="token-val">"section-title"</span> <span class="token-attr">id</span>=<span class="token-val">"ex-head"</span><span class="token-tag">&gt;</span>Practice Exercises<span class="token-tag">&lt;/h2&gt;</span></span>
+  ...
+<span class="diff-line add"><span class="token-tag">&lt;/section&gt;</span></span></code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Issue 4 -->
+                    <article class="issue-item">
+                        <div class="issue-top">
+                            <h3 class="issue-headline">
+                                <span class="issue-number-badge">04</span>
+                                <span>Accessible Skip Navigation Link &amp; Text&nbsp;Contrast</span>
+                            </h3>
+                            <div class="issue-tag-group">
+                                <span class="pill-wcag">WCAG 2.4.1 / 1.4.3</span>
+                                <span class="pill-fixed">Fixed</span>
+                            </div>
+                        </div>
+                        <div class="issue-explanation">
+                            <strong>Problem:</strong> Keyboard-only navigators were forced to tab repeatedly through all top-level links before reaching the grid, and subdued caption text (<code>#64748b</code>) had borderline contrast&nbsp;ratios.<br>
+                            <strong>Remediation:</strong> Added a focus-activated <code>&lt;a href="#main-content" class="skip-link"&gt;</code> at the top of the document and improved text colors to high-contrast <code>#94a3b8</code> (&gt;&nbsp;7:1&nbsp;ratio).
+                        </div>
+                        <div class="diff-split">
+                            <div class="diff-panel">
+                                <div class="diff-bar before">
+                                    <span>❌ Before</span>
+                                    <span>week 9_1/index.html</span>
+                                </div>
+                                <pre><code><span class="token-tag">&lt;body&gt;</span>
+<span class="diff-line del">  <span class="token-comment">&lt;!-- Keyboard navigators forced to tab through entire topbar --&gt;</span></span>
+  <span class="token-tag">&lt;nav</span> <span class="token-attr">class</span>=<span class="token-val">"topbar"</span><span class="token-tag">&gt;</span>...<span class="token-tag">&lt;/nav&gt;</span>
+<span class="token-tag">&lt;/body&gt;</span></code></pre>
+                            </div>
+                            <div class="diff-panel">
+                                <div class="diff-bar after">
+                                    <span>✅ After</span>
+                                    <span>week 9_1/index.html</span>
+                                </div>
+                                <pre><code><span class="token-tag">&lt;body&gt;</span>
+<span class="diff-line add">  <span class="token-tag">&lt;a</span> <span class="token-attr">href</span>=<span class="token-val">"#main-content"</span> <span class="token-attr">class</span>=<span class="token-val">"skip-link"</span><span class="token-tag">&gt;</span></span>
+<span class="diff-line add">    Skip to main content</span>
+<span class="diff-line add">  <span class="token-tag">&lt;/a&gt;</span></span>
+  <span class="token-tag">&lt;nav</span> <span class="token-attr">class</span>=<span class="token-val">"topbar"</span><span class="token-tag">&gt;</span>...<span class="token-tag">&lt;/nav&gt;</span>
+<span class="token-tag">&lt;/body&gt;</span></code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- Step 5: Submission Checklist -->
+            <section class="section-block" aria-labelledby="checklist-heading">
+                <div class="section-head">
+                    <h2 id="checklist-heading">
+                        <span class="step-circle" aria-hidden="true">3</span>
+                        Grading &amp; Submission Criteria Checklist
+                    </h2>
+                    <span class="pill-fixed">100% Complete</span>
+                </div>
+
+                <div class="checklist-group">
+                    <div class="check-card">
+                        <div class="check-icon" aria-hidden="true">✓</div>
+                        <div class="check-content">
+                            <h4>1. Before Screenshot</h4>
+                            <p>Baseline audit score of <strong>96</strong> captured with the failing main landmark audit element clearly&nbsp;visible.</p>
+                        </div>
+                    </div>
+
+                    <div class="check-card">
+                        <div class="check-icon" aria-hidden="true">✓</div>
+                        <div class="check-content">
+                            <h4>2. What I Changed</h4>
+                            <p>Documented <strong>4 code fixes</strong> with side-by-side diffs, problem analyses, and specific WCAG&nbsp;2.2&nbsp;criteria.</p>
+                        </div>
+                    </div>
+
+                    <div class="check-card">
+                        <div class="check-icon" aria-hidden="true">✓</div>
+                        <div class="check-content">
+                            <h4>3. After Screenshot</h4>
+                            <p>Verified post-remediation audit achieving a <strong>perfect 100 score</strong> across all automated accessibility&nbsp;tests.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Issue 4: Skip Link & Contrast -->
-            <div class="issue-card">
-                <div class="issue-header">
-                    <span class="issue-title">Issue 4: Added "Skip to Main Content" Bypass Link &amp; Boosted Contrast</span>
-                    <span class="issue-badge badge-fixed">Fixed</span>
-                </div>
-                <p class="issue-desc">
-                    <strong>Problem:</strong> Keyboard-only users had to tab through the top navigation every time before reaching page content, and low-contrast dim text (<code>#64748b</code>) had borderline contrast.<br>
-                    <strong>Fix:</strong> Added a hidden-until-focused <code>&lt;a href="#main-content" class="skip-link"&gt;Skip to main content&lt;/a&gt;</code> and increased contrast to <code>#94a3b8</code> (> 6.8:1 ratio).
-                </p>
-                <div class="diff-grid">
-                    <div class="diff-box">
-                        <div class="diff-header before">Before: No skip link</div>
-                        <pre><code>&lt;body&gt;
-    &lt;div class="topbar"&gt;
-        ...
-    &lt;/div&gt;
-&lt;/body&gt;</code></pre>
-                    </div>
-                    <div class="diff-box">
-                        <div class="diff-header after">After: Accessible skip link</div>
-                        <pre><code>&lt;body&gt;
-    &lt;a href="#main-content" class="skip-link"&gt;
-        Skip to main content
-    &lt;/a&gt;
-    &lt;nav class="topbar" ...&gt;...&lt;/nav&gt;
-&lt;/body&gt;</code></pre>
-                    </div>
-                </div>
-            </div>
+        </main>
 
-        </div>
-
-        <!-- Step 5: Submission Checklist -->
-        <div class="step-card">
-            <div class="step-header">
-                <div class="step-title">
-                    <span class="step-num">3</span>
-                    Submission Checklist
-                </div>
-            </div>
-            <ul class="checklist">
-                <li><strong>Before Screenshot:</strong> Captured baseline score of 96 with the failing landmark list.</li>
-                <li><strong>What You Changed:</strong> Identified 4 distinct issues, documented before/after code snippets and WCAG principles.</li>
-                <li><strong>After Screenshot:</strong> Verified remediations achieve a 100/100 score on Lighthouse Accessibility.</li>
-            </ul>
-        </div>
+        <!-- Footer -->
+        <footer style="text-align:center; padding:20px 0; color:var(--text-dim); font-size:0.85rem; border-top:1px solid rgba(255,255,255,0.06);">
+            Interactive Accessibility Laboratory Report &copy; 2026 · Built compliant with WCAG 2.2 Level AA / Section&nbsp;508&nbsp;Standards
+        </footer>
 
     </div>
 
+    <!-- Accessible Image Lightbox Modal -->
+    <div id="imageLightbox" class="lightbox-modal" role="dialog" aria-modal="true" aria-labelledby="lightboxCaption" onclick="closeLightboxOnBackdrop(event)">
+        <div class="lightbox-dialog" role="document">
+            <div class="lightbox-topbar">
+                <span id="lightboxCaption" class="lightbox-caption">Audit Screenshot</span>
+                <button type="button" class="lightbox-close-btn" onclick="closeLightbox()" aria-label="Close dialog">✕</button>
+            </div>
+            <div class="lightbox-body">
+                <img id="lightboxImg" src="" alt="Enlarged screenshot preview">
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Check if after screenshot exists and dynamically display it
-        const img = new Image();
-        img.src = 'lighthouse-after.png';
-        img.onload = function() {
-            const box = document.getElementById('after-box');
-            box.className = 'screenshot-frame';
-            box.innerHTML = '<img src="lighthouse-after.png" alt="Lighthouse after score of 100">';
-        };
+        // Lightbox Modal Controller with full keyboard accessibility
+        let previousActiveElement = null;
+
+        function openLightbox(imgSrc, captionText) {
+            previousActiveElement = document.activeElement;
+            const modal = document.getElementById('imageLightbox');
+            const img = document.getElementById('lightboxImg');
+            const caption = document.getElementById('lightboxCaption');
+            
+            img.src = imgSrc;
+            img.alt = captionText;
+            caption.textContent = captionText;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus the close button for keyboard users
+            const closeBtn = modal.querySelector('.lightbox-close-btn');
+            if (closeBtn) closeBtn.focus();
+        }
+
+        function closeLightbox() {
+            const modal = document.getElementById('imageLightbox');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            if (previousActiveElement && typeof previousActiveElement.focus === 'function') {
+                previousActiveElement.focus();
+            }
+        }
+
+        function closeLightboxOnBackdrop(e) {
+            if (e.target.id === 'imageLightbox') {
+                closeLightbox();
+            }
+        }
+
+        // Close on Escape key
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('imageLightbox');
+                if (modal && modal.classList.contains('active')) {
+                    closeLightbox();
+                }
+            }
+        });
     </script>
+
 </body>
 </html>
-
