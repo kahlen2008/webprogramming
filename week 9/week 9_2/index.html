@@ -394,8 +394,8 @@
         }
 
         .exercise-item:hover {
-            background: rgba(168, 85, 247, 0.08);
-            border-color: rgba(168, 85, 247, 0.35);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(59, 130, 246, 0.35);
             transform: translateX(4px);
         }
 
@@ -419,6 +419,12 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+        }
+
+        .exercise-num {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: #60a5fa;
         }
 
         .item-text {
@@ -447,7 +453,7 @@
         }
 
         .exercise-item:hover .item-arrow {
-            color: var(--purple-light);
+            color: #60a5fa;
             transform: translateX(3px);
         }
 
@@ -646,7 +652,7 @@
                     <li>
                         <a href="e1-lighthouse-results.html" class="exercise-item">
                             <div class="item-left">
-                                <span class="item-num">E1</span>
+                                <span class="item-num exercise-num">E1</span>
                                 <div class="item-text">
                                     <span class="item-title">Run Lighthouse &amp; Read Results</span>
                                     <span class="item-desc">Audit a sluggish baseline page, eliminate render-blocking scripts, and lazy-load offscreen images.</span>
@@ -659,7 +665,7 @@
                     <li>
                         <a href="e2-image-formats.html" class="exercise-item">
                             <div class="item-left">
-                                <span class="item-num">E2</span>
+                                <span class="item-num exercise-num">E2</span>
                                 <div class="item-text">
                                     <span class="item-title">Compare Image Formats (WebP vs&nbsp;JPEG)</span>
                                     <span class="item-desc">Implement HTML5 &lt;picture&gt; with WebP source, srcset 400w/800w, and zero-CLS dimensions.</span>
@@ -672,7 +678,7 @@
                     <li>
                         <a href="e3-defer-scripts.html" class="exercise-item">
                             <div class="item-left">
-                                <span class="item-num">E3</span>
+                                <span class="item-num exercise-num">E3</span>
                                 <div class="item-text">
                                     <span class="item-title">Add defer to Scripts — Before &amp;&nbsp;After</span>
                                     <span class="item-desc">Restructure head scripts with defer and async attributes to eliminate Critical Rendering Path pauses.</span>
