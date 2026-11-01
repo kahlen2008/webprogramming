@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>Topic 02: Lazy Loading — Assets &amp; Performance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(168, 85, 247, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-purple: #c084fc;
+            --accent-cyan: #38bdf8;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        h1, h2, h3, h4, .topic-rule-badge, .nav-badge {
+            text-wrap: balance;
+        }
+
+        p, li, .topic-desc {
+            text-wrap: pretty;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main) !important;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-purple);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .nav-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 5px 12px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 24px;
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .topic-title-group h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #ffffff 40%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(168, 85, 247, 0.12);
+            color: var(--accent-purple);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            font-weight: 600;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            line-height: 1.55;
+            text-wrap: pretty;
+        }
+
+        /* Two-Column Split Layout */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.05fr;
+            gap: 22px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 950px) {
+            .split-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Code Box */
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: var(--accent-purple);
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: color 0.2s;
+        }
+
+        .copy-btn:hover { color: var(--text-primary); }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.84rem;
+            color: #e2e8f0;
+            padding: 18px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .token-tag { color: #f472b6; }
+        .token-attr { color: #60a5fa; }
+        .token-string { color: #34d399; }
+        .token-comment { color: #64748b; font-style: italic; }
+        .token-fix { color: #c084fc; font-weight: 600; }
+        .token-bad { color: #f43f5e; font-weight: 600; }
+
+        /* Interactive Box (Right) */
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .interactive-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
+
+        .interactive-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #a855f7;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #a855f7;
+        }
+
+        .interactive-subtext {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Metric Stats */
+        .score-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .score-pill {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 10px 8px;
+            text-align: center;
+        }
+
+        .pill-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .pill-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #34d399;
+            transition: all 0.3s;
+        }
+
+        .pill-state {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #34d399;
+        }
+
+        /* Interactive Scroll Simulation Viewport */
+        .viewport-sim {
+            background: #ffffff;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            color: #0f172a;
+            max-height: 250px;
+            overflow-y: scroll;
+            border: 2px dashed rgba(168, 85, 247, 0.4);
+            position: relative;
+        }
+
+        .sim-header-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sim-hero-box {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sim-spacer {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            border-left: 2px dotted #cbd5e1;
+            margin-left: 20px;
+            padding-left: 10px;
+        }
+
+        .sim-lazy-box {
+            background: #ecfdf5;
+            border: 1px solid #6ee7b7;
+            border-radius: 6px;
+            padding: 14px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .sim-lazy-box.loaded {
+            background: #dcfce7;
+            border-color: #22c55e;
+        }
+
+        /* Status log output */
+        .status-display {
+            background: #060911;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+
+        /* Do and Don't Grid */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 700px) {
+            .rules-grid { grid-template-columns: 1fr; }
+        }
+
+        .rule-col {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+        }
+
+        .rule-col-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-good { color: #34d399; }
+        .title-bad { color: #f43f5e; }
+
+        .rules-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.86rem;
+            color: var(--text-secondary);
+        }
+
+        .rules-list li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Key Points Card */
+        .key-points-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+        }
+
+        .key-points-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--accent-purple);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-points-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .key-points-list li {
+            position: relative;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .key-points-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Navigation Bar -->
+        <div class="navbar">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back to Week 9_2 Hub
+            </a>
+            <span class="nav-badge">Topic 02</span>
+        </div>
+
+        <!-- Main Topic Card -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title-group">
+                    <h2>02 · Lazy Loading</h2>
+                </div>
+                <span class="topic-rule-badge">Assets</span>
+            </div>
+            <p class="topic-desc">Lazy loading delays loading resources (images, iframes) until they are about to enter the viewport. Images below the fold don't load immediately — the browser loads them only as the user scrolls toward them. This dramatically reduces initial page weight.</p>
+
+            <!-- Two-Column Split Layout -->
+            <div class="split-grid">
+                <!-- Left: Code Box -->
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label">
+                            <span class="code-lang-dot"></span>
+                            HTML — Native lazy loading
+                        </span>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
+                    </div>
+                    <pre><code id="code-content"><span class="token-comment">&lt;!-- Native lazy loading — one attribute! --&gt;</span>
+<span class="token-tag">&lt;img</span> <span class="token-attr">src</span>=<span class="token-string">"photo.webp"</span> <span class="token-attr">alt</span>=<span class="token-string">"Gallery photo"</span>
+     <span class="token-fix">loading="lazy"</span> <span class="token-attr">width</span>=<span class="token-string">"600"</span> <span class="token-attr">height</span>=<span class="token-string">"400"</span><span class="token-tag">&gt;</span>
+
+<span class="token-comment">&lt;!-- Also works for iframes --&gt;</span>
+<span class="token-tag">&lt;iframe</span> <span class="token-attr">src</span>=<span class="token-string">"https://www.youtube.com/embed/xyz"</span>
+        <span class="token-fix">loading="lazy"</span> <span class="token-attr">title</span>=<span class="token-string">"Tutorial video"</span><span class="token-tag">&gt;&lt;/iframe&gt;</span>
+
+<span class="token-comment">&lt;!-- ❌ NEVER lazy-load the hero/above-fold image! --&gt;</span>
+<span class="token-comment">&lt;!-- This delays your LCP and hurts your Lighthouse score --&gt;</span>
+<span class="token-tag">&lt;img</span> <span class="token-attr">src</span>=<span class="token-string">"hero.webp"</span> <span class="token-attr">alt</span>=<span class="token-string">"Hero"</span> <span class="token-bad">loading="lazy"</span><span class="token-tag">&gt;</span> <span class="token-comment">&lt;!-- WRONG --&gt;</span>
+
+<span class="token-comment">&lt;!-- ✅ Hero image: use eager (default) or fetchpriority --&gt;</span>
+<span class="token-tag">&lt;img</span> <span class="token-attr">src</span>=<span class="token-string">"hero.webp"</span> <span class="token-attr">alt</span>=<span class="token-string">"Hero"</span>
+     <span class="token-fix">fetchpriority="high"</span> <span class="token-attr">width</span>=<span class="token-string">"1200"</span> <span class="token-attr">height</span>=<span class="token-string">"600"</span><span class="token-tag">&gt;</span></code></pre>
+                </div>
+
+                <!-- Right: Interactive Live Demo Box -->
+                <div class="interactive-box">
+                    <div class="interactive-header">
+                        <span class="interactive-title">
+                            <span class="pulse-dot"></span>
+                            LIVE DEMO — SCROLL INTERSECTION OBSERVER
+                        </span>
+                        <span class="interactive-subtext">Scroll container below</span>
+                    </div>
+
+                    <!-- Metric Stats -->
+                    <div class="score-matrix">
+                        <div class="score-pill">
+                            <span class="pill-label">Initial Bytes</span>
+                            <div class="pill-val" id="pillInitial">42 KB</div>
+                            <span class="pill-state">Hero Only</span>
+                        </div>
+                        <div class="score-pill">
+                            <span class="pill-label">Deferred Bytes</span>
+                            <div class="pill-val" id="pillDeferred">480 KB</div>
+                            <span class="pill-state">Saved on load</span>
+                        </div>
+                        <div class="score-pill">
+                            <span class="pill-label">Lazy Item Status</span>
+                            <div class="pill-val" id="pillStatus" style="font-size: 0.95rem;">Pending</div>
+                            <span class="pill-state" id="pillStatusSub">Waiting for scroll</span>
+                        </div>
+                    </div>
+
+                    <!-- Scroll Viewport Container -->
+                    <div class="viewport-sim" id="scrollBox" onscroll="handleSimScroll()">
+                        <div class="sim-header-tag">
+                            <span>Viewport Top (Above Fold)</span>
+                            <span>Scroll &darr; to intersect</span>
+                        </div>
+
+                        <div class="sim-hero-box">
+                            <strong>⭐ Hero Banner (Above Fold)</strong>
+                            <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Loaded immediately with <code>fetchpriority="high"</code> for optimal LCP.</p>
+                        </div>
+
+                        <div class="sim-spacer">
+                            &darr; 800px offscreen distance &darr;
+                        </div>
+
+                        <div class="sim-lazy-box" id="lazyTarget">
+                            <strong id="targetTitle">⏳ Offscreen Gallery Image</strong>
+                            <p id="targetDesc" style="font-size: 0.78rem; color: #059669; margin-top: 4px;">Configured with <code>loading="lazy"</code>. Not requested until scrolled into view!</p>
+                        </div>
+                    </div>
+
+                    <!-- Status Display -->
+                    <div class="status-display" id="statusLog">
+                        &gt; Initial load complete · Offscreen gallery image deferred · 480 KB saved from critical rendering path.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Points Card -->
+            <div class="key-points-card">
+                <div class="key-points-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    Key Points
+                </div>
+                <ul class="key-points-list">
+                    <li><code>loading="lazy"</code> on <code>&lt;img&gt;</code> and <code>&lt;iframe&gt;</code> — supported natively by all modern browsers.</li>
+                    <li>Lazy loading defers off-screen resources until the user scrolls near them, slashing initial network payload.</li>
+                    <li>Never lazy load the hero image or any above-the-fold content — it delays Largest Contentful Paint (LCP).</li>
+                    <li>Use <code>fetchpriority="high"</code> on your most important above-fold image to prioritize it in the network scanner queue.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let hasLoaded = false;
+        function handleSimScroll() {
+            const box = document.getElementById('scrollBox');
+            const target = document.getElementById('lazyTarget');
+            const title = document.getElementById('targetTitle');
+            const desc = document.getElementById('targetDesc');
+            const pill = document.getElementById('pillStatus');
+            const pillSub = document.getElementById('pillStatusSub');
+            const log = document.getElementById('statusLog');
+
+            // When scrolled down near target
+            if (box.scrollTop > 80 && !hasLoaded) {
+                hasLoaded = true;
+                target.classList.add('loaded');
+                title.textContent = '✅ Intersected: Image Loaded!';
+                desc.textContent = 'Native browser observer triggered network request right as element neared viewport.';
+                pill.textContent = 'Loaded';
+                pill.style.color = '#34d399';
+                pillSub.textContent = 'Fetched 480 KB';
+                pillSub.style.color = '#34d399';
+                log.innerHTML = '&gt; Viewport intersection threshold reached! Browser fetched photo.webp on demand.';
+            }
+        }
+    </script>
+</body>
+</html>
+

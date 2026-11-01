@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>Topic 05: Caching — Loading Strategy &amp; Performance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(168, 85, 247, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-purple: #c084fc;
+            --accent-cyan: #38bdf8;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        h1, h2, h3, h4, .topic-rule-badge, .nav-badge {
+            text-wrap: balance;
+        }
+
+        p, li, .topic-desc {
+            text-wrap: pretty;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main) !important;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-purple);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .nav-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 5px 12px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 24px;
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .topic-title-group h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #ffffff 40%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(168, 85, 247, 0.12);
+            color: var(--accent-purple);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            font-weight: 600;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            line-height: 1.55;
+            text-wrap: pretty;
+        }
+
+        /* Two-Column Split Layout */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.05fr;
+            gap: 22px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 950px) {
+            .split-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Code Box */
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: var(--accent-purple);
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: color 0.2s;
+        }
+
+        .copy-btn:hover { color: var(--text-primary); }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.84rem;
+            color: #e2e8f0;
+            padding: 18px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .token-tag { color: #f472b6; }
+        .token-attr { color: #60a5fa; }
+        .token-string { color: #34d399; }
+        .token-comment { color: #64748b; font-style: italic; }
+        .token-fix { color: #c084fc; font-weight: 600; }
+
+        /* Interactive Box (Right) */
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .interactive-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
+
+        .interactive-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #a855f7;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #a855f7;
+        }
+
+        .interactive-subtext {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Metric Stats */
+        .score-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .score-pill {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 10px 8px;
+            text-align: center;
+        }
+
+        .pill-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .pill-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #34d399;
+            transition: all 0.3s;
+        }
+
+        .pill-state {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #34d399;
+        }
+
+        /* Action Buttons */
+        .action-btn-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(168, 85, 247, 0.25);
+            border-color: #c084fc;
+        }
+
+        .action-btn.active {
+            background: var(--accent-purple);
+            color: #ffffff;
+            border-color: var(--accent-purple);
+        }
+
+        /* Status log output */
+        .status-display {
+            background: #060911;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+            min-height: 80px;
+        }
+
+        /* Key Points Card */
+        .key-points-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+        }
+
+        .key-points-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--accent-purple);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-points-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .key-points-list li {
+            position: relative;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .key-points-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Navigation Bar -->
+        <div class="navbar">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back to Week 9_2 Hub
+            </a>
+            <span class="nav-badge">Topic 05</span>
+        </div>
+
+        <!-- Main Topic Card -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title-group">
+                    <h2>05 · Caching</h2>
+                </div>
+                <span class="topic-rule-badge">Loading Strategy</span>
+            </div>
+            <p class="topic-desc">Browser caching stores a copy of resources (CSS, JS, images) locally. When a user revisits your site, the browser loads those resources from the local cache instead of downloading them again. This makes repeat visits dramatically faster — often instantaneous.</p>
+
+            <!-- Two-Column Split Layout -->
+            <div class="split-grid">
+                <!-- Left: Code Box -->
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label">
+                            <span class="code-lang-dot"></span>
+                            HTTP Headers &amp; Cache Busting
+                        </span>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
+                    </div>
+                    <pre><code id="code-content"><span class="token-comment">/* Server response headers — set by server (Apache/Nginx/Node) */</span>
+
+<span class="token-comment">// Cache for 1 year — for versioned files (CSS/JS with hash)</span>
+<span class="token-fix">Cache-Control: public, max-age=31536000, immutable</span>
+
+<span class="token-comment">// Cache for 1 hour — for frequently updated content</span>
+<span class="token-fix">Cache-Control: public, max-age=3600</span>
+
+<span class="token-comment">// No cache — for HTML pages that must always be fresh</span>
+<span class="token-fix">Cache-Control: no-store</span>
+
+<span class="token-comment">/* Cache Busting — add version hash to filenames */</span>
+<span class="token-comment">/* When updated, hash changes → new URL → downloads fresh */</span>
+<span class="token-tag">&lt;link</span> <span class="token-attr">rel</span>=<span class="token-string">"stylesheet"</span> <span class="token-attr">href</span>=<span class="token-string">"styles.a3f9c2b1.css"</span><span class="token-tag">&gt;</span>
+<span class="token-tag">&lt;script</span> <span class="token-attr">src</span>=<span class="token-string">"app.d8e4f2a9.js"</span> <span class="token-attr">defer</span><span class="token-tag">&gt;&lt;/script&gt;</span>
+
+<span class="token-comment">/* Build tools (Vite, webpack) add these hashes automatically */</span></code></pre>
+                </div>
+
+                <!-- Right: Interactive Live Demo Box -->
+                <div class="interactive-box">
+                    <div class="interactive-header">
+                        <span class="interactive-title">
+                            <span class="pulse-dot"></span>
+                            LIVE DEMO — CACHE HIT / MISS INSPECTOR
+                        </span>
+                        <span class="interactive-subtext">Network simulator</span>
+                    </div>
+
+                    <!-- Metric Stats -->
+                    <div class="score-matrix">
+                        <div class="score-pill">
+                            <span class="pill-label">Network Transferred</span>
+                            <div class="pill-val" id="pillTransferred">0 KB</div>
+                            <span class="pill-state" id="pillTransferredState">DISK CACHE</span>
+                        </div>
+                        <div class="score-pill">
+                            <span class="pill-label">Load Time</span>
+                            <div class="pill-val" id="pillTime">2 ms</div>
+                            <span class="pill-state" id="pillTimeState">INSTANT</span>
+                        </div>
+                        <div class="score-pill">
+                            <span class="pill-label">HTTP Status</span>
+                            <div class="pill-val" id="pillStatus">200</div>
+                            <span class="pill-state" id="pillStatusSub">(from disk cache)</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Selector -->
+                    <div class="action-btn-row">
+                        <button class="action-btn active" id="btnRepeat" onclick="simulateVisit('repeat')">Repeat Visit (Cache Hit)</button>
+                        <button class="action-btn" id="btnFirst" onclick="simulateVisit('first')">First Visit (Cold Cache)</button>
+                    </div>
+
+                    <!-- Status Display -->
+                    <div class="status-display" id="statusLog">
+                        &gt; Repeat visit: Assets served from local browser disk cache · 0 bytes transferred over wire · 2ms instantaneous response.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Points Card -->
+            <div class="key-points-card">
+                <div class="key-points-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    Key Points
+                </div>
+                <ul class="key-points-list">
+                    <li>Browser caching stores resources locally so repeat visits become virtually instantaneous.</li>
+                    <li>Use <code>Cache-Control: public, max-age=31536000, immutable</code> for versioned static assets (CSS, JS, images).</li>
+                    <li>Cache Busting (unique build hashes like <code>app.d8e4f2a9.js</code>) ensures users immediately receive updates without stale cache bugs.</li>
+                    <li>HTML documents should use <code>Cache-Control: no-store</code> or short TTLs so users always receive latest markup.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function simulateVisit(type) {
+            const btnR = document.getElementById('btnRepeat');
+            const btnF = document.getElementById('btnFirst');
+            const bytes = document.getElementById('pillTransferred');
+            const bytesState = document.getElementById('pillTransferredState');
+            const time = document.getElementById('pillTime');
+            const timeState = document.getElementById('pillTimeState');
+            const status = document.getElementById('pillStatus');
+            const statusSub = document.getElementById('pillStatusSub');
+            const log = document.getElementById('statusLog');
+
+            if (type === 'repeat') {
+                btnR.classList.add('active');
+                btnF.classList.remove('active');
+
+                bytes.textContent = '0 KB';
+                bytes.style.color = '#34d399';
+                bytesState.textContent = 'DISK CACHE';
+                bytesState.style.color = '#34d399';
+
+                time.textContent = '2 ms';
+                time.style.color = '#34d399';
+                timeState.textContent = 'INSTANT';
+                timeState.style.color = '#34d399';
+
+                status.textContent = '200';
+                status.style.color = '#34d399';
+                statusSub.textContent = '(from disk cache)';
+
+                log.innerHTML = '&gt; Repeat visit: Assets served from local browser disk cache · 0 bytes transferred over wire · 2ms instantaneous response.';
+            } else {
+                btnF.classList.add('active');
+                btnR.classList.remove('active');
+
+                bytes.textContent = '1,240 KB';
+                bytes.style.color = '#f43f5e';
+                bytesState.textContent = 'NETWORK FETCH';
+                bytesState.style.color = '#f43f5e';
+
+                time.textContent = '840 ms';
+                time.style.color = '#f43f5e';
+                timeState.textContent = 'ROUND TRIP';
+                timeState.style.color = '#f43f5e';
+
+                status.textContent = '200 OK';
+                status.style.color = '#f8fafc';
+                statusSub.textContent = 'Downloaded';
+
+                log.innerHTML = '&gt; Cold first visit: Full HTTP round trip · Downloaded 1,240 KB from origin server across wire (840ms latency).';
+            }
+        }
+    </script>
+</body>
+</html>
+

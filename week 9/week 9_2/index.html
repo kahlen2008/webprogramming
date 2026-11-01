@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Week 9_2 — Web Performance &amp; Core Web Vitals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(168, 85, 247, 0.35);
+            --purple: #a855f7;
+            --purple-light: #c084fc;
+            --purple-glow: rgba(168, 85, 247, 0.25);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.25);
+            --green: #10b981;
+            --green-glow: rgba(16, 185, 129, 0.25);
+            --amber: #fbbf24;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 22px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Modern typographic orphan and widow prevention */
+        h1, h2, h3, h4, .badge, .session-badge, .hero-tag {
+            text-wrap: balance;
+        }
+
+        p, .hero-desc, .topic-desc {
+            text-wrap: pretty;
+        }
+
+        /* Skip Navigation Link */
+        .skip-link {
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1000;
+            background: var(--purple);
+            color: #ffffff;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+            transform: translateY(-200%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+
+        .skip-link:focus-visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            outline: 3px solid #ffffff;
+            outline-offset: 3px;
+        }
+
+        html {
+            background-color: var(--bg-body);
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(168, 85, 247, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px 20px 80px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--purple);
+            background: rgba(168, 85, 247, 0.15);
+            transform: translateX(-2px);
+        }
+
+        .session-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: #c084fc;
+            white-space: nowrap;
+        }
+
+        header.header-title {
+            text-align: center;
+            max-width: 860px;
+            margin-bottom: 34px;
+        }
+
+        header.header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffffff 30%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header.header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Homework Featured Card */
+        .hw-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .hw-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: var(--radius-card);
+            padding: 28px 32px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            transition: all 0.3s ease;
+        }
+
+        .hero-card:hover {
+            border-color: rgba(192, 132, 252, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(168, 85, 247, 0.25);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 860px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #fbbf24;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .hero-desc {
+            color: var(--text-sub);
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .hero-url-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+            color: #c084fc;
+            background: rgba(168, 85, 247, 0.12);
+            padding: 4px 10px;
+            border-radius: 6px;
+            width: fit-content;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+        }
+
+        .btn-launch-hero {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 960px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 30px 32px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topics-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .topic-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sub);
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .topic-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(168, 85, 247, 0.35);
+            transform: translateX(3px);
+        }
+
+        .topic-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: #c084fc;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .topic-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .topic-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .topic-desc {
+            font-size: 0.84rem;
+            color: var(--text-sub);
+            line-height: 1.45;
+        }
+
+        /* Exercise Navigation Links */
+        .exercise-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sub);
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+        .exercise-item:hover {
+            background: rgba(168, 85, 247, 0.08);
+            border-color: rgba(168, 85, 247, 0.35);
+            transform: translateX(4px);
+        }
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .item-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: var(--purple-light);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .item-text {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .item-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .item-desc {
+            font-size: 0.84rem;
+            color: var(--text-sub);
+            line-height: 1.45;
+            text-wrap: pretty;
+        }
+
+        .item-arrow {
+            color: var(--text-dim);
+            transition: transform 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .exercise-item:hover .item-arrow {
+            color: var(--purple-light);
+            transform: translateX(3px);
+        }
+
+        /* Benchmark Metric Cards */
+        .metric-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sub);
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateX(3px);
+        }
+
+        .metric-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .metric-badge {
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .metric-delta {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #34d399;
+            font-family: 'Fira Code', monospace;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Accessible Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Topbar Navigation -->
+    <nav class="topbar" aria-label="Course navigation">
+        <a href="../../index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Course Hub
+        </a>
+        <span class="session-badge">Week 9_2 · Web&nbsp;Performance</span>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="header-title">
+        <h1>Web Performance &amp; Core Web&nbsp;Vitals</h1>
+        <p>Comprehensive performance laboratory covering modern WebP compression, render-blocking compiler elimination, script deferral, font hints, and Lighthouse auditing.</p>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-container" id="main-content">
+
+        <!-- Featured Homework Section -->
+        <section class="hw-section" aria-labelledby="hw-heading">
+            <div class="hw-section-title" id="hw-heading">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Homework Assignment
+            </div>
+            
+            <div class="hero-card">
+                <div class="hero-content">
+                    <span class="hero-tag">⭐ Homework 2 · Performance Report</span>
+                    <h2 class="hero-title">Lighthouse Performance Audit &amp; Remediation Report</h2>
+                    <p class="hero-desc">
+                        Full laboratory documentation analyzing baseline mobile and desktop audits on RecipePlan, 5 applied Core Web Vitals optimizations with before/after code diffs, and an architectural CRP reflection.
+                    </p>
+                    <div class="hero-url-pill">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                        Target: https://kahlen2008.github.io/webprogproject/index.html
+                    </div>
+                </div>
+                <a href="report.html" class="btn-launch-hero">
+                    Launch Report
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </section>
+
+        <!-- Two Column Grid -->
+        <div class="content-grid">
+
+            <!-- Column 1: Performance Lecture Topics -->
+            <section class="section-card" aria-labelledby="topics-head">
+                <h2 class="section-title" id="topics-head">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                    Lecture Topics (Core Concepts &amp; Interactive Demos)
+                </h2>
+
+                <ul class="topics-list">
+                    <li>
+                        <a href="topic-1.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="topic-badge">01</span>
+                                <div class="item-text">
+                                    <span class="item-title">Image Optimization</span>
+                                    <span class="item-desc">Format comparison (WebP, AVIF, JPEG, SVG), responsive srcset, and compression tools.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-2.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="topic-badge">02</span>
+                                <div class="item-text">
+                                    <span class="item-title">Lazy Loading</span>
+                                    <span class="item-desc">Native loading="lazy" for offscreen media, fetchpriority="high", and when NOT to lazy load.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-3.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="topic-badge">03</span>
+                                <div class="item-text">
+                                    <span class="item-title">Minification</span>
+                                    <span class="item-desc">Removing whitespace and comments from CSS/JS, 40–70% size reduction, and build tools.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-4.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="topic-badge">04</span>
+                                <div class="item-text">
+                                    <span class="item-title">JavaScript Loading Strategy</span>
+                                    <span class="item-desc">Render-blocking parser pauses, defer vs async execution diagram, and head script placement.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="topic-5.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="topic-badge">05</span>
+                                <div class="item-text">
+                                    <span class="item-title">Caching</span>
+                                    <span class="item-desc">HTTP Cache-Control headers, 1-year immutable caching, cache busting hashes, and instant visits.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Column 2: Practice Exercises -->
+            <section class="section-card" aria-labelledby="exercises-head">
+                <h2 class="section-title" id="exercises-head">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Practice Exercises
+                </h2>
+
+                <ul class="topics-list">
+                    <li>
+                        <a href="e1-lighthouse-results.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">E1</span>
+                                <div class="item-text">
+                                    <span class="item-title">Run Lighthouse &amp; Read Results</span>
+                                    <span class="item-desc">Audit a sluggish baseline page, eliminate render-blocking scripts, and lazy-load offscreen images.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="e2-image-formats.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">E2</span>
+                                <div class="item-text">
+                                    <span class="item-title">Compare Image Formats (WebP vs&nbsp;JPEG)</span>
+                                    <span class="item-desc">Implement HTML5 &lt;picture&gt; with WebP source, srcset 400w/800w, and zero-CLS dimensions.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="e3-defer-scripts.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num">E3</span>
+                                <div class="item-text">
+                                    <span class="item-title">Add defer to Scripts — Before &amp;&nbsp;After</span>
+                                    <span class="item-desc">Restructure head scripts with defer and async attributes to eliminate Critical Rendering Path pauses.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        Web Programming Course · Week 9_2 · Core Web Vitals &amp; Performance Auditing
+    </footer>
+
+</body>
+</html>

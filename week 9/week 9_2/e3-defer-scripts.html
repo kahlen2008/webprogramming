@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>E3: Add defer to Scripts — Week 9_2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(168, 85, 247, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-purple: #c084fc;
+            --accent-cyan: #38bdf8;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        h1, h2, h3, h4, .topic-rule-badge, .nav-badge {
+            text-wrap: balance;
+        }
+
+        p, li, .topic-desc {
+            text-wrap: pretty;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main) !important;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-purple);
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .nav-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 5px 12px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .topic-title-group h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #ffffff 40%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .topic-rule-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(168, 85, 247, 0.12);
+            color: var(--accent-purple);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            font-weight: 600;
+        }
+
+        .topic-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            line-height: 1.55;
+            text-wrap: pretty;
+        }
+
+        /* Two-Column Split Layout */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.05fr;
+            gap: 22px;
+        }
+
+        @media (max-width: 950px) {
+            .split-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Code Box */
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-lang-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: var(--accent-purple);
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: color 0.2s;
+        }
+
+        .copy-btn:hover { color: var(--text-primary); }
+
+        pre code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.84rem;
+            color: #e2e8f0;
+            padding: 18px;
+            display: block;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .token-tag { color: #f472b6; }
+        .token-attr { color: #60a5fa; }
+        .token-string { color: #34d399; }
+        .token-comment { color: #64748b; font-style: italic; }
+        .token-fix { color: #c084fc; font-weight: 600; }
+
+        /* Interactive Box (Right) */
+        .interactive-box {
+            background: rgba(14, 20, 33, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .interactive-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
+
+        .interactive-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #a855f7;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #a855f7;
+        }
+
+        .interactive-subtext {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Metric Stats Matrix */
+        .score-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .score-pill {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 10px 8px;
+            text-align: center;
+        }
+
+        .pill-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .pill-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #34d399;
+            transition: all 0.3s;
+        }
+
+        .pill-state {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #34d399;
+        }
+
+        /* Action Buttons */
+        .action-btn-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(168, 85, 247, 0.25);
+            border-color: #c084fc;
+        }
+
+        .action-btn.active {
+            background: var(--accent-purple);
+            color: #ffffff;
+            border-color: var(--accent-purple);
+        }
+
+        /* Live Preview Simulation Window */
+        .preview-frame {
+            background: #ffffff;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            color: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .preview-frame h3 {
+            font-size: 1.15rem;
+            margin-bottom: 4px;
+            color: #0f172a;
+            font-family: system-ui, sans-serif;
+        }
+
+        .preview-frame p {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.45;
+            margin-bottom: 12px;
+        }
+
+        #statusEl {
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .ok { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+        .pending { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+
+        /* Status log output */
+        .status-display {
+            background: #060911;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+            min-height: 72px;
+        }
+
+        /* Key Points Card */
+        .key-points-card {
+            margin-top: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+        }
+
+        .key-points-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--accent-purple);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-points-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .key-points-list li {
+            position: relative;
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .key-points-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Navigation Bar -->
+        <div class="navbar">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back to Week 9_2 Hub
+            </a>
+            <span class="nav-badge">Exercise 03</span>
+        </div>
+
+        <!-- Main Topic Card -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title-group">
+                    <h2>E3: Add defer to Scripts — Before &amp;&nbsp;After</h2>
+                </div>
+                <span class="topic-rule-badge">Script Loading &amp; CRP</span>
+            </div>
+            <p class="topic-desc">Fix script loading order by placing scripts in <code>&lt;head&gt;</code> with <code>defer</code> and <code>async</code>. <code>defer</code> downloads scripts in parallel during HTML parsing and executes in source order once the DOM is constructed.</p>
+
+            <!-- Two-Column Split Layout -->
+            <div class="split-grid">
+                <!-- Left: Correct Code Box -->
+                <div class="code-box">
+                    <div class="code-box-header">
+                        <span class="code-lang-label">
+                            <span class="code-lang-dot"></span>
+                            HTML (Optimized Solution)
+                        </span>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('code-content').innerText)">Copy</button>
+                    </div>
+                    <pre><code id="code-content"><span class="token-tag">&lt;head&gt;</span>
+  <span class="token-tag">&lt;meta</span> <span class="token-attr">charset</span>=<span class="token-string">"UTF-8"</span><span class="token-tag">&gt;</span>
+  <span class="token-tag">&lt;title&gt;</span>Script Loading Demo<span class="token-tag">&lt;/title&gt;</span>
+
+  <span class="token-comment">&lt;!-- FIX 1: Non-blocking independent analytics script --&gt;</span>
+  <span class="token-tag">&lt;script</span> <span class="token-fix">async</span> <span class="token-attr">src</span>=<span class="token-string">"analytics.js"</span><span class="token-tag">&gt;&lt;/script&gt;</span>
+
+  <span class="token-comment">&lt;!-- FIX 2: App script in &lt;head&gt; with defer (guarantees DOM ready) --&gt;</span>
+  <span class="token-tag">&lt;script</span> <span class="token-fix">defer</span><span class="token-tag">&gt;</span>
+    <span class="token-comment">// This script modifies the DOM — defer guarantees DOM ready state</span>
+    document.getElementById('status').textContent =
+      '✅ DOM was ready when this script ran (add defer to verify)';
+    document.getElementById('status').className = 'status ok';
+  <span class="token-tag">&lt;/script&gt;</span>
+<span class="token-tag">&lt;/head&gt;</span>
+
+<span class="token-tag">&lt;body&gt;</span>
+  <span class="token-tag">&lt;h2&gt;</span>Script Loading Test<span class="token-tag">&lt;/h2&gt;</span>
+  <span class="token-tag">&lt;p&gt;</span>With defer, the DOM is ready when scripts run.<span class="token-tag">&lt;/p&gt;</span>
+  <span class="token-tag">&lt;div</span> <span class="token-attr">id</span>=<span class="token-string">"status"</span> <span class="token-attr">class</span>=<span class="token-string">"pending"</span><span class="token-tag">&gt;</span>Waiting for script...<span class="token-tag">&lt;/div&gt;</span>
+<span class="token-tag">&lt;/body&gt;</span></code></pre>
+                </div>
+
+                <!-- Right: Interactive Live Demo Box -->
+                <div class="interactive-box">
+                    <div class="interactive-header">
+                        <span class="interactive-title">
+                            <span class="pulse-dot"></span>
+                            LIVE DEMO — SCRIPT EXECUTION &amp; LIFECYCLE
+                        </span>
+                        <span class="interactive-subtext">Interactive pipeline</span>
+                    </div>
+
+                    <!-- Metric Score Matrix -->
+                    <div class="score-matrix">
+                        <div class="score-pill">
+                            <span class="pill-label">Parser Stall</span>
+                            <div class="pill-val" id="pillStall">0 ms</div>
+                            <span class="pill-state" id="pillStallState">NON-BLOCKING</span>
+                        </div>
+                        <div class="score-pill">
+                            <span class="pill-label">DOM Node Access</span>
+                            <div class="pill-val" id="pillDom">RESOLVED</div>
+                            <span class="pill-state" id="pillDomState">READY</span>
+                        </div>
+                        <div class="score-pill">
+                            <span class="pill-label">Execution Order</span>
+                            <div class="pill-val" id="pillOrder">PRESERVED</div>
+                            <span class="pill-state">ORDERED</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-btn-row">
+                        <button class="action-btn active" id="btnRunTest" onclick="runPipelineTest('defer')">Run Pipeline with defer</button>
+                        <button class="action-btn" id="btnRunBlock" onclick="runPipelineTest('blocking')">Simulate Blocking Script</button>
+                    </div>
+
+                    <!-- Live Rendered Frame -->
+                    <div class="preview-frame">
+                        <h3>Script Loading Test</h3>
+                        <p>With defer, the DOM is ready when scripts run. Without defer, scripts block the page.</p>
+
+                        <div id="statusEl" class="ok">
+                            ✅ DOM was ready when this script ran (defer verified)
+                        </div>
+                    </div>
+
+                    <!-- Status Display -->
+                    <div class="status-display" id="statusLog">
+                        [0.00ms] &lt;script defer&gt; in &lt;head&gt; &rarr; parallel background fetch.<br>
+                        [24.5ms] DOM tree fully constructed (DOMContentLoaded reached).<br>
+                        [26.1ms] Deferred script executed: document.getElementById('status') resolved.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Takeaways Card -->
+            <div class="key-points-card">
+                <div class="key-points-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    Core Optimization Rules
+                </div>
+                <ul class="key-points-list">
+                    <li><code>defer</code> scripts download in the background without halting the HTML parser.</li>
+                    <li><code>defer</code> scripts always execute in document order right before <code>DOMContentLoaded</code>.</li>
+                    <li><code>async</code> is ideal for independent third-party scripts like analytics that do not touch the DOM.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function runPipelineTest(mode) {
+            const btnRun = document.getElementById('btnRunTest');
+            const btnBlock = document.getElementById('btnRunBlock');
+            const stall = document.getElementById('pillStall');
+            const stallState = document.getElementById('pillStallState');
+            const dom = document.getElementById('pillDom');
+            const domState = document.getElementById('pillDomState');
+            const order = document.getElementById('pillOrder');
+            const statusBox = document.getElementById('statusEl');
+            const log = document.getElementById('statusLog');
+
+            if (mode === 'defer') {
+                btnRun.classList.add('active');
+                btnBlock.classList.remove('active');
+
+                stall.textContent = '0 ms';
+                stall.style.color = '#34d399';
+                stallState.textContent = 'NON-BLOCKING';
+                stallState.style.color = '#34d399';
+
+                dom.textContent = 'RESOLVED';
+                dom.style.color = '#34d399';
+                domState.textContent = 'READY';
+                domState.style.color = '#34d399';
+
+                order.textContent = 'PRESERVED';
+                order.style.color = '#34d399';
+
+                statusBox.className = 'ok';
+                statusBox.textContent = '✅ DOM was ready when this script ran (defer verified)';
+
+                log.innerHTML = `[0.00ms] &lt;script defer&gt; in &lt;head&gt; &rarr; parallel background fetch.<br>
+[24.5ms] DOM tree fully constructed (DOMContentLoaded reached).<br>
+[26.1ms] Deferred script executed: document.getElementById('status') resolved.`;
+            } else {
+                btnBlock.classList.add('active');
+                btnRun.classList.remove('active');
+
+                stall.textContent = '+200 ms';
+                stall.style.color = '#f43f5e';
+                stallState.textContent = 'PARSER STALL';
+                stallState.style.color = '#f43f5e';
+
+                dom.textContent = 'BLOCKED';
+                dom.style.color = '#f43f5e';
+                domState.textContent = 'NULL ERROR';
+                domState.style.color = '#f43f5e';
+
+                order.textContent = 'HALTED';
+                order.style.color = '#f43f5e';
+
+                statusBox.className = 'pending';
+                statusBox.textContent = '⚠️ Waiting for script (parser blocked by heavy synchronous execution)...';
+
+                log.innerHTML = `[0.00ms] Synchronous &lt;script&gt; encountered in &lt;head&gt;.<br>
+[1.20ms] ⛔ HTML parsing halted! Main thread stalled for 200ms.<br>
+[202.0ms] Script fails: document.getElementById('status') is null (DOM not parsed yet!).`;
+            }
+        }
+    </script>
+</body>
+</html>
