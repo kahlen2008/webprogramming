@@ -328,93 +328,51 @@
             gap: 12px;
         }
 
-        .topic-item {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-sub);
-            padding: 16px 18px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: all 0.2s ease;
-        }
-
-        .topic-item:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(168, 85, 247, 0.35);
-            transform: translateX(3px);
-        }
-
-        .topic-badge {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            background: rgba(168, 85, 247, 0.15);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            color: #c084fc;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .topic-info {
+        /* Topic & Exercise Item List */
+        .topics-list {
+            list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 12px;
         }
 
-        .topic-name {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .topic-desc {
-            font-size: 0.84rem;
-            color: var(--text-sub);
-            line-height: 1.45;
-        }
-
-        /* Exercise Navigation Links */
+        /* Exercise & Topic Navigation Links */
         .exercise-item {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: var(--radius-sub);
-            padding: 16px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 14px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
             text-decoration: none;
-            transition: all 0.25s ease;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            gap: 16px;
         }
 
         .exercise-item:hover {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(59, 130, 246, 0.35);
+            background: rgba(168, 85, 247, 0.08);
+            border-color: rgba(168, 85, 247, 0.35);
             transform: translateX(4px);
         }
 
         .item-left {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
         }
 
-        .item-num {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
+        .item-num,
+        .topic-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             background: rgba(168, 85, 247, 0.15);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            color: var(--purple-light);
-            font-family: 'Fira Code', monospace;
-            font-size: 0.88rem;
-            font-weight: 700;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            color: #c084fc;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -425,6 +383,10 @@
             background: rgba(59, 130, 246, 0.15);
             border: 1px solid rgba(59, 130, 246, 0.25);
             color: #60a5fa;
+        }
+
+        .exercise-item:hover .exercise-num {
+            border-color: rgba(59, 130, 246, 0.45);
         }
 
         .item-text {
@@ -577,7 +539,7 @@
                     <li>
                         <a href="topic-1.html" class="exercise-item">
                             <div class="item-left">
-                                <span class="topic-badge">01</span>
+                                <span class="item-num">01</span>
                                 <div class="item-text">
                                     <span class="item-title">Image Optimization</span>
                                     <span class="item-desc">Format comparison (WebP, AVIF, JPEG, SVG), responsive srcset, and compression tools.</span>
@@ -590,7 +552,7 @@
                     <li>
                         <a href="topic-2.html" class="exercise-item">
                             <div class="item-left">
-                                <span class="topic-badge">02</span>
+                                <span class="item-num">02</span>
                                 <div class="item-text">
                                     <span class="item-title">Lazy Loading</span>
                                     <span class="item-desc">Native loading="lazy" for offscreen media, fetchpriority="high", and when NOT to lazy load.</span>
@@ -603,7 +565,7 @@
                     <li>
                         <a href="topic-3.html" class="exercise-item">
                             <div class="item-left">
-                                <span class="topic-badge">03</span>
+                                <span class="item-num">03</span>
                                 <div class="item-text">
                                     <span class="item-title">Minification</span>
                                     <span class="item-desc">Removing whitespace and comments from CSS/JS, 40–70% size reduction, and build tools.</span>
@@ -616,7 +578,7 @@
                     <li>
                         <a href="topic-4.html" class="exercise-item">
                             <div class="item-left">
-                                <span class="topic-badge">04</span>
+                                <span class="item-num">04</span>
                                 <div class="item-text">
                                     <span class="item-title">JavaScript Loading Strategy</span>
                                     <span class="item-desc">Render-blocking parser pauses, defer vs async execution diagram, and head script placement.</span>
@@ -629,7 +591,7 @@
                     <li>
                         <a href="topic-5.html" class="exercise-item">
                             <div class="item-left">
-                                <span class="topic-badge">05</span>
+                                <span class="item-num">05</span>
                                 <div class="item-text">
                                     <span class="item-title">Caching</span>
                                     <span class="item-desc">HTTP Cache-Control headers, 1-year immutable caching, cache busting hashes, and instant visits.</span>
