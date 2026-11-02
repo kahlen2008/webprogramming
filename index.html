@@ -122,12 +122,284 @@
             width: 6px;
         }
 
-        .week-card:nth-child(1) { animation-delay: 0.08s; }
-        .week-card:nth-child(2) { animation-delay: 0.14s; }
-        .week-card:nth-child(3) { animation-delay: 0.20s; }
-        .week-card:nth-child(4) { animation-delay: 0.26s; }
-        .week-card:nth-child(5) { animation-delay: 0.32s; }
-        .week-card:nth-child(6) { animation-delay: 0.38s; }
+        .week-card:nth-child(1) { animation-delay: 0.05s; }
+        .week-card:nth-child(2) { animation-delay: 0.10s; }
+        .week-card:nth-child(3) { animation-delay: 0.16s; }
+        .week-card:nth-child(4) { animation-delay: 0.22s; }
+        .week-card:nth-child(5) { animation-delay: 0.28s; }
+        .week-card:nth-child(6) { animation-delay: 0.34s; }
+        .week-card:nth-child(7) { animation-delay: 0.40s; }
+        .week-card:nth-child(8) { animation-delay: 0.46s; }
+        .week-card:nth-child(9) { animation-delay: 0.52s; }
+
+        /* Group Project Hero Cards Section */
+        .group-project-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 34px;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            animation-delay: 0.04s;
+        }
+
+        .section-badge-header {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 4px;
+        }
+
+        .hero-card {
+            border-radius: 20px;
+            padding: 26px 32px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .hero-card-blue {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .hero-card-blue:hover {
+            border-color: rgba(96, 165, 250, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 25px rgba(59, 130, 246, 0.25);
+        }
+
+        .hero-card-green {
+            background: linear-gradient(135deg, rgba(6, 78, 59, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .hero-card-green:hover {
+            border-color: rgba(52, 211, 153, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 25px rgba(16, 185, 129, 0.25);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-width: 820px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-tag-yellow {
+            color: #fbbf24;
+        }
+
+        .hero-tag-green {
+            color: #34d399;
+        }
+
+        .hero-tag-purple {
+            color: #c084fc;
+        }
+
+        .hero-card-purple {
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .hero-card-purple:hover {
+            border-color: rgba(192, 132, 252, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 25px rgba(168, 85, 247, 0.25);
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .hero-desc {
+            color: #94a3b8;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            margin: 0;
+            text-wrap: pretty;
+        }
+
+        .btn-launch-hero {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch-blue {
+            background: linear-gradient(135deg, #1a56db 0%, #2563eb 100%);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.45);
+        }
+
+        .hero-card-blue:hover .btn-launch-blue {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.65);
+        }
+
+        .btn-launch-green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.45);
+        }
+
+        .hero-card-green:hover .btn-launch-green {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.65);
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        .btn-launch-purple {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.45);
+        }
+
+        .hero-card-purple:hover .btn-launch-purple {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.65);
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        /* Embedded Video Dropdown Styles */
+        .video-card {
+            flex-direction: column;
+            align-items: stretch;
+            cursor: default;
+        }
+
+        .hero-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .video-card .btn-launch-purple {
+            cursor: pointer;
+            border: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chevron-icon {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .video-card.is-open .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        .video-dropdown-panel {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(168, 85, 247, 0.25);
+            flex-direction: column;
+            gap: 12px;
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .video-card.is-open .video-dropdown-panel {
+            display: flex;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #000000;
+            border: 1px solid rgba(168, 85, 247, 0.35);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .video-meta-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            padding: 4px 6px;
+        }
+
+        .video-meta-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .video-external-link {
+            color: #c084fc;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .video-external-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
 
         .week-header {
             width: 160px;
@@ -233,6 +505,24 @@
         }
 
         @media (max-width: 840px) {
+            .hero-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 22px 20px;
+            }
+
+            .hero-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .btn-launch-hero {
+                width: 100%;
+                justify-content: center;
+            }
+
             .week-card {
                 flex-direction: column;
                 align-items: flex-start;
@@ -266,6 +556,84 @@
             <h1>Web Programming Coursework</h1>
             <p class="subtitle">Kahlen Ong (202699471)</p>
         </header>
+
+        <!-- Web Programming Group Project Section -->
+        <section class="group-project-section" aria-labelledby="project-heading">
+            <div class="section-badge-header" id="project-heading">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Group Project · Team 3
+            </div>
+
+            <!-- Card 1: RecipePlan Live Web App -->
+            <a href="https://kahlen2008.github.io/webprogproject/index.html" target="_blank" rel="noopener" class="hero-card hero-card-blue">
+                <div class="hero-content">
+                    <span class="hero-tag hero-tag-yellow">⭐ Group Project · Live Application</span>
+                    <h2 class="hero-title">RecipePlan — Find Recipes, Plan Meals, Eat Better</h2>
+                    <p class="hero-desc">Interactive web application featuring recipe discovery, custom meal planning, real-time ingredient calculations, dietary tags, and responsive layouts.</p>
+                </div>
+                <span class="btn-launch-hero btn-launch-blue">
+                    Launch App
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </span>
+            </a>
+
+            <!-- Card 2: RecipePlan Project Proposal -->
+            <a href="https://kahlen2008.github.io/webprogproject/proposal/index.html" target="_blank" rel="noopener" class="hero-card hero-card-green">
+                <div class="hero-content">
+                    <span class="hero-tag hero-tag-green">⭐ Project Documentation</span>
+                    <h2 class="hero-title">Team 3 — RecipePlan Project Proposal</h2>
+                    <p class="hero-desc">Comprehensive project proposal detailing problem statement, user personas, UI wireframes, technical architecture, and milestone delivery roadmap.</p>
+                </div>
+                <span class="btn-launch-hero btn-launch-green">
+                    View Proposal
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </span>
+            </a>
+
+            <!-- Card 3: RecipePlan Proposal Presentation Video (Embedded Dropdown) -->
+            <div class="hero-card hero-card-purple video-card" id="video-card">
+                <div class="hero-card-header" id="video-card-header">
+                    <div class="hero-content">
+                        <span class="hero-tag hero-tag-purple">⭐ Proposal Video Presentation</span>
+                        <h2 class="hero-title">RecipePlan — Project Proposal Video (presentation.mp4)</h2>
+                        <p class="hero-desc">Recorded team presentation and walkthrough video detailing the RecipePlan concept, interface architecture, user workflows, and development roadmap.</p>
+                    </div>
+                    <button type="button" class="btn-launch-hero btn-launch-purple" id="video-toggle-btn" aria-expanded="false" aria-controls="video-dropdown-panel">
+                        <svg class="play-icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <span id="video-btn-text">Watch Video</span>
+                        <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                </div>
+
+                <!-- Dropdown Embedded Video Player Panel -->
+                <div class="video-dropdown-panel" id="video-dropdown-panel" role="region" aria-label="Embedded Presentation Video">
+                    <div class="video-wrapper">
+                        <iframe 
+                            id="video-iframe"
+                            data-src="https://drive.google.com/file/d/1fm30EHX9H_X3D-qCcLZ3_2O0gHvutgSQ/preview"
+                            title="RecipePlan Proposal Presentation Video"
+                            allow="autoplay; fullscreen"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="video-meta-bar">
+                        <span class="video-meta-info">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+                            presentation.mp4 · Embedded Google Drive Player
+                        </span>
+                        <a href="https://drive.google.com/file/d/1fm30EHX9H_X3D-qCcLZ3_2O0gHvutgSQ/view" target="_blank" rel="noopener" class="video-external-link">
+                            Open in Drive Tab
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-badge-header" style="margin-bottom: 14px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Weekly Coursework &amp; Lab Exercises
+        </div>
 
         <div class="grid">
             <div class="week-card">
@@ -455,5 +823,44 @@
             </div>
         </div>
     </div>
+
+    <!-- Interactive Embedded Video Dropdown Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoCard = document.getElementById('video-card');
+            const toggleBtn = document.getElementById('video-toggle-btn');
+            const cardHeader = document.getElementById('video-card-header');
+            const videoIframe = document.getElementById('video-iframe');
+            const btnText = document.getElementById('video-btn-text');
+
+            if (videoCard && toggleBtn && cardHeader && videoIframe) {
+                const toggleVideo = (e) => {
+                    // Prevent toggle if clicking an anchor link inside
+                    if (e && e.target && e.target.closest('a')) return;
+
+                    const isOpen = videoCard.classList.toggle('is-open');
+                    toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                    if (btnText) {
+                        btnText.textContent = isOpen ? 'Hide Video' : 'Watch Video';
+                    }
+
+                    // Lazy-load iframe source on first expansion
+                    if (isOpen && !videoIframe.getAttribute('src')) {
+                        videoIframe.src = videoIframe.dataset.src;
+                    }
+                };
+
+                toggleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleVideo(e);
+                });
+
+                cardHeader.addEventListener('click', (e) => {
+                    if (e.target.closest('#video-toggle-btn')) return;
+                    toggleVideo(e);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
