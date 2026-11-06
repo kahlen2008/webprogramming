@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Week 10_1 — Git &amp; GitHub Version Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(59, 130, 246, 0.35);
+            --purple: #a855f7;
+            --purple-light: #c084fc;
+            --purple-glow: rgba(168, 85, 247, 0.25);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.25);
+            --green: #10b981;
+            --green-glow: rgba(16, 185, 129, 0.25);
+            --amber: #fbbf24;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 22px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        h1, h2, h3, h4, .badge, .session-badge, .hero-tag { text-wrap: balance; }
+        p, .hero-desc, .topic-desc { text-wrap: pretty; }
+
+        .skip-link {
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1000;
+            background: var(--blue);
+            color: #ffffff;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+            transform: translateY(-200%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+
+        .skip-link:focus-visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            outline: 3px solid #ffffff;
+            outline-offset: 3px;
+        }
+
+        html {
+            background-color: var(--bg-body);
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px 20px 80px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--blue);
+            background: rgba(59, 130, 246, 0.15);
+            transform: translateX(-2px);
+        }
+
+        .session-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            white-space: nowrap;
+        }
+
+        header.header-title {
+            text-align: center;
+            max-width: 860px;
+            margin-bottom: 34px;
+        }
+
+        header.header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 30%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header.header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.55;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* Homework Featured Hero Card */
+        .hw-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .hw-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: var(--radius-card);
+            padding: 30px 36px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            transition: all 0.3s ease;
+        }
+
+        .hero-card:hover {
+            border-color: rgba(96, 165, 250, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--blue-glow);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 840px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #fbbf24;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .hero-desc {
+            color: var(--text-sub);
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .hero-url-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .hero-url-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .hero-url-pill:hover {
+            color: #ffffff;
+            background: rgba(59, 130, 246, 0.25);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .hero-url-pill-live {
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.14);
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+
+        .hero-url-pill-live:hover {
+            color: #ffffff;
+            background: rgba(16, 185, 129, 0.28);
+            border-color: rgba(16, 185, 129, 0.6);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulseGlow 2s infinite ease-in-out;
+            display: inline-block;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(0.85); }
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-launch-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 22px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch-live:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+
+        .btn-launch-hero {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #1a56db 0%, #2563eb 100%);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        /* Exercises Section */
+        .exercises-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 30px 32px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topics-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            gap: 16px;
+        }
+
+        .exercise-item:hover {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.35);
+            transform: translateX(4px);
+        }
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Squircle Badges (Matching Week 8_2 & 9_2 Outfit 40px) */
+        .item-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            color: #c084fc;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .exercise-num {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: #60a5fa;
+        }
+
+        .item-text {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .item-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .item-desc {
+            font-size: 0.84rem;
+            color: var(--text-sub);
+            line-height: 1.45;
+            text-wrap: pretty;
+        }
+
+        .item-arrow {
+            color: var(--text-dim);
+            transition: transform 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .exercise-item:hover .item-arrow {
+            color: #60a5fa;
+            transform: translateX(3px);
+        }
+
+        footer {
+            margin-top: 50px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Accessible Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Top Navigation -->
+    <nav class="topbar" aria-label="Page Navigation">
+        <a href="../../index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Coursework Hub
+        </a>
+        <div class="session-badge">Week 10_1 · Git &amp; GitHub</div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="header-title">
+        <h1>Git &amp; GitHub Version Control</h1>
+        <p>Repository initialization, staged snapshots, atomic commits, branching, merging, pull requests, and remote cloud collaboration workflows.</p>
+    </header>
+
+    <main class="main-container" id="main-content">
+
+        <!-- Homework Assignment Featured Banner -->
+        <section class="hw-section" aria-labelledby="hw-heading">
+            <div class="hw-section-title" id="hw-heading">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Homework Assignment
+            </div>
+
+            <div class="hero-card">
+                <div class="hero-content">
+                    <span class="hero-tag">⭐ Homework 1 · Personal Portfolio</span>
+                    <h2 class="hero-title">Personal Portfolio Repository &amp; Commit History</h2>
+                    <p class="hero-desc">
+                        Created, published, and deployed a personal portfolio repository (<code>kahlensdigitalportfolio</code>) on GitHub Pages containing index.html with student name, bio, photo, technical skills matrix, 2–3 course project links, and a verified history of 5+ meaningful commits.
+                    </p>
+                    <div class="hero-url-row">
+                        <a href="https://kahlen2008.github.io/kahlensdigitalportfolio/" target="_blank" rel="noopener" class="hero-url-pill hero-url-pill-live">
+                            <span class="pulse-dot" style="width:6px; height:6px; display:inline-block; border-radius:50%; background:#10b981;"></span>
+                            Live: https://kahlen2008.github.io/kahlensdigitalportfolio/
+                        </a>
+                        <a href="https://github.com/kahlen2008/kahlensdigitalportfolio" target="_blank" rel="noopener" class="hero-url-pill">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                            Repo: github.com/kahlen2008/kahlensdigitalportfolio
+                        </a>
+                        <a href="https://github.com/kahlen2008/kahlensdigitalportfolio/commits/main/" target="_blank" rel="noopener" class="hero-url-pill">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><line x1="1.05" y1="12" x2="7" y2="12"></line><line x1="17.01" y1="12" x2="22.96" y2="12"></line></svg>
+                            Commits: github.com/kahlen2008/kahlensdigitalportfolio/commits/main/
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <a href="hw-portfolio.html" class="btn-launch-hero">
+                        Launch Report
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="https://kahlen2008.github.io/kahlensdigitalportfolio/" target="_blank" rel="noopener" class="btn-launch-live">
+                        Open Live Site
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Exercises -->
+        <section class="exercises-section" aria-labelledby="exercises-head">
+            <div class="hw-section-title" id="exercises-head">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Practice Exercises
+            </div>
+
+            <div class="section-card">
+                <ul class="topics-list">
+                    <li>
+                        <a href="e1-first-repo.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E1</span>
+                                <div class="item-text">
+                                    <span class="item-title">Create Your First Repository</span>
+                                    <span class="item-desc">Initialize Git, create index.html, check untracked status, stage changes, and commit e5419f7.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="e2-branch-merge.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E2</span>
+                                <div class="item-text">
+                                    <span class="item-title">Create a Branch and Merge It</span>
+                                    <span class="item-desc">Branch creation, isolated feature commits, merging to main, verified via Pull Request #1.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="e3-push-github.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E3</span>
+                                <div class="item-text">
+                                    <span class="item-title">Push Your Repo to GitHub</span>
+                                    <span class="item-desc">Link remote origin tracking URL, set main upstream, and push to kahlensdigitalportfolio.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        Web Programming Course · Week 10_1 · Git &amp; GitHub Version Control
+    </footer>
+
+</body>
+</html>

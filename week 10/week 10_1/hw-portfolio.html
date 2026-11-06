@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>Homework 1: Personal Portfolio Repository — Week 10_1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #070b12;
+            --bg-card: rgba(13, 20, 36, 0.85);
+            --bg-card-sub: rgba(18, 27, 48, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.4);
+            --border-glow: rgba(56, 189, 248, 0.25);
+            --blue: #38bdf8;
+            --blue-glow: rgba(56, 189, 248, 0.25);
+            --green: #10b981;
+            --emerald: #34d399;
+            --purple: #a855f7;
+            --purple-light: #c084fc;
+            --amber: #fbbf24;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-sub: 12px;
+            --radius-btn: 10px;
+            --shadow-card: 0 16px 40px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        h1, h2, h3, h4, .stat-val, .stat-label { text-wrap: balance; }
+        p, td, th, .item-desc { text-wrap: pretty; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.15), transparent 70%),
+                radial-gradient(ellipse 60% 40% at 90% 60%, rgba(168, 85, 247, 0.1), transparent 60%),
+                radial-gradient(ellipse 50% 30% at 10% 80%, rgba(16, 185, 129, 0.08), transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 80px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1080px;
+            display: flex;
+            flex-direction: column;
+            gap: 26px;
+        }
+
+        /* Topbar Navigation */
+        .topbar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-link, .print-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 9px 16px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover, .print-btn:hover {
+            color: #ffffff;
+            border-color: var(--blue);
+            background: rgba(56, 189, 248, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            padding: 7px 14px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--blue);
+            white-space: nowrap;
+        }
+
+        /* Hero Header Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(14, 116, 144, 0.25) 0%, rgba(13, 20, 36, 0.95) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: var(--radius-card);
+            padding: 36px 40px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--amber);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-desc {
+            color: var(--text-sub);
+            font-size: 1rem;
+            max-width: 860px;
+            line-height: 1.6;
+        }
+
+        /* Metadata Grid */
+        .meta-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .meta-cell {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meta-cell-label {
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .meta-cell-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Target URL Bar & Submission Links */
+        .target-url-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 18px 22px;
+        }
+
+        .submission-links-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .submission-links-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.01em;
+        }
+
+        .deploy-status-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 14px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #34d399;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulseGlow 2s infinite ease-in-out;
+            display: inline-block;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(0.85); }
+        }
+
+        .submission-links-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .link-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 10px;
+            padding: 10px 14px;
+            transition: all 0.2s ease;
+        }
+
+        .link-entry:hover {
+            background: rgba(255, 255, 255, 0.045);
+            border-color: rgba(255, 255, 255, 0.16);
+        }
+
+        .link-entry-live {
+            background: rgba(16, 185, 129, 0.06);
+            border-color: rgba(16, 185, 129, 0.28);
+        }
+
+        .link-entry-live:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.45);
+        }
+
+        .link-entry-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .link-tag {
+            font-size: 0.76rem;
+            font-weight: 700;
+            padding: 4px 9px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.02em;
+        }
+
+        .tag-live {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .tag-repo {
+            background: rgba(56, 189, 248, 0.18);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .tag-commits {
+            background: rgba(168, 85, 247, 0.18);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .link-desc {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .actual-url-btn {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            max-width: 100%;
+            word-break: break-all;
+        }
+
+        .actual-url-live {
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.14);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .actual-url-live:hover {
+            color: #ffffff;
+            background: rgba(16, 185, 129, 0.28);
+            border-color: rgba(16, 185, 129, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .actual-url-repo {
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.28);
+        }
+
+        .actual-url-repo:hover {
+            color: #ffffff;
+            background: rgba(56, 189, 248, 0.24);
+            border-color: rgba(56, 189, 248, 0.55);
+            transform: translateY(-1px);
+        }
+
+        .actual-url-commits {
+            color: #c084fc;
+            background: rgba(168, 85, 247, 0.12);
+            border: 1px solid rgba(168, 85, 247, 0.28);
+        }
+
+        .actual-url-commits:hover {
+            color: #ffffff;
+            background: rgba(168, 85, 247, 0.24);
+            border-color: rgba(168, 85, 247, 0.55);
+            transform: translateY(-1px);
+        }
+
+        .external-icon {
+            flex-shrink: 0;
+            opacity: 0.8;
+            transition: transform 0.2s;
+        }
+
+        .actual-url-btn:hover .external-icon {
+            transform: translate(2px, -2px);
+            opacity: 1;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .section-head h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffffff;
+        }
+
+        .section-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+            text-transform: uppercase;
+        }
+
+
+
+        /* Commits Table */
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sub);
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 18px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-sub);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+            color: #ffffff;
+        }
+
+        .commit-pill {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .commit-type {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .type-feat {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .type-style {
+            background: rgba(168, 85, 247, 0.15);
+            color: var(--purple-light);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .type-fix {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--amber);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        /* Reflection Card */
+        .reflection-card {
+            background: rgba(56, 189, 248, 0.06);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: var(--radius-sub);
+            padding: 22px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .reflection-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reflection-card p {
+            color: var(--text-sub);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Navigation -->
+        <nav class="topbar" aria-label="Page Navigation">
+            <div class="nav-actions">
+                <a href="index.html" class="back-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    Week 10_1 Overview
+                </a>
+                <button type="button" class="print-btn" onclick="window.print()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    Print Report
+                </button>
+            </div>
+            <div class="badge-pill">Week 10_1 · Git &amp; GitHub</div>
+        </nav>
+
+        <!-- Hero Header Banner -->
+        <header class="hero-banner">
+            <div>
+                <span class="hero-tag">⭐ Homework 1 Submission Report</span>
+                <h1 class="hero-title">Personal Portfolio Repository &amp; Commit Audit</h1>
+                <p class="hero-desc">
+                    Comprehensive audit documentation for the personal portfolio repository (<code>kahlensdigitalportfolio</code>) created on GitHub, showcasing semantic HTML5 markup, profile information, skills competency matrix, course project showcases, and a verified sequence of 5+ atomic commit snapshots.
+                </p>
+            </div>
+
+            <!-- Target Submission URLs & Deployment Bar -->
+            <div class="target-url-bar">
+                <div class="submission-links-header">
+                    <span class="submission-links-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--emerald);"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Cybercampus Submission Links:
+                    </span>
+                    <span class="deploy-status-tag">
+                        <span class="pulse-dot"></span>
+                        Deployed on GitHub Pages
+                    </span>
+                </div>
+
+                <div class="submission-links-grid">
+                    <!-- Live Deployed Website -->
+                    <div class="link-entry link-entry-live">
+                        <div class="link-entry-meta">
+                            <span class="link-tag tag-live">
+                                <span class="pulse-dot" style="width:6px; height:6px;"></span>
+                                Live Site (GitHub Pages)
+                            </span>
+                            <span class="link-desc">Deployed Web App</span>
+                        </div>
+                        <a href="https://kahlen2008.github.io/kahlensdigitalportfolio/" target="_blank" rel="noopener" class="actual-url-btn actual-url-live">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                            <span>https://kahlen2008.github.io/kahlensdigitalportfolio/</span>
+                            <svg class="external-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                    </div>
+
+                    <!-- Repository Root -->
+                    <div class="link-entry">
+                        <div class="link-entry-meta">
+                            <span class="link-tag tag-repo">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                GitHub Repository
+                            </span>
+                            <span class="link-desc">Source Code Root</span>
+                        </div>
+                        <a href="https://github.com/kahlen2008/kahlensdigitalportfolio" target="_blank" rel="noopener" class="actual-url-btn actual-url-repo">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                            <span>https://github.com/kahlen2008/kahlensdigitalportfolio</span>
+                            <svg class="external-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                    </div>
+
+                    <!-- Commits History -->
+                    <div class="link-entry">
+                        <div class="link-entry-meta">
+                            <span class="link-tag tag-commits">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><line x1="1.05" y1="12" x2="7" y2="12"></line><line x1="17.01" y1="12" x2="22.96" y2="12"></line></svg>
+                                Commit History
+                            </span>
+                            <span class="link-desc">5+ Verified Commits</span>
+                        </div>
+                        <a href="https://github.com/kahlen2008/kahlensdigitalportfolio/commits/main/" target="_blank" rel="noopener" class="actual-url-btn actual-url-commits">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><line x1="1.05" y1="12" x2="7" y2="12"></line><line x1="17.01" y1="12" x2="22.96" y2="12"></line></svg>
+                            <span>https://github.com/kahlen2008/kahlensdigitalportfolio/commits/main/</span>
+                            <svg class="external-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meta Strip -->
+            <div class="meta-strip">
+                <div class="meta-cell">
+                    <span class="meta-cell-label">Repository Name</span>
+                    <span class="meta-cell-value">kahlensdigitalportfolio</span>
+                </div>
+                <div class="meta-cell">
+                    <span class="meta-cell-label">GitHub Pages Hosting</span>
+                    <span class="meta-cell-value" style="color:var(--emerald); display:inline-flex; align-items:center; gap:6px;">
+                        <span class="pulse-dot" style="width:7px; height:7px;"></span>
+                        Deployed &amp; Live
+                    </span>
+                </div>
+                <div class="meta-cell">
+                    <span class="meta-cell-label">Default Branch</span>
+                    <span class="meta-cell-value">main (verified)</span>
+                </div>
+                <div class="meta-cell">
+                    <span class="meta-cell-label">Commit Requirement</span>
+                    <span class="meta-cell-value" style="color:var(--emerald);">5+ Commits Achieved</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Live Deployment Showcase Card -->
+        <section class="section-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(17, 24, 39, 0.94) 100%); border-color: rgba(16, 185, 129, 0.35);">
+            <div class="section-head" style="border-bottom-color: rgba(16, 185, 129, 0.2);">
+                <h2>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--emerald);"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    GitHub Pages Live Deployment
+                </h2>
+                <span class="section-badge" style="background:rgba(16,185,129,0.2); border-color:rgba(16,185,129,0.4); color:var(--emerald); display:inline-flex; align-items:center; gap:6px;">
+                    <span class="pulse-dot" style="width:7px; height:7px;"></span>
+                    Production Live
+                </span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+                <div style="max-width:760px; display:flex; flex-direction:column; gap:10px;">
+                    <div style="font-size:1.15rem; font-weight:700; color:#ffffff;">Kahlen Ong | Applied AI &amp; Analytics</div>
+                    <p style="color:var(--text-sub); font-size:0.92rem; line-height:1.55;">
+                        Personal portfolio deployed live to GitHub Pages. Fully responsive web application featuring profile identity, technical skills matrix, and interactive course projects.
+                    </p>
+                    <div style="font-family:'Fira Code', monospace; font-size:0.85rem; color:#34d399; background:rgba(0,0,0,0.35); padding:8px 14px; border-radius:8px; border:1px solid rgba(16,185,129,0.25); width:fit-content; word-break:break-all;">
+                        🔗 https://kahlen2008.github.io/kahlensdigitalportfolio/
+                    </div>
+                </div>
+                <a href="https://kahlen2008.github.io/kahlensdigitalportfolio/" target="_blank" rel="noopener" class="actual-url-btn actual-url-live" style="padding:12px 22px; font-size:0.92rem; font-weight:700; border-radius:10px; box-shadow:0 4px 16px rgba(16,185,129,0.35); white-space:nowrap;">
+                    Open Live Portfolio
+                    <svg class="external-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+            </div>
+        </section>
+
+        <!-- Section 2: Commit Progression History -->
+        <section class="section-card" aria-labelledby="commits-heading">
+            <div class="section-head">
+                <h2 id="commits-heading">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--emerald);"><circle cx="12" cy="12" r="4"></circle><line x1="1.05" y1="12" x2="7" y2="12"></line><line x1="17.01" y1="12" x2="22.96" y2="12"></line></svg>
+                    Commit History &amp; Message Progression
+                </h2>
+                <span class="section-badge" style="background:rgba(56,189,248,0.15); border-color:rgba(56,189,248,0.3); color:var(--blue);">Atomic Commit History</span>
+            </div>
+
+            <p style="color:var(--text-sub); font-size:0.92rem;">
+                Each commit follows conventional commit prefixes (<code>feat:</code>, <code>style:</code>, <code>fix:</code>) illustrating incremental project development without bloated single-commit submissions:
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hash</th>
+                            <th>Type</th>
+                            <th>Commit Message</th>
+                            <th>Scope &amp; Changes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="commit-pill">e5419f7</span></td>
+                            <td><span class="commit-type type-feat">feat</span></td>
+                            <td><strong style="color:#ffffff;">feat: initial portfolio website structure and assets</strong></td>
+                            <td>Base HTML5 document skeleton, head metadata, and asset links</td>
+                        </tr>
+                        <tr>
+                            <td><span class="commit-pill">a82f1b4</span></td>
+                            <td><span class="commit-type type-feat">feat</span></td>
+                            <td><strong style="color:#ffffff;">feat: add hero section with bio and profile photo</strong></td>
+                            <td>Hero container, heading, student bio paragraph, and avatar image</td>
+                        </tr>
+                        <tr>
+                            <td><span class="commit-pill">c49e210</span></td>
+                            <td><span class="commit-type type-feat">feat</span></td>
+                            <td><strong style="color:#ffffff;">feat: add technical skills grid and competency tags</strong></td>
+                            <td>Skills matrix section with HTML5, CSS3, JS, Git, and a11y pills</td>
+                        </tr>
+                        <tr>
+                            <td><span class="commit-pill">f13d809</span></td>
+                            <td><span class="commit-type type-feat">feat</span></td>
+                            <td><strong style="color:#ffffff;">feat: add featured course projects with live deployment links</strong></td>
+                            <td>Project showcase cards linking RecipePlan and Book Finder projects</td>
+                        </tr>
+                        <tr>
+                            <td><span class="commit-pill">d27a441</span></td>
+                            <td><span class="commit-type type-style">style</span></td>
+                            <td><strong style="color:#ffffff;">style: refine responsive mobile layout and navigation bar</strong></td>
+                            <td>CSS media queries for mobile viewports and responsive navigation</td>
+                        </tr>
+                        <tr>
+                            <td><span class="commit-pill">8b92ef3</span></td>
+                            <td><span class="commit-type type-fix">fix</span></td>
+                            <td><strong style="color:#ffffff;">fix: optimize image dimensions and color contrast ratios</strong></td>
+                            <td>WCAG color contrast enhancement and zero-CLS image dimensions</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 3: Reflection & Git Best Practices -->
+        <section class="section-card" aria-labelledby="reflection-heading">
+            <div class="section-head">
+                <h2 id="reflection-heading">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--amber);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    Reflection: Version Control &amp; Atomic Commits
+                </h2>
+                <span class="section-badge" style="background:rgba(251,191,36,0.15); border-color:rgba(251,191,36,0.3); color:var(--amber);">Best Practices</span>
+            </div>
+
+            <div class="reflection-card">
+                <h3>The Value of Atomic, Descriptive Commits</h3>
+                <p>
+                    Rather than making one monolithic commit at the end of development, breaking progress into discrete commits with descriptive messages creates an auditable timeline. If a bug is introduced, <code>git bisect</code> or <code>git log</code> allows pinpointing the exact change. In collaborative team projects like our RecipePlan application, clear commit hygiene ensures teammates understand code intent during code review.
+                </p>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>
