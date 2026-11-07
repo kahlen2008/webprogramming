@@ -194,6 +194,10 @@
             gap: 24px;
             flex-wrap: wrap;
             transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .hero-card:hover {
@@ -205,8 +209,11 @@
         .hero-content {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             max-width: 840px;
+            width: 100%;
+            min-width: 0;
+            flex: 1 1 480px;
         }
 
         .hero-tag {
@@ -225,6 +232,7 @@
             font-size: 1.45rem;
             font-weight: 700;
             color: #ffffff;
+            line-height: 1.35;
         }
 
         .hero-desc {
@@ -235,25 +243,30 @@
 
         .hero-url-row {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            min-width: 0;
             margin-top: 6px;
         }
 
         .hero-url-pill {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             font-family: 'Fira Code', monospace;
             font-size: 0.8rem;
             color: #93c5fd;
             background: rgba(59, 130, 246, 0.12);
             border: 1px solid rgba(59, 130, 246, 0.25);
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
             text-decoration: none;
             transition: all 0.2s ease;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         .hero-url-pill:hover {
@@ -273,6 +286,45 @@
             color: #ffffff;
             background: rgba(16, 185, 129, 0.28);
             border-color: rgba(16, 185, 129, 0.6);
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.74rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .hero-url-pill-live .pill-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .pill-url {
+            overflow-wrap: anywhere;
+            word-break: break-all;
+            min-width: 0;
+            flex: 1;
+            font-size: 0.78rem;
+            line-height: 1.4;
+        }
+
+        .pill-ext-icon {
+            flex-shrink: 0;
+            opacity: 0.7;
+            transition: transform 0.2s;
+        }
+
+        .hero-url-pill:hover .pill-ext-icon {
+            transform: translate(2px, -2px);
+            opacity: 1;
         }
 
         .pulse-dot {
@@ -295,6 +347,7 @@
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
+            flex-shrink: 0;
         }
 
         .btn-launch-live {
@@ -404,6 +457,8 @@
             display: flex;
             align-items: center;
             gap: 16px;
+            min-width: 0;
+            flex: 1;
         }
 
         /* Squircle Badges (Matching Week 8_2 & 9_2 Outfit 40px) */
@@ -433,6 +488,7 @@
             display: flex;
             flex-direction: column;
             gap: 3px;
+            min-width: 0;
         }
 
         .item-title {
@@ -457,6 +513,115 @@
         .exercise-item:hover .item-arrow {
             color: #60a5fa;
             transform: translateX(3px);
+        }
+
+        /* Mobile Layout & Media Queries */
+        @media (max-width: 768px) {
+            body {
+                padding: 18px 14px 60px 14px;
+            }
+
+            .topbar {
+                margin-bottom: 20px;
+                gap: 10px;
+            }
+
+            .session-badge {
+                font-size: 0.72rem;
+                padding: 5px 10px;
+            }
+
+            header.header-title {
+                margin-bottom: 24px;
+            }
+
+            header.header-title h1 {
+                font-size: 1.85rem;
+            }
+
+            header.header-title p {
+                font-size: 0.92rem;
+            }
+
+            .hero-card {
+                padding: 20px 16px;
+                gap: 18px;
+            }
+
+            .hero-title {
+                font-size: 1.22rem;
+            }
+
+            .hero-desc {
+                font-size: 0.88rem;
+            }
+
+            .hero-actions {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .btn-launch-hero,
+            .btn-launch-live {
+                width: 100%;
+                justify-content: center;
+                box-sizing: border-box;
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+
+            .section-card {
+                padding: 20px 16px;
+            }
+
+            .exercise-item {
+                padding: 12px 14px;
+                gap: 12px;
+            }
+
+            .item-num {
+                width: 36px;
+                height: 36px;
+                font-size: 0.9rem;
+            }
+
+            .item-title {
+                font-size: 0.95rem;
+            }
+
+            .item-desc {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 14px 10px 50px 10px;
+            }
+
+            .hero-card {
+                padding: 16px 12px;
+            }
+
+            .section-card {
+                padding: 16px 12px;
+            }
+
+            .hero-url-pill {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+
+            .pill-url {
+                font-size: 0.72rem;
+            }
+
+            .exercise-item {
+                padding: 10px;
+                gap: 10px;
+            }
         }
 
         footer {
@@ -505,16 +670,28 @@
                     </p>
                     <div class="hero-url-row">
                         <a href="https://kahlen2008.github.io/kahlensdigitalportfolio/" target="_blank" rel="noopener" class="hero-url-pill hero-url-pill-live">
-                            <span class="pulse-dot" style="width:6px; height:6px; display:inline-block; border-radius:50%; background:#10b981;"></span>
-                            Live: https://kahlen2008.github.io/kahlensdigitalportfolio/
+                            <span class="pill-badge">
+                                <span class="pulse-dot" style="width:6px; height:6px;"></span>
+                                Live
+                            </span>
+                            <span class="pill-url">https://kahlen2008.github.io/kahlensdigitalportfolio/</span>
+                            <svg class="pill-ext-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                         </a>
                         <a href="https://github.com/kahlen2008/kahlensdigitalportfolio" target="_blank" rel="noopener" class="hero-url-pill">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-                            Repo: github.com/kahlen2008/kahlensdigitalportfolio
+                            <span class="pill-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                Repo
+                            </span>
+                            <span class="pill-url">github.com/kahlen2008/kahlensdigitalportfolio</span>
+                            <svg class="pill-ext-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                         </a>
                         <a href="https://github.com/kahlen2008/kahlensdigitalportfolio/commits/main/" target="_blank" rel="noopener" class="hero-url-pill">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><line x1="1.05" y1="12" x2="7" y2="12"></line><line x1="17.01" y1="12" x2="22.96" y2="12"></line></svg>
-                            Commits: github.com/kahlen2008/kahlensdigitalportfolio/commits/main/
+                            <span class="pill-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><line x1="1.05" y1="12" x2="7" y2="12"></line><line x1="17.01" y1="12" x2="22.96" y2="12"></line></svg>
+                                Commits
+                            </span>
+                            <span class="pill-url">github.com/kahlen2008/kahlensdigitalportfolio/commits/main/</span>
+                            <svg class="pill-ext-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                         </a>
                     </div>
                 </div>
