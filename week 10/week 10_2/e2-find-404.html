@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>E2: Find and Understand a 404 Page — Week 10_2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(59, 130, 246, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #60a5fa;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        h1, h2, h3, h4, .nav-badge, .exercise-tag { text-wrap: balance; }
+        p, li, .desc { text-wrap: pretty; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(244, 63, 94, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: #ffffff;
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(59, 130, 246, 0.12);
+        }
+
+        .nav-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-rose);
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            padding: 6px 14px;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+        }
+
+        .header-section {
+            margin-bottom: 30px;
+        }
+
+        .exercise-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--accent-rose);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .desc {
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+            max-width: 820px;
+        }
+
+        /* Split Grid */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: stretch;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .panel-header {
+            padding: 14px 20px;
+            background: rgba(0, 0, 0, 0.25);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            flex-grow: 1;
+        }
+
+        /* Mock Default 404 Visual */
+        .mock-404-window {
+            background: #ffffff;
+            color: #24292f;
+            border-radius: 8px;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .mock-404-icon {
+            font-size: 2.2rem;
+            line-height: 1;
+        }
+
+        .mock-404-title {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #24292f;
+        }
+
+        .mock-404-desc {
+            font-size: 0.85rem;
+            color: #57606a;
+            max-width: 380px;
+            line-height: 1.4;
+        }
+
+        .mock-badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent-rose);
+            background: rgba(244, 63, 94, 0.12);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .url-callout {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            color: var(--accent-blue);
+            word-break: break-all;
+        }
+
+        /* UX Critique Cards */
+        .critique-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .critique-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .critique-title-bad {
+            color: var(--accent-rose);
+        }
+
+        .critique-title-good {
+            color: var(--accent-emerald);
+        }
+
+        .critique-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Key Concept Box */
+        .concept-card {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0%, rgba(17, 24, 39, 0.95) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .concept-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-amber);
+        }
+
+        .concept-body {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .concept-pill {
+            font-family: 'Fira Code', monospace;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .btn-test {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #1a56db 0%, #2563eb 100%);
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+            transition: all 0.2s ease;
+            margin-top: auto;
+        }
+
+        .btn-test:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        /* Mobile Layout */
+        @media (max-width: 768px) {
+            body { padding: 18px 14px 60px 14px; }
+            h1 { font-size: 1.65rem; }
+            .panel-body { padding: 18px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Navigation -->
+        <nav class="navbar" aria-label="Page Navigation">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Week 10_2 Overview
+            </a>
+            <div class="nav-badge">Exercise 2 Analysis</div>
+        </nav>
+
+        <!-- Header -->
+        <header class="header-section">
+            <span class="exercise-tag">Exercise 2</span>
+            <h1>Find and Understand a 404 Page</h1>
+            <p class="desc">
+                Inspect GitHub's generic 404 fallback page on an invalid route, evaluate user experience impact, check local repository assets for 404.html, and define UX remediation strategies.
+            </p>
+        </header>
+
+        <!-- Split Grid -->
+        <div class="split-grid">
+            <!-- Left: Default 404 Simulation & Route Test -->
+            <section class="panel-card" aria-labelledby="default-404-title">
+                <div class="panel-header">
+                    <span class="panel-title" id="default-404-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-rose);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        Simulated GitHub Default 404 Behavior
+                    </span>
+                    <span class="mock-badge">Default Fallback</span>
+                </div>
+
+                <div class="panel-body">
+                    <p style="font-size:0.88rem; color:var(--text-secondary);">
+                        When navigating to an undefined route on GitHub Pages without a custom handler, GitHub returns its generic static 404 screen:
+                    </p>
+
+                    <!-- Mock Default UI -->
+                    <div class="mock-404-window">
+                        <div class="mock-404-icon">🐙</div>
+                        <h2 class="mock-404-title">404 — Page Not Found</h2>
+                        <p class="mock-404-desc">
+                            There isn't a GitHub Pages site here. If you're trying to publish one, offer feedback or check GitHub Status.
+                        </p>
+                    </div>
+
+                    <div class="url-callout">
+                        GET https://kahlen2008.github.io/webprogramming/this-does-not-exist.html
+                    </div>
+
+                    <a href="https://kahlen2008.github.io/webprogramming/this-does-not-exist.html" target="_blank" rel="noopener" class="btn-test">
+                        Test Non-Existent Route Live ↗
+                    </a>
+                </div>
+            </section>
+
+            <!-- Right: UX Analysis & Discussion Question -->
+            <section class="panel-card" aria-labelledby="ux-title">
+                <div class="panel-header">
+                    <span class="panel-title" id="ux-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-blue);"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        UX Evaluation &amp; Question
+                    </span>
+                    <span style="font-size:0.75rem; color:var(--accent-blue); font-family:'Fira Code', monospace;">UX Analysis</span>
+                </div>
+
+                <div class="panel-body">
+                    <div class="critique-card">
+                        <span class="critique-title critique-title-bad">
+                            ✕ Question: Is this a good user experience?
+                        </span>
+                        <p class="critique-desc">
+                            <strong>No.</strong> The default 404 completely strips the user away from the site's layout. It looks like the entire server crashed or the project was deleted. There are no navigation links, no search bar, and no way back to safety other than the browser's back button.
+                        </p>
+                    </div>
+
+                    <div class="critique-card">
+                        <span class="critique-title critique-title-good">
+                            ✓ What would you improve?
+                        </span>
+                        <p class="critique-desc">
+                            1. <strong>Maintain Visual Identity</strong>: Keep the dark aesthetic, font family, and header.<br>
+                            2. <strong>Clear Guidance</strong>: Provide friendly, non-technical explanations.<br>
+                            3. <strong>Clear Recovery Links</strong>: Direct buttons to Homepage, Coursework Index, and a "Go Back" action.
+                        </p>
+                    </div>
+
+                    <div class="critique-card">
+                        <span class="critique-title" style="color:var(--accent-purple);">
+                            🔍 Local Check: Do you have a 404.html file?
+                        </span>
+                        <p class="critique-desc">
+                            Checked local directory: <span class="config-pill" style="font-family:'Fira Code', monospace; color:#f87171; background:rgba(248,113,113,0.12); border-color:rgba(248,113,113,0.3); padding:2px 6px; border-radius:4px;">404.html: Missing</span>. Without this file in the repo root, GitHub Pages falls back to its generic server error.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Key Concept Card -->
+        <aside class="concept-card" aria-label="GitHub Pages 404 Mechanism">
+            <div class="concept-head">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                💡 GitHub Pages Automatic 404 Mechanism
+            </div>
+            <p class="concept-body">
+                GitHub Pages automatically serves <span class="concept-pill">404.html</span> whenever an invalid or deleted route is requested — <strong>provided that file exists at the root of your publishing branch</strong>. When the file is present, GitHub returns HTTP 404 status code while rendering your custom HTML, keeping visitors inside your brand and navigation hierarchy!
+            </p>
+        </aside>
+    </div>
+
+</body>
+</html>

@@ -428,7 +428,7 @@
             margin: 0;
             flex-grow: 1;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
             gap: 10px;
             align-items: stretch;
         }
@@ -458,17 +458,17 @@
         .link-item a::after {
             content: '→';
             position: absolute;
-            right: 14px;
+            right: 12px;
             opacity: 0;
-            transform: translateX(-8px);
+            transform: translateX(-6px);
             transition: all 0.25s ease;
             color: var(--accent-color);
+            pointer-events: none;
         }
 
         .link-item a:hover {
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.16);
-            padding-right: 32px;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
@@ -482,6 +482,7 @@
             font-weight: 600;
             font-size: 0.92rem;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .description {
@@ -489,12 +490,12 @@
             font-size: 0.8rem;
             white-space: nowrap;
             text-align: right;
-            flex-shrink: 0;
-            transition: color 0.3s ease;
+            transition: color 0.25s ease, transform 0.25s ease;
         }
 
         .link-item a:hover .description {
             color: #cbd5e1;
+            transform: translateX(-18px);
         }
 
         @keyframes fadeIn {
@@ -833,6 +834,12 @@
                         <a href="week 10/week 10_1/">
                             <span class="link-name">week 10_1</span>
                             <span class="description">Git &amp; GitHub</span>
+                        </a>
+                    </li>
+                    <li class="link-item">
+                        <a href="week 10/week 10_2/">
+                            <span class="link-name">week 10_2</span>
+                            <span class="description">GitHub Pages &amp; 404</span>
                         </a>
                     </li>
                 </ul>

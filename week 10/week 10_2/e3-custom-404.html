@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>E3: Create a Custom 404 Page — Week 10_2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(59, 130, 246, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #60a5fa;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        h1, h2, h3, h4, .nav-badge, .exercise-tag { text-wrap: balance; }
+        p, li, .desc { text-wrap: pretty; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(168, 85, 247, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: #ffffff;
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(59, 130, 246, 0.12);
+        }
+
+        .nav-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-emerald);
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 14px;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+        }
+
+        .header-section {
+            margin-bottom: 30px;
+        }
+
+        .exercise-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--accent-emerald);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .desc {
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+            max-width: 820px;
+        }
+
+        /* Split Grid */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: stretch;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .split-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .panel-header {
+            padding: 14px 20px;
+            background: rgba(0, 0, 0, 0.25);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            flex-grow: 1;
+        }
+
+        /* Code Block */
+        .code-container {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            overflow-x: auto;
+            max-height: 380px;
+        }
+
+        .code-tag { color: #f43f5e; }
+        .code-attr { color: #fbbf24; }
+        .code-val { color: #34d399; }
+        .code-comment { color: #64748b; font-style: italic; }
+
+        /* Feature Pillars List */
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .feature-icon {
+            color: var(--accent-emerald);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .feature-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .feature-text {
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        /* Live Action Bar */
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+
+        .btn-launch {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 22px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .btn-launch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+
+        .btn-preview {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .btn-preview:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border-highlight);
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Layout */
+        @media (max-width: 768px) {
+            body { padding: 18px 14px 60px 14px; }
+            h1 { font-size: 1.65rem; }
+            .panel-body { padding: 18px 14px; }
+            .action-row { flex-direction: column; align-items: stretch; }
+            .btn-launch, .btn-preview { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Navigation -->
+        <nav class="navbar" aria-label="Page Navigation">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Week 10_2 Overview
+            </a>
+            <div class="nav-badge">Exercise 3 Implementation</div>
+        </nav>
+
+        <!-- Header -->
+        <header class="header-section">
+            <span class="exercise-tag">Exercise 3</span>
+            <h1>Create a Custom 404 Page</h1>
+            <p class="desc">
+                Construct and publish an accessible custom 404.html error handler to root repository, providing clear user feedback, dynamic pathname inspection, and direct recovery navigation.
+            </p>
+        </header>
+
+        <!-- Split Grid -->
+        <div class="split-grid">
+            <!-- Left: Implementation Code -->
+            <section class="panel-card" aria-labelledby="code-title">
+                <div class="panel-header">
+                    <span class="panel-title" id="code-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-blue);"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        Root 404.html Architecture
+                    </span>
+                    <span style="font-size:0.75rem; color:var(--text-muted); font-family:'Fira Code', monospace;">Location: /404.html</span>
+                </div>
+
+                <div class="panel-body">
+                    <div class="code-container">
+<span class="code-comment">&lt;!-- Custom 404 handler for GitHub Pages --&gt;</span>
+&lt;<span class="code-tag">article</span> <span class="code-attr">class</span>=<span class="code-val">"error-card"</span>&gt;
+  &lt;<span class="code-tag">span</span> <span class="code-attr">class</span>=<span class="code-val">"badge-pill"</span>&gt;HTTP 404 Error&lt;/<span class="code-tag">span</span>&gt;
+  &lt;<span class="code-tag">div</span> <span class="code-attr">class</span>=<span class="code-val">"error-code"</span>&gt;404&lt;/<span class="code-tag">div</span>&gt;
+  &lt;<span class="code-tag">h1</span>&gt;Page Not Found&lt;/<span class="code-tag">h1</span>&gt;
+  &lt;<span class="code-tag">p</span>&gt;The resource you are looking for does not exist...&lt;/<span class="code-tag">p</span>&gt;
+
+  &lt;<span class="code-tag">div</span> <span class="code-attr">class</span>=<span class="code-val">"invalid-path-box"</span>&gt;
+    &lt;<span class="code-tag">span</span> <span class="code-attr">id</span>=<span class="code-val">"requested-path"</span>&gt;&lt;/<span class="code-tag">span</span>&gt;
+  &lt;/<span class="code-tag">div</span>&gt;
+
+  &lt;<span class="code-tag">div</span> <span class="code-attr">class</span>=<span class="code-val">"actions-group"</span>&gt;
+    &lt;<span class="code-tag">a</span> <span class="code-attr">href</span>=<span class="code-val">"/webprogramming/index.html"</span> <span class="code-attr">class</span>=<span class="code-val">"btn-primary"</span>&gt;
+      Return to Hub
+    &lt;/<span class="code-tag">a</span>&gt;
+    &lt;<span class="code-tag">button</span> <span class="code-attr">onclick</span>=<span class="code-val">"window.history.back()"</span>&gt;
+      Go Back
+    &lt;/<span class="code-tag">button</span>&gt;
+  &lt;/<span class="code-tag">div</span>&gt;
+&lt;/<span class="code-tag">article</span>&gt;
+                    </div>
+
+                    <p style="font-size:0.86rem; color:var(--text-secondary); line-height:1.5;">
+                        Saved at root <span style="font-family:'Fira Code', monospace; color:var(--accent-blue);">/404.html</span> so GitHub Pages automatically hooks into it for any unrouted URL across the site.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Right: Feature Breakdown & Live Testing -->
+            <section class="panel-card" aria-labelledby="features-title">
+                <div class="panel-header">
+                    <span class="panel-title" id="features-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-emerald);"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                        UX Enhancements Implemented
+                    </span>
+                    <span style="font-size:0.75rem; color:var(--accent-emerald); font-family:'Fira Code', monospace;">Verified</span>
+                </div>
+
+                <div class="panel-body">
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <div>
+                                <h3 class="feature-title">Consistent Dark Aesthetic</h3>
+                                <p class="feature-text">Preserves the dark glassmorphic styling, typography, and color palette so visitors know they are still on your website.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <div>
+                                <h3 class="feature-title">Dynamic Route Inspection</h3>
+                                <p class="feature-text">JavaScript reads <code>window.location.pathname</code> and displays the exact invalid route that caused the error.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-item">
+                            <span class="feature-icon">✓</span>
+                            <div>
+                                <h3 class="feature-title">Dual Recovery Actions</h3>
+                                <p class="feature-text">Provides a prominent "Return to Hub" escape link alongside a "Go Back" browser navigation button.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <a href="../../404.html" class="btn-preview">
+                            Preview Local 404.html
+                        </a>
+                        <a href="https://kahlen2008.github.io/webprogramming/404.html" target="_blank" rel="noopener" class="btn-launch">
+                            Test 404 on Live Site ↗
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+</body>
+</html>
