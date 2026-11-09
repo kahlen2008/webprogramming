@@ -156,6 +156,253 @@
             gap: 28px;
         }
 
+        /* Homework Featured Hero Cards */
+        .hw-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: var(--radius-card);
+            padding: 30px 36px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .hero-card:hover {
+            border-color: rgba(96, 165, 250, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--blue-glow);
+        }
+
+        .hero-card-purple {
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .hero-card-purple:hover {
+            border-color: rgba(167, 139, 250, 0.6);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(139, 92, 246, 0.35);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 840px;
+            width: 100%;
+            min-width: 0;
+            flex: 1 1 480px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #fbbf24;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-tag-purple {
+            color: #c084fc;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.35;
+        }
+
+        .hero-desc {
+            color: var(--text-sub);
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .hero-url-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            min-width: 0;
+            margin-top: 6px;
+        }
+
+        .hero-url-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .hero-url-pill:hover {
+            color: #ffffff;
+            background: rgba(59, 130, 246, 0.25);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .hero-url-pill-live {
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.14);
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+
+        .hero-url-pill-live:hover {
+            color: #ffffff;
+            background: rgba(16, 185, 129, 0.28);
+            border-color: rgba(16, 185, 129, 0.6);
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.74rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .hero-url-pill-live .pill-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .pill-url {
+            overflow-wrap: anywhere;
+            word-break: break-all;
+            min-width: 0;
+            flex: 1;
+            font-size: 0.78rem;
+            line-height: 1.4;
+        }
+
+        .pill-ext-icon {
+            flex-shrink: 0;
+            opacity: 0.7;
+            transition: transform 0.2s;
+        }
+
+        .hero-url-pill:hover .pill-ext-icon {
+            transform: translate(2px, -2px);
+            opacity: 1;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulseGlow 2s infinite ease-in-out;
+            display: inline-block;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(0.85); }
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .btn-launch-hero {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #1a56db 0%, #2563eb 100%);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        .btn-launch-purple {
+            background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-launch-purple:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+        }
+
+        .btn-launch-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 22px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch-live:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+
         /* Exercises Section */
         .exercises-section {
             display: flex;
@@ -281,6 +528,11 @@
             body { padding: 18px 14px 60px 14px; }
             header.header-title h1 { font-size: 1.85rem; }
             header.header-title p { font-size: 0.92rem; }
+            .hero-card { padding: 20px 16px; gap: 18px; }
+            .hero-title { font-size: 1.22rem; }
+            .hero-desc { font-size: 0.88rem; }
+            .hero-actions { width: 100%; flex-direction: column; align-items: stretch; gap: 10px; }
+            .btn-launch-hero, .btn-launch-purple, .btn-launch-live { width: 100%; justify-content: center; box-sizing: border-box; padding: 12px 16px; font-size: 0.9rem; }
             .section-card { padding: 20px 16px; }
             .exercise-item { padding: 12px 14px; gap: 12px; }
             .item-num { width: 36px; height: 36px; font-size: 0.9rem; }
@@ -290,7 +542,10 @@
 
         @media (max-width: 480px) {
             body { padding: 14px 10px 50px 10px; }
+            .hero-card { padding: 16px 12px; }
             .section-card { padding: 16px 12px; }
+            .hero-url-pill { padding: 8px 10px; gap: 6px; }
+            .pill-url { font-size: 0.72rem; }
             .exercise-item { padding: 10px; gap: 10px; }
         }
 
@@ -323,6 +578,100 @@
     </header>
 
     <main class="main-container" id="main-content">
+
+        <!-- Homework Assignments Section -->
+        <section class="hw-section" aria-labelledby="hw-heading">
+            <div class="hw-section-title" id="hw-heading">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Homework Assignments
+            </div>
+
+            <!-- Homework 1 Card: Personal Portfolio Deployment & Audit -->
+            <div class="hero-card">
+                <div class="hero-content">
+                    <span class="hero-tag">⭐ Homework 1 · Personal Portfolio</span>
+                    <h2 class="hero-title">Personal Portfolio GitHub Pages Deployment &amp; Audit</h2>
+                    <p class="hero-desc">
+                        Full production cloud deployment of personal portfolio (<code>kahlensdigitalportfolio</code>) on GitHub Pages with verified compliance across all 6 core requirements: semantic landmark HTML, responsive mobile layout with hamburger drawer, multi-faceted JavaScript interactions (Lenis smooth scroll, interactive skill cards, custom video player), perfect Lighthouse Accessibility audit score (100/100), descriptive image alt attributes, and WCAG AA color contrast.
+                    </p>
+                    <div class="hero-url-row">
+                        <a href="https://kahlen2008.github.io/kahlensdigitalportfolio/" target="_blank" rel="noopener" class="hero-url-pill hero-url-pill-live">
+                            <span class="pill-badge">
+                                <span class="pulse-dot" style="width:6px; height:6px;"></span>
+                                Live
+                            </span>
+                            <span class="pill-url">https://kahlen2008.github.io/kahlensdigitalportfolio/</span>
+                            <svg class="pill-ext-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                        <a href="https://github.com/kahlen2008/kahlensdigitalportfolio" target="_blank" rel="noopener" class="hero-url-pill">
+                            <span class="pill-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                Repo
+                            </span>
+                            <span class="pill-url">github.com/kahlen2008/kahlensdigitalportfolio</span>
+                            <svg class="pill-ext-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                        <a href="https://github.com/kahlen2008/kahlensdigitalportfolio/commits/main/" target="_blank" rel="noopener" class="hero-url-pill">
+                            <span class="pill-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><line x1="1.05" y1="12" x2="7" y2="12"></line><line x1="17.01" y1="12" x2="22.96" y2="12"></line></svg>
+                                Commits
+                            </span>
+                            <span class="pill-url">github.com/kahlen2008/kahlensdigitalportfolio/commits/main/</span>
+                            <svg class="pill-ext-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <a href="hw-portfolio-deployment.html" class="btn-launch-hero">
+                        Audit Report
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="https://kahlen2008.github.io/kahlensdigitalportfolio/" target="_blank" rel="noopener" class="btn-launch-live">
+                        Open Live Site
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Homework 2 Card: Book Search Web App Deployment -->
+            <div class="hero-card hero-card-purple">
+                <div class="hero-content">
+                    <span class="hero-tag hero-tag-purple">⭐ Homework 2 · Web Application Deployment</span>
+                    <h2 class="hero-title">Book Search Web App GitHub Pages Deployment</h2>
+                    <p class="hero-desc">
+                        Production cloud deployment of the Week 7 Book Search Web Application (<code>webpro-book-search</code>) to GitHub Pages. Features automated branch hosting from repository root, zero-configuration SSL/HTTPS, dynamic Open Library Search API querying with debounce, and mobile-friendly responsive design.
+                    </p>
+                    <div class="hero-url-row">
+                        <a href="https://kahlen2008.github.io/webpro-book-search/" target="_blank" rel="noopener" class="hero-url-pill hero-url-pill-live">
+                            <span class="pill-badge">
+                                <span class="pulse-dot" style="width:6px; height:6px;"></span>
+                                Live
+                            </span>
+                            <span class="pill-url">https://kahlen2008.github.io/webpro-book-search/</span>
+                            <svg class="pill-ext-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                        <a href="https://github.com/kahlen2008/webpro-book-search" target="_blank" rel="noopener" class="hero-url-pill">
+                            <span class="pill-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                Repo
+                            </span>
+                            <span class="pill-url">github.com/kahlen2008/webpro-book-search</span>
+                            <svg class="pill-ext-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <a href="hw-book-search.html" class="btn-launch-hero btn-launch-purple">
+                        Deployment Report
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="https://kahlen2008.github.io/webpro-book-search/" target="_blank" rel="noopener" class="btn-launch-live">
+                        Open Live App
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
 
         <!-- Practice Exercises -->
         <section class="exercises-section" aria-labelledby="exercises-head">

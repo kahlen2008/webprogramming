@@ -428,7 +428,7 @@
             margin: 0;
             flex-grow: 1;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
             gap: 10px;
             align-items: stretch;
         }
@@ -443,7 +443,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 10px;
-            padding: 12px 16px;
+            padding: 12px 34px 12px 16px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
@@ -458,12 +458,13 @@
         .link-item a::after {
             content: '→';
             position: absolute;
-            right: 12px;
+            right: 14px;
             opacity: 0;
             transform: translateX(-6px);
             transition: all 0.25s ease;
             color: var(--accent-color);
             pointer-events: none;
+            font-weight: 700;
         }
 
         .link-item a:hover {
@@ -490,12 +491,11 @@
             font-size: 0.8rem;
             white-space: nowrap;
             text-align: right;
-            transition: color 0.25s ease, transform 0.25s ease;
+            transition: color 0.25s ease;
         }
 
         .link-item a:hover .description {
-            color: #cbd5e1;
-            transform: translateX(-18px);
+            color: #ffffff;
         }
 
         @keyframes fadeIn {
