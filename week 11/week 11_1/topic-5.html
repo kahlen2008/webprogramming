@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Topic 05: Component Composition — Week 11_1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --bg-code: #0b0f19;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(59, 130, 246, 0.35);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.25);
+            --green: #10b981;
+            --amber: #fbbf24;
+            --purple: #a855f7;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-md: 12px;
+            --radius-btn: 10px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.12) 0%, transparent 45%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 28px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1150px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--blue);
+            background: rgba(59, 130, 246, 0.15);
+            transform: translateX(-2px);
+        }
+
+        .session-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+        }
+
+        .topic-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .topic-header p {
+            color: var(--text-sub);
+            font-size: 0.98rem;
+            line-height: 1.5;
+        }
+
+        /* Split Grid: Code & Output */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 22px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 900px) {
+            .split-grid { grid-template-columns: 1fr; }
+        }
+
+        .code-box {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .code-box-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+        }
+
+        .code-box-header .tag {
+            color: #c084fc;
+            background: rgba(168, 85, 247, 0.15);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        pre {
+            padding: 20px 22px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.83rem;
+            line-height: 1.65;
+            color: #f1f5f9;
+            flex: 1;
+        }
+
+        .kw { color: #f472b6; font-weight: 600; }
+        .fn { color: #60a5fa; }
+        .str { color: #34d399; }
+        .num { color: #fbbf24; }
+        .cm { color: #64748b; font-style: italic; }
+        .tag-name { color: #f87171; }
+        .attr { color: #38bdf8; }
+        .curly { color: #fbbf24; }
+
+        /* Interactive Canvas */
+        .interactive-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .interactive-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .interactive-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-pill {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.74rem;
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+
+        /* Composed Cards List */
+        .roster-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .composed-student-card {
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.25s ease;
+        }
+
+        .composed-student-card:hover {
+            border-color: #60a5fa;
+            transform: translateX(4px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.18);
+        }
+
+        /* Composed Sub-Component 1: Avatar */
+        .composed-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid #3b82f6;
+            background: #0f172a;
+            flex-shrink: 0;
+        }
+
+        .composed-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .composed-info h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .composed-info .meta-row {
+            font-size: 0.84rem;
+            color: var(--text-sub);
+            white-space: nowrap;
+        }
+
+        .composed-info .meta-row code {
+            font-family: 'Fira Code', monospace;
+            color: #93c5fd;
+            font-size: 0.78rem;
+        }
+
+        /* Composed Sub-Component 2: StatusBadge */
+        .composed-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 999px;
+            color: #ffffff;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar" aria-label="Page Navigation">
+            <a href="index.html" class="back-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Week 11_1 Hub
+            </a>
+            <span class="session-badge">Topic 05 · Component Composition</span>
+        </nav>
+
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <h1>Component Composition</h1>
+            <p>Assemble scalable UIs by composing focused, atomic components (e.g. <code>Avatar</code> + <code>Badge</code> into <code>StudentCard</code>) instead of maintaining bloated monolithic components.</p>
+        </header>
+
+        <!-- Split Grid: Code & Output -->
+        <div class="split-grid">
+            <!-- Left: Source Code -->
+            <div class="code-box">
+                <div class="code-box-header">
+                    <span>StudentCard.jsx (Composed Architecture)</span>
+                    <span class="tag">Composition over Monoliths</span>
+                </div>
+                <pre><code><span class="cm">// 1. Atomic Avatar Component</span>
+<span class="kw">function</span> <span class="fn">Avatar</span>({ src, alt, size = <span class="num">52</span> }) {
+  <span class="kw">return</span> (
+    <span class="tag-name">&lt;img</span> 
+      <span class="attr">src</span>=<span class="curly">{src}</span> 
+      <span class="attr">alt</span>=<span class="curly">{alt}</span> 
+      <span class="attr">className</span>=<span class="str">"composed-avatar"</span>
+      <span class="attr">style</span>={{ width: size, height: size }} 
+    <span class="tag-name">/&gt;</span>
+  );
+}
+
+<span class="cm">// 2. Atomic Badge Component</span>
+<span class="kw">function</span> <span class="fn">StatusBadge</span>({ text, color = <span class="str">'#3b82f6'</span> }) {
+  <span class="kw">return</span> (
+    <span class="tag-name">&lt;span</span> <span class="attr">className</span>=<span class="str">"composed-badge"</span> <span class="attr">style</span>={{ backgroundColor: color }}<span class="tag-name">&gt;</span>
+      <span class="curly">{text}</span>
+    <span class="tag-name">&lt;/span&gt;</span>
+  );
+}
+
+<span class="cm">// 3. Composed Container: StudentCard</span>
+<span class="kw">function</span> <span class="fn">StudentCard</span>({ name, studentId, major, year, avatarUrl, badgeColor }) {
+  <span class="kw">return</span> (
+    <span class="tag-name">&lt;div</span> <span class="attr">className</span>=<span class="str">"composed-student-card"</span><span class="tag-name">&gt;</span>
+      <span class="tag-name">&lt;Avatar</span> <span class="attr">src</span>=<span class="curly">{avatarUrl}</span> <span class="attr">alt</span>=<span class="curly">{name}</span> <span class="tag-name">/&gt;</span>
+      <span class="tag-name">&lt;div</span> <span class="attr">className</span>=<span class="str">"composed-info"</span><span class="tag-name">&gt;</span>
+        <span class="tag-name">&lt;h3&gt;</span><span class="curly">{name}</span><span class="tag-name">&lt;/h3&gt;</span>
+        <span class="tag-name">&lt;p</span> <span class="attr">className</span>=<span class="str">"meta-row"</span><span class="tag-name">&gt;</span>
+          ID: <span class="tag-name">&lt;code&gt;</span><span class="curly">{studentId}</span><span class="tag-name">&lt;/code&gt;</span> · <span class="curly">{major}</span>
+        <span class="tag-name">&lt;/p&gt;</span>
+      <span class="tag-name">&lt;/div&gt;</span>
+      <span class="tag-name">&lt;StatusBadge</span> <span class="attr">text</span>=<span class="str">{`Year ${year}`}</span> <span class="attr">color</span>=<span class="curly">{badgeColor}</span> <span class="tag-name">/&gt;</span>
+    <span class="tag-name">&lt;/div&gt;</span>
+  );
+}
+
+<span class="cm">// 4. Composed in App</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag-name">&lt;div</span> <span class="attr">className</span>=<span class="str">"roster-list"</span><span class="tag-name">&gt;</span>
+      <span class="tag-name">&lt;StudentCard</span> 
+        <span class="attr">name</span>=<span class="str">"Kahlen Ong"</span> 
+        <span class="attr">studentId</span>=<span class="str">"202699471"</span> 
+        <span class="attr">major</span>=<span class="str">"Computer Engineering"</span> 
+        <span class="attr">year</span>={<span class="num">1</span>} 
+        <span class="attr">avatarUrl</span>=<span class="str">"https://api.dicebear.com/7.x/bottts/svg?seed=Kahlen"</span> 
+        <span class="attr">badgeColor</span>=<span class="str">"#3b82f6"</span> 
+      <span class="tag-name">/&gt;</span>
+      <span class="tag-name">&lt;StudentCard</span> 
+        <span class="attr">name</span>=<span class="str">"Aale Aaditi"</span> 
+        <span class="attr">studentId</span>=<span class="str">"202537195"</span> 
+        <span class="attr">major</span>=<span class="str">"Computer Engineering"</span> 
+        <span class="attr">year</span>={<span class="num">2</span>} 
+        <span class="attr">avatarUrl</span>=<span class="str">"https://api.dicebear.com/7.x/bottts/svg?seed=Aaditi"</span> 
+        <span class="attr">badgeColor</span>=<span class="str">"#10b981"</span> 
+      <span class="tag-name">/&gt;</span>
+    <span class="tag-name">&lt;/div&gt;</span>
+  );
+}</code></pre>
+            </div>
+
+            <!-- Right: Interactive Live Output -->
+            <div class="interactive-box">
+                <div class="interactive-header">
+                    <h2>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Interactive Output
+                    </h2>
+                    <span class="view-pill">Composed Roster</span>
+                </div>
+
+                <div class="roster-list">
+                    <!-- Student 1: Kahlen Ong -->
+                    <div class="composed-student-card">
+                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Kahlen" alt="Kahlen Ong" class="composed-avatar" style="border-color:#3b82f6;">
+                        <div class="composed-info">
+                            <h3>Kahlen Ong</h3>
+                            <p class="meta-row">ID: <code>202699471</code> · Computer Engineering</p>
+                        </div>
+                        <span class="composed-badge" style="background-color:#3b82f6;">Year 1</span>
+                    </div>
+
+                    <!-- Student 2: Aale Aaditi -->
+                    <div class="composed-student-card">
+                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Aaditi" alt="Aale Aaditi" class="composed-avatar" style="border-color:#10b981;">
+                        <div class="composed-info">
+                            <h3>Aale Aaditi</h3>
+                            <p class="meta-row">ID: <code>202537195</code> · Computer Engineering</p>
+                        </div>
+                        <span class="composed-badge" style="background-color:#10b981;">Year 2</span>
+                    </div>
+
+                    <!-- Student 3: Shrestha Puja -->
+                    <div class="composed-student-card">
+                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Puja" alt="Shrestha Puja" class="composed-avatar" style="border-color:#a855f7;">
+                        <div class="composed-info">
+                            <h3>Shrestha Puja</h3>
+                            <p class="meta-row">ID: <code>202537250</code> · Computer Engineering</p>
+                        </div>
+                        <span class="composed-badge" style="background-color:#a855f7;">Year 2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>E1: ProfileCard Component with Default Props — Week 11_1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #38bdf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        h1, h2, h3, h4, .nav-badge, .exercise-tag { text-wrap: balance; }
+        p, li, .desc { text-wrap: pretty; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: #ffffff;
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .nav-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 6px 14px;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+        }
+
+        /* Card container */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 30px 34px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .exercise-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .task-spec {
+            background: rgba(56, 189, 248, 0.08);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 4px 10px 10px 4px;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .task-spec strong {
+            color: var(--accent-blue);
+        }
+
+        /* Live Component Demo Canvas */
+        .demo-canvas {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px dashed rgba(56, 189, 248, 0.3);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 28px;
+        }
+
+        /* Exact ProfileCard Rendered Component */
+        .react-profile-card {
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
+            padding: 22px;
+            max-width: 300px;
+            width: 100%;
+            background: #1e293b;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .react-profile-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 14px 35px rgba(56, 189, 248, 0.25);
+        }
+
+        .react-profile-card img {
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 2px solid var(--accent-blue);
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+            background: #0f172a;
+        }
+
+        .react-profile-card h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .react-profile-card p {
+            margin: 0;
+            font-size: 0.88rem;
+            color: var(--accent-emerald);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: rgba(16, 185, 129, 0.12);
+            padding: 3px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .react-profile-card a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            word-break: break-all;
+            transition: color 0.2s;
+        }
+
+        .react-profile-card a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        /* Code block */
+        .code-container {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        pre {
+            margin: 0;
+            padding: 18px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.84rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .code-kw { color: #f472b6; font-weight: 600; }
+        .code-fn { color: #60a5fa; }
+        .code-pr { color: #38bdf8; }
+        .code-st { color: #a7f3d0; }
+        .code-cm { color: #64748b; font-style: italic; }
+
+        /* Key Takeaways list */
+        .key-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .key-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            font-size: 0.92rem;
+        }
+
+        .key-icon {
+            color: var(--accent-blue);
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 18px 14px 60px 14px; }
+            .card { padding: 22px 18px; }
+            h1 { font-size: 1.6rem; }
+            .demo-canvas { padding: 20px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Top Navigation -->
+        <nav class="navbar" aria-label="Page Navigation">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Week 11_1 Overview
+            </a>
+            <span class="nav-badge">Exercise 1 · ProfileCard Component</span>
+        </nav>
+
+        <!-- Main Card -->
+        <main class="card">
+            <div>
+                <span class="exercise-tag">React Components &amp; Props · Lab E1</span>
+                <h1>ProfileCard with Default Props</h1>
+            </div>
+
+            <!-- Task Specification Box -->
+            <div class="task-spec">
+                <strong>Task Specification:</strong> Create a <span style="font-family:'Fira Code', monospace; color:#38bdf8;">ProfileCard</span> component that accepts <span style="font-family:'Fira Code', monospace; color:#38bdf8;">name</span>, <span style="font-family:'Fira Code', monospace; color:#38bdf8;">role</span>, <span style="font-family:'Fira Code', monospace; color:#38bdf8;">email</span>, and optional <span style="font-family:'Fira Code', monospace; color:#38bdf8;">avatarUrl</span> (default: a placeholder image). Render a card showing all four fields. Use ES6 default parameter destructuring for <span style="font-family:'Fira Code', monospace; color:#38bdf8;">avatarUrl</span>.
+            </div>
+
+            <!-- Live Rendered Component Demo -->
+            <div>
+                <h3 style="font-family:'Outfit', sans-serif; font-size:1.15rem; color:#ffffff; margin-bottom:12px;">Live Rendered Component</h3>
+                <div class="demo-canvas">
+                    <!-- Rendered ProfileCard for Kahlen Ong -->
+                    <div class="react-profile-card">
+                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Kahlen" alt="Kahlen Ong" />
+                        <h2>Kahlen Ong</h2>
+                        <p>Student</p>
+                        <a href="mailto:kahlenongzhiqi@gmail.com">kahlenongzhiqi@gmail.com</a>
+                    </div>
+
+                    <!-- Rendered ProfileCard with Fallback Default Avatar -->
+                    <div class="react-profile-card">
+                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=DT" alt="Dr. Toshpulatov" />
+                        <h2>Dr. Toshpulatov</h2>
+                        <p style="color:var(--accent-purple); background:rgba(192,132,252,0.12); border-color:rgba(192,132,252,0.3);">Professor</p>
+                        <a href="mailto:muhiddin@gachon.ac.kr">muhiddin@gachon.ac.kr</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Component Code Showcase -->
+            <div class="code-container">
+                <div class="code-header">
+                    <span>ProfileCard.jsx</span>
+                    <span>Component Definition &amp; Usage</span>
+                </div>
+                <pre><code><span class="code-comment">// Definition: Destructuring props with default fallback for avatarUrl</span>
+<span class="code-kw">function</span> <span class="code-fn">ProfileCard</span>({ 
+  <span class="code-pr">name</span>, 
+  <span class="code-pr">role</span>, 
+  <span class="code-pr">email</span>, 
+  <span class="code-pr">avatarUrl</span> = <span class="code-st">'https://via.placeholder.com/80'</span> 
+}) {
+  <span class="code-kw">return</span> (
+    &lt;<span class="code-kw">div</span> <span class="code-pr">style</span>={{ <span class="code-pr">border</span>: <span class="code-st">'1px solid #ccc'</span>, <span class="code-pr">borderRadius</span>: <span class="code-kw">8</span>, <span class="code-pr">padding</span>: <span class="code-kw">16</span>, <span class="code-pr">maxWidth</span>: <span class="code-kw">300</span> }}&gt;
+      &lt;<span class="code-kw">img</span> 
+        <span class="code-pr">src</span>={<span class="code-pr">avatarUrl</span>} 
+        <span class="code-pr">alt</span>={<span class="code-pr">name</span>} 
+        <span class="code-pr">style</span>={{ <span class="code-pr">borderRadius</span>: <span class="code-st">'50%'</span>, <span class="code-pr">width</span>: <span class="code-kw">80</span>, <span class="code-pr">height</span>: <span class="code-kw">80</span> }} 
+      /&gt;
+      &lt;<span class="code-kw">h2</span>&gt;{<span class="code-pr">name</span>}&lt;/<span class="code-kw">h2</span>&gt;
+      &lt;<span class="code-kw">p</span>&gt;{<span class="code-pr">role</span>}&lt;/<span class="code-kw">p</span>&gt;
+      &lt;<span class="code-kw">a</span> <span class="code-pr">href</span>={`mailto:${<span class="code-pr">email</span>}`}&gt;{<span class="code-pr">email</span>}&lt;/<span class="code-kw">a</span>&gt;
+    &lt;/<span class="code-kw">div</span>&gt;
+  );
+}
+
+<span class="code-comment">// Usage in App:</span>
+&lt;<span class="code-fn">ProfileCard</span> 
+  <span class="code-pr">name</span>=<span class="code-st">"Kahlen Ong"</span> 
+  <span class="code-pr">role</span>=<span class="code-st">"Student"</span> 
+  <span class="code-pr">email</span>=<span class="code-st">"kahlenongzhiqi@gmail.com"</span> 
+/&gt;</code></pre>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>
+

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>E2: Conditional Rendering in Notification Lists — Week 11_1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #38bdf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #f43f5e;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        h1, h2, h3, h4, .nav-badge, .exercise-tag { text-wrap: balance; }
+        p, li, .desc { text-wrap: pretty; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: #ffffff;
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .nav-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 6px 14px;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+        }
+
+        /* Card container */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 30px 34px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .exercise-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--accent-emerald);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .task-spec {
+            background: rgba(16, 185, 129, 0.08);
+            border-left: 4px solid var(--accent-emerald);
+            border-radius: 4px 10px 10px 4px;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .task-spec strong {
+            color: var(--accent-emerald);
+        }
+
+        /* Live Notification Render Canvas */
+        .demo-canvas {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px dashed rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .demo-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .demo-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .demo-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.76rem;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #34d399;
+        }
+
+        /* Notification List Component Styling */
+        .notification-list-box {
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 20px 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .notification-list-box h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            color: #ffffff;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification-ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .notification-item:hover {
+            transform: translateX(4px);
+        }
+
+        /* Type Variations */
+        .item-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #ecfdf5;
+        }
+
+        .item-success .notif-icon {
+            filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.5));
+        }
+
+        .item-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #fffbeb;
+        }
+
+        .item-warning .notif-icon {
+            filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.5));
+        }
+
+        .item-info {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: rgba(56, 189, 248, 0.3);
+            color: #f0f9ff;
+        }
+
+        .item-info .notif-icon {
+            filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5));
+        }
+
+        .notif-icon {
+            font-size: 1.25rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .notif-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .notif-message {
+            font-weight: 600;
+        }
+
+        .notif-type-tag {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .tag-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+
+        .tag-info {
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+        }
+
+        /* Interactive Simulator Bar */
+        .simulator-bar {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .sim-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .sim-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.84rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sim-btn:hover {
+            border-color: var(--border-highlight);
+            background: rgba(56, 189, 248, 0.15);
+            color: #ffffff;
+        }
+
+        .sim-btn.active {
+            background: rgba(56, 189, 248, 0.25);
+            border-color: var(--accent-blue);
+            color: #ffffff;
+        }
+
+        /* Code block */
+        .code-container {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        pre {
+            padding: 18px 22px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.86rem;
+            line-height: 1.65;
+            color: #f1f5f9;
+        }
+
+        .kw { color: #f472b6; font-weight: 600; }
+        .fn { color: #60a5fa; }
+        .str { color: #34d399; }
+        .num { color: #fbbf24; }
+        .cm { color: #64748b; font-style: italic; }
+        .prop { color: #38bdf8; }
+        .tag { color: #f87171; }
+        .op { color: #cbd5e1; }
+
+        /* Notes Grid */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .note-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .note-card h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .note-card p {
+            font-size: 0.86rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .note-card code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #93c5fd;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .card { padding: 20px 18px; }
+            h1 { font-size: 1.65rem; }
+            .demo-canvas { padding: 18px 14px; }
+            .notification-list-box { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Navigation -->
+        <nav class="navbar" aria-label="Breadcrumb">
+            <a href="index.html" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Week 11_1 Hub
+            </a>
+            <span class="nav-badge">Exercise 2 · Conditional Rendering</span>
+        </nav>
+
+        <!-- Main Card -->
+        <main class="card">
+            <span class="exercise-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                React Fundamentals · Conditional Icons &amp; List Mapping
+            </span>
+
+            <h1>Conditional Rendering in Notification Lists</h1>
+
+            <div class="task-spec">
+                <strong>Task Requirement:</strong> Given an array of notification objects <code>[{ id, type, message }]</code>, render each as a styled item. Show a checkmark icon (<code>✅</code>) for <code>type === 'success'</code>, a warning icon (<code>⚠️</code>) for <code>type === 'warning'</code>, and a default info icon (<code>ℹ️</code>) otherwise. Use conditional rendering.
+            </div>
+
+            <!-- Live Component Demo -->
+            <div class="demo-canvas">
+                <div class="demo-header">
+                    <h2>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        Rendered NotificationList Component
+                    </h2>
+                    <span class="demo-badge">Array.prototype.map() + Conditional Icon</span>
+                </div>
+
+                <!-- Interactive Filter & Simulator -->
+                <div class="simulator-bar">
+                    <span class="sim-label">Filter Notification State:</span>
+                    <button class="sim-btn active" onclick="filterNotifs('all', this)">Show All (3)</button>
+                    <button class="sim-btn" onclick="filterNotifs('success', this)">Success Only</button>
+                    <button class="sim-btn" onclick="filterNotifs('warning', this)">Warning Only</button>
+                    <button class="sim-btn" onclick="filterNotifs('info', this)">Info Only</button>
+                </div>
+
+                <!-- The Rendered React Container -->
+                <div class="notification-list-box">
+                    <h3>
+                        <span>System Notifications</span>
+                        <span id="notif-count" style="font-size: 0.78rem; font-weight: normal; color: var(--text-muted);">(3 items rendered)</span>
+                    </h3>
+                    <ul class="notification-ul" id="notif-ul">
+                        <!-- Rendered by JavaScript reflecting exact React output -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Source Code Showcase -->
+            <div class="code-container">
+                <div class="code-header">
+                    <span>NotificationList.jsx (React Component Implementation)</span>
+                    <span>JSX + Ternary Expression</span>
+                </div>
+                <pre><code><span class="cm">// Notification Data Array</span>
+<span class="kw">const</span> <span class="prop">notifications</span> <span class="op">=</span> [
+  { <span class="prop">id</span>: <span class="num">1</span>, <span class="prop">type</span>: <span class="str">'success'</span>, <span class="prop">message</span>: <span class="str">'Profile updated successfully'</span> },
+  { <span class="prop">id</span>: <span class="num">2</span>, <span class="prop">type</span>: <span class="str">'warning'</span>, <span class="prop">message</span>: <span class="str">'Password expires in 3 days'</span> },
+  { <span class="prop">id</span>: <span class="num">3</span>, <span class="prop">type</span>: <span class="str">'info'</span>, <span class="prop">message</span>: <span class="str">'New lecture materials available'</span> },
+];
+
+<span class="cm">// Presentational Item Component with Nested Ternary Conditional Icon</span>
+<span class="kw">function</span> <span class="fn">NotificationItem</span>({ <span class="prop">type</span>, <span class="prop">message</span> }) {
+  <span class="kw">const</span> <span class="prop">icon</span> <span class="op">=</span> <span class="prop">type</span> <span class="op">===</span> <span class="str">'success'</span> 
+    <span class="op">?</span> <span class="str">'✅'</span> 
+    <span class="op">:</span> <span class="prop">type</span> <span class="op">===</span> <span class="str">'warning'</span> 
+    <span class="op">?</span> <span class="str">'⚠️'</span> 
+    <span class="op">:</span> <span class="str">'ℹ️'</span>;
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;li</span> <span class="prop">className</span>=<span class="str">{`notification-item item-${type}`}</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;span</span> <span class="prop">className</span>=<span class="str">"notif-icon"</span><span class="tag">&gt;</span>{icon}<span class="tag">&lt;/span&gt;</span>
+      <span class="tag">&lt;span</span> <span class="prop">className</span>=<span class="str">"notif-message"</span><span class="tag">&gt;</span>{message}<span class="tag">&lt;/span&gt;</span>
+    <span class="tag">&lt;/li&gt;</span>
+  );
+}
+
+<span class="cm">// Container Component Rendering Dynamic List</span>
+<span class="kw">function</span> <span class="fn">NotificationList</span>() {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;ul</span> <span class="prop">className</span>=<span class="str">"notification-ul"</span><span class="tag">&gt;</span>
+      {notifications.<span class="fn">map</span>(n <span class="op">=&gt;</span> (
+        <span class="tag">&lt;NotificationItem</span> 
+          <span class="prop">key</span>={n.<span class="prop">id</span>} 
+          <span class="prop">type</span>={n.<span class="prop">type</span>} 
+          <span class="prop">message</span>={n.<span class="prop">message</span>} 
+        <span class="tag">/&gt;</span>
+      ))}
+    <span class="tag">&lt;/ul&gt;</span>
+  );
+}</code></pre>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const notificationsData = [
+            { id: 1, type: 'success', message: 'Profile updated successfully' },
+            { id: 2, type: 'warning', message: 'Password expires in 3 days' },
+            { id: 3, type: 'info', message: 'New lecture materials available' },
+        ];
+
+        function getIcon(type) {
+            return type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️';
+        }
+
+        function renderList(filter = 'all') {
+            const ul = document.getElementById('notif-ul');
+            const count = document.getElementById('notif-count');
+            ul.innerHTML = '';
+
+            const filtered = filter === 'all' 
+                ? notificationsData 
+                : notificationsData.filter(n => n.type === filter);
+
+            count.textContent = `(${filtered.length} item${filtered.length === 1 ? '' : 's'} rendered)`;
+
+            filtered.forEach(n => {
+                const li = document.createElement('li');
+                li.className = `notification-item item-${n.type}`;
+                
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'notif-icon';
+                iconSpan.textContent = getIcon(n.type);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'notif-content';
+
+                const msgSpan = document.createElement('span');
+                msgSpan.className = 'notif-message';
+                msgSpan.textContent = n.message;
+
+                const tagSpan = document.createElement('span');
+                tagSpan.className = `notif-type-tag tag-${n.type}`;
+                tagSpan.textContent = n.type;
+
+                contentDiv.appendChild(msgSpan);
+                contentDiv.appendChild(tagSpan);
+
+                li.appendChild(iconSpan);
+                li.appendChild(contentDiv);
+                ul.appendChild(li);
+            });
+        }
+
+        function filterNotifs(type, btn) {
+            document.querySelectorAll('.sim-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderList(type);
+        }
+
+        // Initialize on load
+        renderList('all');
+    </script>
+</body>
+</html>
+

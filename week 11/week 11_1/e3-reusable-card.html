@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>E3: Reusable Card Component with props.children — Week 11_1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #38bdf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        h1, h2, h3, h4, .nav-badge, .exercise-tag { text-wrap: balance; }
+        p, li, .desc { text-wrap: pretty; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: #ffffff;
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .nav-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            background: rgba(192, 132, 252, 0.15);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            padding: 6px 14px;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+        }
+
+        /* Card container */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 30px 34px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .exercise-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .task-spec {
+            background: rgba(192, 132, 252, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            border-radius: 4px 10px 10px 4px;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .task-spec strong {
+            color: var(--accent-purple);
+        }
+
+        /* Live Render Demo Canvas */
+        .demo-canvas {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px dashed rgba(192, 132, 252, 0.35);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .demo-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .demo-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .demo-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.76rem;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: rgba(192, 132, 252, 0.15);
+            border: 1px solid rgba(192, 132, 252, 0.35);
+            color: #c084fc;
+        }
+
+        /* Grid displaying the two Card components */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* Exact React Card Component Style Specification:
+           style={{ border: '1px solid #bae6fd', borderRadius: 10, padding: '16px 20px', marginBottom: 16 }}
+        */
+        .react-wrapper-card {
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 16px 20px;
+            background: #111827;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .react-wrapper-card:hover {
+            transform: translateY(-3px);
+            border-color: #38bdf8;
+            box-shadow: 0 12px 30px rgba(56, 189, 248, 0.2);
+        }
+
+        .react-wrapper-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #bae6fd;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Children Section 1 Styling: <ul><li>...</li></ul> */
+        .react-wrapper-card ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-left: 4px;
+        }
+
+        .react-wrapper-card li {
+            position: relative;
+            padding-left: 20px;
+            color: #f1f5f9;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .react-wrapper-card li::before {
+            content: "•";
+            position: absolute;
+            left: 4px;
+            color: #38bdf8;
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        /* Children Section 2 Styling: <p>...</p> */
+        .react-wrapper-card p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.55;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 14px;
+            border-radius: 6px;
+            border-left: 3px solid #34d399;
+        }
+
+        /* Interactive Playground Controls */
+        .playground-controls {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .playground-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .inputs-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pg-input {
+            background: #0b0f19;
+            border: 1px solid var(--border-subtle);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.88rem;
+            padding: 8px 14px;
+            border-radius: 6px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .pg-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+
+        .pg-btn {
+            background: rgba(192, 132, 252, 0.2);
+            border: 1px solid rgba(192, 132, 252, 0.4);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .pg-btn:hover {
+            background: rgba(192, 132, 252, 0.35);
+            border-color: var(--accent-purple);
+        }
+
+        /* Code block */
+        .code-container {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        pre {
+            padding: 18px 22px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.86rem;
+            line-height: 1.65;
+            color: #f1f5f9;
+        }
+
+        .kw { color: #f472b6; font-weight: 600; }
+        .fn { color: #60a5fa; }
+        .str { color: #34d399; }
+        .num { color: #fbbf24; }
+        .cm { color: #64748b; font-style: italic; }
+        .prop { color: #38bdf8; }
+        .tag { color: #f87171; }
+        .op { color: #cbd5e1; }
+
+        /* Notes Grid */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .note-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .note-card h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .note-card p {
+            font-size: 0.86rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .note-card code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #c084fc;
+            background: rgba(192, 132, 252, 0.1);
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .card { padding: 20px 18px; }
+            h1 { font-size: 1.65rem; }
+            .demo-canvas { padding: 18px 14px; }
+            .inputs-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Navigation -->
+        <nav class="navbar" aria-label="Breadcrumb">
+            <a href="index.html" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Week 11_1 Hub
+            </a>
+            <span class="nav-badge">Exercise 3 · Component Composition</span>
+        </nav>
+
+        <!-- Main Card -->
+        <main class="card">
+            <span class="exercise-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                React Composition · Wrapper Pattern &amp; props.children
+            </span>
+
+            <h1>Reusable Card Component with props.children</h1>
+
+            <div class="task-spec">
+                <strong>Task Requirement:</strong> Create a reusable <code>Card</code> component that accepts a <code>title</code> prop and renders any <code>children</code> inside a styled box. Use it to wrap two different content sections: one with an unordered list of lecture topics, and another with a paragraph describing homework.
+            </div>
+
+            <!-- Live Component Demo -->
+            <div class="demo-canvas">
+                <div class="demo-header">
+                    <h2>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                        Rendered Card Instances with Differing Children
+                    </h2>
+                    <span class="demo-badge">props.children Content Slotting</span>
+                </div>
+
+                <!-- Grid of Rendered Cards -->
+                <div class="cards-grid" id="cards-grid">
+                    <!-- Card 1: Lecture Topics with <ul> list -->
+                    <div class="react-wrapper-card">
+                        <h3>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bae6fd" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                            Lecture Topics
+                        </h3>
+                        <ul>
+                            <li>Components</li>
+                            <li>Props</li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 2: Homework with <p> paragraph -->
+                    <div class="react-wrapper-card">
+                        <h3>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bae6fd" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            Homework
+                        </h3>
+                        <p>Build a student portfolio component</p>
+                    </div>
+                </div>
+
+                <!-- Interactive Playground to Test Reusability -->
+                <div class="playground-controls">
+                    <span class="playground-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        Test Container Reusability (Dynamic Slot Injection):
+                    </span>
+                    <div class="inputs-row">
+                        <input type="text" id="custom-title" class="pg-input" placeholder="Enter Card Title (e.g. Next Steps)" value="Learning Goals">
+                        <input type="text" id="custom-body" class="pg-input" placeholder="Enter child text content" value="Master component composition and state management in React.">
+                        <button class="pg-btn" onclick="addCustomCard()">+ Wrap in &lt;Card&gt;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Source Code Showcase -->
+            <div class="code-container">
+                <div class="code-header">
+                    <span>Card.jsx (Reusable Container Pattern)</span>
+                    <span>props.children</span>
+                </div>
+                <pre><code><span class="cm">// Reusable Container Component</span>
+<span class="kw">function</span> <span class="fn">Card</span>({ <span class="prop">title</span>, <span class="prop">children</span> }) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> <span class="prop">style</span>={{ 
+      <span class="prop">border</span>: <span class="str">'1px solid #bae6fd'</span>, 
+      <span class="prop">borderRadius</span>: <span class="num">10</span>, 
+      <span class="prop">padding</span>: <span class="str">'16px 20px'</span>, 
+      <span class="prop">marginBottom</span>: <span class="num">16</span> 
+    }}<span class="tag">&gt;</span>
+      <span class="tag">&lt;h3</span> <span class="prop">style</span>={{ <span class="prop">marginBottom</span>: <span class="num">10</span> }}<span class="tag">&gt;</span>{title}<span class="tag">&lt;/h3&gt;</span>
+      {children}
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}
+
+<span class="cm">// Component Composition Usage</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="cm">{/* Instance 1: Wrapping an Unordered List */}</span>
+      <span class="tag">&lt;Card</span> <span class="prop">title</span>=<span class="str">"Lecture Topics"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;ul&gt;</span>
+          <span class="tag">&lt;li&gt;</span>Components<span class="tag">&lt;/li&gt;</span>
+          <span class="tag">&lt;li&gt;</span>Props<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;/ul&gt;</span>
+      <span class="tag">&lt;/Card&gt;</span>
+
+      <span class="cm">{/* Instance 2: Wrapping a Paragraph */}</span>
+      <span class="tag">&lt;Card</span> <span class="prop">title</span>=<span class="str">"Homework"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;p&gt;</span>Build a student portfolio component<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;/Card&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}</code></pre>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        function addCustomCard() {
+            const titleInput = document.getElementById('custom-title');
+            const bodyInput = document.getElementById('custom-body');
+            const grid = document.getElementById('cards-grid');
+
+            const title = titleInput.value.trim() || 'Custom Section';
+            const body = bodyInput.value.trim() || 'Custom slotted child element.';
+
+            const card = document.createElement('div');
+            card.className = 'react-wrapper-card';
+            
+            const h3 = document.createElement('h3');
+            h3.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bae6fd" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> ${title}`;
+
+            const p = document.createElement('p');
+            p.textContent = body;
+
+            card.appendChild(h3);
+            card.appendChild(p);
+            grid.appendChild(card);
+
+            titleInput.value = '';
+            bodyInput.value = '';
+        }
+    </script>
+</body>
+</html>
+
