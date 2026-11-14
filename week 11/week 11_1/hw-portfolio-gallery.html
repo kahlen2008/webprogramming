@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>Week 11_1 · HW2: Portfolio Gallery Component</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #060911;
+            --bg-card: rgba(15, 23, 42, 0.85);
+            --bg-card-sub: rgba(30, 41, 59, 0.5);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.45);
+            --blue: #38bdf8;
+            --blue-glow: rgba(56, 189, 248, 0.35);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.35);
+            --amber: #f59e0b;
+            --purple: #8b5cf6;
+            --purple-light: #c084fc;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 20px;
+            --radius-sub: 12px;
+            --radius-btn: 10px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        h1, h2, h3, h4, .badge-pill { text-wrap: balance; }
+        p, .req-desc { text-wrap: pretty; }
+
+        .skip-link {
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1000;
+            background: var(--blue);
+            color: #000000;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+            transform: translateY(-200%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+
+        .skip-link:focus-visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            outline: 3px solid #ffffff;
+            outline-offset: 3px;
+        }
+
+        html {
+            background-color: var(--bg-body);
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 90% 15%, rgba(168, 85, 247, 0.1) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px 80px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* Top Navigation */
+        .topbar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--blue);
+            background: rgba(56, 189, 248, 0.12);
+            transform: translateX(-2px);
+        }
+
+        .badge-pill {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--blue);
+            white-space: nowrap;
+        }
+
+        .print-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .print-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hero Header Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.3) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: var(--radius-card);
+            padding: 34px 40px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--amber);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+        }
+
+        .hero-desc {
+            color: var(--text-sub);
+            font-size: 1.02rem;
+            line-height: 1.6;
+            max-width: 960px;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 30px 34px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 16px;
+        }
+
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue);
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .section-desc {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            line-height: 1.55;
+        }
+
+        /* Architecture Flow Diagram */
+        .arch-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(10, 15, 26, 0.8);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 24px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .arch-node {
+            flex: 1 1 200px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .arch-node:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .arch-node.state-owner {
+            border-color: rgba(168, 85, 247, 0.4);
+            background: rgba(168, 85, 247, 0.08);
+        }
+
+        .arch-node-name {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .arch-node-role {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+
+        .arch-arrow {
+            color: var(--blue);
+            font-weight: 800;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Interactive Playground */
+        .playground-container {
+            background: rgba(8, 12, 22, 0.95);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: var(--radius-card);
+            padding: 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .filter-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 2px;
+        }
+
+        .filter-bar-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-stats {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.76rem;
+            color: var(--blue);
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 4px 12px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--blue);
+            box-shadow: 0 0 8px var(--blue);
+            animation: pulse 2s infinite;
+            display: inline-block;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        .filter-buttons-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: rgba(10, 15, 26, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .filter-pill {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            padding: 6px 13px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            white-space: nowrap;
+        }
+
+        .filter-pill:hover {
+            color: #ffffff;
+            border-color: rgba(56, 189, 248, 0.4);
+            background: rgba(56, 189, 248, 0.08);
+            transform: translateY(-1.5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .filter-pill.active {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(37, 99, 235, 0.26) 100%);
+            border-color: rgba(56, 189, 248, 0.7);
+            color: #38bdf8;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(56, 189, 248, 0.2), inset 0 0 12px rgba(56, 189, 248, 0.1);
+            transform: translateY(-1.5px);
+        }
+
+        .filter-count {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 1px 7px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #64748b;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .filter-pill:hover .filter-count {
+            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-pill.active .filter-count {
+            background: rgba(56, 189, 248, 0.25);
+            color: #ffffff;
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
+        }
+
+        /* Project Cards Grid */
+        .project-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            background: rgba(18, 24, 38, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-sub);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 16px;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--blue), var(--purple-light));
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .project-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-card-top {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .project-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .project-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .project-domain-tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--purple-light);
+            background: rgba(168, 85, 247, 0.12);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            padding: 3px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .project-desc {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            line-height: 1.55;
+        }
+
+        .tech-stack-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .tech-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 3px 9px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .tech-badge.match {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: rgba(56, 189, 248, 0.45);
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .project-card-footer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .btn-card-link {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-repo {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-repo:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+        }
+
+        .btn-demo {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: var(--blue);
+        }
+
+        .btn-demo:hover {
+            background: var(--blue);
+            color: #060911;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+        }
+
+        .btn-study {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.35);
+            color: var(--purple-light);
+            width: 100%;
+        }
+
+        .btn-study:hover {
+            background: rgba(168, 85, 247, 0.3);
+            border-color: rgba(168, 85, 247, 0.6);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 48px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-sub);
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        /* Code Showcase Tabs */
+        .code-tabs-nav {
+            display: flex;
+            gap: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+            overflow-x: auto;
+        }
+
+        .code-tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-dim);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .code-tab-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .code-tab-btn.active {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.3);
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .code-tab-content {
+            display: none;
+            background: #040711;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sub);
+            overflow: hidden;
+        }
+
+        .code-tab-content.active {
+            display: block;
+        }
+
+        .code-box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        pre.code-block {
+            margin: 0;
+            padding: 18px 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.86rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            overflow-x: auto;
+        }
+
+        .copy-code-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            cursor: pointer;
+            font-size: 0.76rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .copy-code-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Syntax colors */
+        .kw { color: #f472b6; }
+        .fn { color: #60a5fa; }
+        .str { color: #34d399; }
+        .cm { color: #64748b; font-style: italic; }
+        .tag { color: #f87171; }
+        .attr { color: #fbbf24; }
+        .curly { color: #c084fc; }
+
+        /* Table Specs */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .spec-table th, .spec-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            vertical-align: top;
+        }
+
+        .spec-table th {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: rgba(255, 255, 255, 0.02);
+            white-space: nowrap;
+        }
+
+        .spec-table td {
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        .spec-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+            color: #ffffff;
+        }
+
+        .spec-code {
+            font-family: 'Fira Code', monospace;
+            color: var(--blue);
+            background: rgba(56, 189, 248, 0.1);
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-size: 0.82rem;
+            display: inline-block;
+            line-height: 1.4;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.82rem;
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 1.7rem; }
+            .hero-banner { padding: 24px 20px; }
+            .section-card { padding: 22px 18px; }
+            .project-cards-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="container" id="main-content">
+
+        <!-- Top Navigation -->
+        <nav class="topbar" aria-label="Page Navigation">
+            <div class="nav-actions">
+                <a href="index.html" class="back-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    Week 11_1 Overview
+                </a>
+                <button type="button" class="print-btn" onclick="window.print()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    Print Report
+                </button>
+            </div>
+            <div class="badge-pill">Week 11_1 · HW2: Portfolio Gallery</div>
+        </nav>
+
+        <!-- Hero Header Banner -->
+        <header class="hero-banner">
+            <div>
+                <span class="hero-tag">⭐ Homework 2 · React Component Composition &amp; State</span>
+                <h1 class="hero-title">Portfolio Gallery Component — Dynamic Tech Filtering</h1>
+                <p class="hero-desc">
+                    A modular React architecture demonstrating pure functional components, props destructuring contracts, array mapping with stable keys, and declarative filter state. Houses authentic production and coursework projects from Kahlen's GitHub profile (<code>@kahlen2008</code>) and digital portfolio.
+                </p>
+            </div>
+        </header>
+
+        <!-- Interactive Live Component Preview -->
+        <section class="section-card" aria-labelledby="live-heading">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <div class="section-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    </div>
+                    <div>
+                        <h2 class="section-title" id="live-heading">Interactive Live Component Gallery</h2>
+                        <p class="section-desc">Test real-time technology filtering powered by reactive state simulation with Kahlen's authentic projects.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- React Runtime Playground -->
+            <div class="playground-container">
+                <!-- FilterBar Component -->
+                <div class="filter-bar-header">
+                    <div class="filter-bar-title">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                        FilterBar Component
+                    </div>
+                    <span class="filter-stats" id="filter-counter">Showing 6 of 6 projects</span>
+                </div>
+
+                <div class="filter-buttons-wrapper" id="filter-buttons">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <!-- ProjectList Component -->
+                <div class="project-cards-grid" id="project-list-container">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- React Component Source Code Tabs -->
+        <section class="section-card" aria-labelledby="code-heading">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <div class="section-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                    </div>
+                    <div>
+                        <h2 class="section-title" id="code-heading">Production React Component Source</h2>
+                        <p class="section-desc">Complete, modular JSX files conforming to ES6 destructuring, PropTypes contracts, and clean component isolation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Buttons -->
+            <div class="code-tabs-nav">
+                <button type="button" class="code-tab-btn active" onclick="switchTab('card')">ProjectCard.jsx</button>
+                <button type="button" class="code-tab-btn" onclick="switchTab('list')">ProjectList.jsx</button>
+                <button type="button" class="code-tab-btn" onclick="switchTab('filter')">FilterBar.jsx</button>
+                <button type="button" class="code-tab-btn" onclick="switchTab('data')">projectsData.js</button>
+                <button type="button" class="code-tab-btn" onclick="switchTab('app')">App.jsx</button>
+            </div>
+
+            <!-- Tab 1: ProjectCard.jsx -->
+            <div class="code-tab-content active" id="tab-card">
+                <div class="code-box-header">
+                    <span>src/components/ProjectCard.jsx</span>
+                    <button type="button" class="copy-code-btn" onclick="copySnippet('code-card')">📋 Copy</button>
+                </div>
+                <pre class="code-block" id="code-card"><code><span class="cm">// src/components/ProjectCard.jsx</span>
+<span class="kw">function</span> <span class="fn">ProjectCard</span>({ title, description, techStack, githubLink, demoLink, caseStudyLink, domain }) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="str">"project-card"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="str">"project-card-top"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="str">"project-header-row"</span><span class="tag">&gt;</span>
+          <span class="tag">&lt;h3</span> <span class="attr">className</span>=<span class="str">"project-title"</span><span class="tag">&gt;</span><span class="curly">{title}</span><span class="tag">&lt;/h3&gt;</span>
+          {domain &amp;&amp; <span class="tag">&lt;span</span> <span class="attr">className</span>=<span class="str">"project-domain-tag"</span><span class="tag">&gt;</span><span class="curly">{domain}</span><span class="tag">&lt;/span&gt;</span>}
+        <span class="tag">&lt;/div&gt;</span>
+        <span class="tag">&lt;p</span> <span class="attr">className</span>=<span class="str">"project-desc"</span><span class="tag">&gt;</span><span class="curly">{description}</span><span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="str">"tech-stack-row"</span><span class="tag">&gt;</span>
+          <span class="curly">{techStack.map((tech) =&gt; (</span>
+            <span class="tag">&lt;span</span> <span class="attr">key</span>=<span class="curly">{tech}</span> <span class="attr">className</span>=<span class="str">"tech-badge"</span><span class="tag">&gt;</span>
+              <span class="curly">{tech}</span>
+            <span class="tag">&lt;/span&gt;</span>
+          <span class="curly">))}</span>
+        <span class="tag">&lt;/div&gt;</span>
+      <span class="tag">&lt;/div&gt;</span>
+
+      <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="str">"project-card-footer"</span><span class="tag">&gt;</span>
+        {caseStudyLink ? (
+          <span class="tag">&lt;a</span>
+            <span class="attr">href</span>=<span class="curly">{caseStudyLink}</span>
+            <span class="attr">target</span>=<span class="str">"_blank"</span>
+            <span class="attr">rel</span>=<span class="str">"noopener noreferrer"</span>
+            <span class="attr">className</span>=<span class="str">"btn-card-link btn-study"</span>
+          <span class="tag">&gt;</span>
+            Explore Case Study ↗
+          <span class="tag">&lt;/a&gt;</span>
+        ) : (
+          <span class="tag">&lt;&gt;</span>
+            {githubLink &amp;&amp; (
+              <span class="tag">&lt;a</span>
+                <span class="attr">href</span>=<span class="curly">{githubLink}</span>
+                <span class="attr">target</span>=<span class="str">"_blank"</span>
+                <span class="attr">rel</span>=<span class="str">"noopener noreferrer"</span>
+                <span class="attr">className</span>=<span class="str">"btn-card-link btn-repo"</span>
+              <span class="tag">&gt;</span>
+                GitHub Repo
+              <span class="tag">&lt;/a&gt;</span>
+            )}
+            {demoLink &amp;&amp; (
+              <span class="tag">&lt;a</span>
+                <span class="attr">href</span>=<span class="curly">{demoLink}</span>
+                <span class="attr">target</span>=<span class="str">"_blank"</span>
+                <span class="attr">rel</span>=<span class="str">"noopener noreferrer"</span>
+                <span class="attr">className</span>=<span class="str">"btn-card-link btn-demo"</span>
+              <span class="tag">&gt;</span>
+                Live Demo ↗
+              <span class="tag">&lt;/a&gt;</span>
+            )}
+          <span class="tag">&lt;/&gt;</span>
+        )}
+      <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> ProjectCard;</code></pre>
+            </div>
+
+            <!-- Tab 2: ProjectList.jsx -->
+            <div class="code-tab-content" id="tab-list">
+                <div class="code-box-header">
+                    <span>src/components/ProjectList.jsx</span>
+                    <button type="button" class="copy-code-btn" onclick="copySnippet('code-list')">📋 Copy</button>
+                </div>
+                <pre class="code-block" id="code-list"><code><span class="cm">// src/components/ProjectList.jsx</span>
+<span class="kw">import</span> ProjectCard <span class="kw">from</span> <span class="str">'./ProjectCard'</span>;
+
+<span class="kw">function</span> <span class="fn">ProjectList</span>({ projects }) {
+  <span class="kw">if</span> (projects.length === 0) {
+    <span class="kw">return</span> (
+      <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="str">"empty-state"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;p&gt;</span>No projects match the selected technology filter.<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;/div&gt;</span>
+    );
+  }
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="str">"project-cards-grid"</span><span class="tag">&gt;</span>
+      <span class="curly">{projects.map((project) =&gt; (</span>
+        <span class="tag">&lt;ProjectCard</span>
+          <span class="attr">key</span>=<span class="curly">{project.id}</span>
+          <span class="attr">title</span>=<span class="curly">{project.title}</span>
+          <span class="attr">description</span>=<span class="curly">{project.description}</span>
+          <span class="attr">techStack</span>=<span class="curly">{project.techStack}</span>
+          <span class="attr">githubLink</span>=<span class="curly">{project.githubLink}</span>
+          <span class="attr">demoLink</span>=<span class="curly">{project.demoLink}</span>
+          <span class="attr">caseStudyLink</span>=<span class="curly">{project.caseStudyLink}</span>
+          <span class="attr">domain</span>=<span class="curly">{project.domain}</span>
+        <span class="tag">/&gt;</span>
+      <span class="curly">))}</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> ProjectList;</code></pre>
+            </div>
+
+            <!-- Tab 3: FilterBar.jsx -->
+            <div class="code-tab-content" id="tab-filter">
+                <div class="code-box-header">
+                    <span>src/components/FilterBar.jsx</span>
+                    <button type="button" class="copy-code-btn" onclick="copySnippet('code-filter')">📋 Copy</button>
+                </div>
+                <pre class="code-block" id="code-filter"><code><span class="cm">// src/components/FilterBar.jsx</span>
+<span class="kw">function</span> <span class="fn">FilterBar</span>({ categories, activeFilter, onSelectFilter }) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="str">"filter-buttons-wrapper"</span><span class="tag">&gt;</span>
+      <span class="curly">{categories.map((category) =&gt; (</span>
+        <span class="tag">&lt;button</span>
+          <span class="attr">key</span>=<span class="curly">{category}</span>
+          <span class="attr">type</span>=<span class="str">"button"</span>
+          <span class="attr">className</span>=<span class="curly">{`filter-pill ${activeFilter === category ? 'active' : ''}`}</span>
+          <span class="attr">onClick</span>=<span class="curly">{() =&gt; onSelectFilter(category)}</span>
+        <span class="tag">&gt;</span>
+          <span class="curly">{category}</span>
+        <span class="tag">&lt;/button&gt;</span>
+      <span class="curly">))}</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> FilterBar;</code></pre>
+            </div>
+
+            <!-- Tab 4: projectsData.js -->
+            <div class="code-tab-content" id="tab-data">
+                <div class="code-box-header">
+                    <span>src/data/projectsData.js</span>
+                    <button type="button" class="copy-code-btn" onclick="copySnippet('code-data')">📋 Copy</button>
+                </div>
+                <pre class="code-block" id="code-data"><code><span class="cm">// src/data/projectsData.js - Real projects by Kahlen Ong (@kahlen2008)</span>
+<span class="kw">export const</span> projectsData = [
+  {
+    id: 'bridgify',
+    title: 'Bridgify',
+    domain: 'Full Stack',
+    description: 'Event management & intergenerational booking platform featuring calendar-based scheduling, RBAC, and capacity control.',
+    techStack: ['Flask', 'SQLite', 'FullCalendar', 'JavaScript', 'Jinja2'],
+    caseStudyLink: 'https://kahlen2008.github.io/kahlensdigitalportfolio/bridgify-study.html'
+  },
+  {
+    id: 'factoriq',
+    title: 'FactorIQ',
+    domain: 'AI & Cloud',
+    description: 'Smart facility management platform with real-time sensor monitoring, predictive alerting, and HACCP compliance tracking.',
+    techStack: ['Next.js', 'Firebase', 'Firestore', 'Scikit-Learn', 'Vertex AI'],
+    caseStudyLink: 'https://kahlen2008.github.io/kahlensdigitalportfolio/factoriq-study.html'
+  },
+  {
+    id: 'motivation-app',
+    title: 'A-Level Motivation Web App',
+    domain: 'Web App',
+    description: 'Interactive motivation board featuring persistent peer messaging, mood-based motivational engines, and study mini-games.',
+    techStack: ['JavaScript', 'Tailwind CSS', 'Firebase', 'HTML5'],
+    githubLink: 'https://github.com/kahlen2008/motivationalboard',
+    demoLink: 'https://motivationalboard.netlify.app/'
+  },
+  {
+    id: 'student-profile-card',
+    title: 'Student Directory Component',
+    domain: 'React UI',
+    description: 'Vite + React component architecture showcasing 5-prop parameter contracts, verified student identity, and custom CSS styling.',
+    techStack: ['React', 'Vite', 'JavaScript', 'CSS3'],
+    githubLink: 'https://github.com/kahlen2008/studentprofilecard',
+    demoLink: 'https://kahlen2008.github.io/studentprofilecard/'
+  },
+  {
+    id: 'recipeplan',
+    title: 'RecipePlan',
+    domain: 'Coursework',
+    description: 'Smart recipe discovery and weekly meal planner featuring Firebase Auth, Firestore security rules, dietary safeguards, and onboarding flows.',
+    techStack: ['Tailwind CSS', 'Firebase', 'Firestore', 'JavaScript', 'TheMealDB API'],
+    githubLink: 'https://github.com/kahlen2008/webprogproject',
+    demoLink: 'https://kahlen2008.github.io/webprogproject/'
+  },
+  {
+    id: 'book-finder',
+    title: 'Book Finder Application',
+    domain: 'API Integration',
+    description: 'Asynchronous book search app consuming Open Library REST APIs with debounced search query and dynamic book preview modals.',
+    techStack: ['JavaScript', 'REST API', 'HTML5', 'CSS3'],
+    githubLink: 'https://github.com/kahlen2008/webpro-book-search',
+    demoLink: 'https://kahlen2008.github.io/webpro-book-search/'
+  }
+];</code></pre>
+            </div>
+
+            <!-- Tab 5: App.jsx -->
+            <div class="code-tab-content" id="tab-app">
+                <div class="code-box-header">
+                    <span>src/App.jsx</span>
+                    <button type="button" class="copy-code-btn" onclick="copySnippet('code-app')">📋 Copy</button>
+                </div>
+                <pre class="code-block" id="code-app"><code><span class="cm">// src/App.jsx</span>
+<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { projectsData } <span class="kw">from</span> <span class="str">'./data/projectsData'</span>;
+<span class="kw">import</span> ProjectList <span class="kw">from</span> <span class="str">'./components/ProjectList'</span>;
+<span class="kw">import</span> FilterBar <span class="kw">from</span> <span class="str">'./components/FilterBar'</span>;
+
+<span class="cm">// Extract all unique technologies dynamically across all projects</span>
+<span class="kw">const</span> CATEGORIES = [
+  <span class="str">'All'</span>,
+  ...<span class="fn">Array</span>.<span class="fn">from</span>(<span class="kw">new</span> <span class="fn">Set</span>(projectsData.<span class="fn">flatMap</span>((p) =&gt; p.techStack)))
+];
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [activeFilter, setActiveFilter] = <span class="fn">useState</span>(<span class="str">'All'</span>);
+
+  <span class="cm">// Filter logic matching project techStack array</span>
+  <span class="kw">const</span> filteredProjects = activeFilter === <span class="str">'All'</span>
+    ? projectsData
+    : projectsData.filter((p) =&gt; p.techStack.includes(activeFilter));
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="str">"portfolio-gallery-app"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;header</span> <span class="attr">className</span>=<span class="str">"gallery-header"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;h1&gt;</span>Kahlen Ong · Project Portfolio<span class="tag">&lt;/h1&gt;</span>
+        <span class="tag">&lt;p&gt;</span>Filtered by technology using modular React components.<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;/header&gt;</span>
+
+      <span class="tag">&lt;FilterBar</span>
+        <span class="attr">categories</span>=<span class="curly">{CATEGORIES}</span>
+        <span class="attr">activeFilter</span>=<span class="curly">{activeFilter}</span>
+        <span class="attr">onSelectFilter</span>=<span class="curly">{setActiveFilter}</span>
+      <span class="tag">/&gt;</span>
+
+      <span class="tag">&lt;ProjectList</span> <span class="attr">projects</span>=<span class="curly">{filteredProjects}</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}
+
+<span class="kw">export default</span> App;</code></pre>
+            </div>
+        </section>
+
+        <!-- Component Architecture & Hierarchy -->
+        <section class="section-card" aria-labelledby="arch-heading">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <div class="section-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="section-title" id="arch-heading">Component Architecture &amp; Data Flow</h2>
+                        <p class="section-desc">Unidirectional data flow passing state and event handler callbacks down the component hierarchy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arch-diagram">
+                <div class="arch-node state-owner">
+                    <span class="arch-node-name">&lt;App /&gt;</span>
+                    <span class="arch-node-role">Main State Owner<br><code style="color:var(--amber); font-size:0.75rem;">useState('All')</code></span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-node">
+                    <span class="arch-node-name">&lt;FilterBar /&gt;</span>
+                    <span class="arch-node-role">Tech Selector<br><code style="color:var(--blue); font-size:0.75rem;">onSelectFilter()</code></span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-node">
+                    <span class="arch-node-name">&lt;ProjectList /&gt;</span>
+                    <span class="arch-node-role">Collection Mapper<br><code style="color:var(--purple-light); font-size:0.75rem;">projects.map()</code></span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-node">
+                    <span class="arch-node-name">&lt;ProjectCard /&gt;</span>
+                    <span class="arch-node-role">Leaf Presentation<br><code style="color:#60a5fa; font-size:0.75rem;">Props Contract</code></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Props & Contract Specifications -->
+        <section class="section-card" aria-labelledby="specs-heading">
+            <div class="section-header">
+                <div class="section-title-wrap">
+                    <div class="section-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </div>
+                    <div>
+                        <h2 class="section-title" id="specs-heading">Props Contract &amp; Architecture Audit</h2>
+                        <p class="section-desc">Specification verification against the Week 11_1 Homework 2 requirements.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="spec-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 16%;">Component</th>
+                            <th style="width: 38%;">Prop Contract</th>
+                            <th style="width: 14%;">Type</th>
+                            <th style="width: 32%;">Role &amp; Responsibilities</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color:#ffffff; white-space:nowrap;">ProjectCard</strong></td>
+                            <td><span class="spec-code">{ title, description, techStack, githubLink, demoLink, caseStudyLink }</span></td>
+                            <td><span style="white-space:nowrap;">Object props</span></td>
+                            <td>Pure presentational leaf component. Renders project headers, text summary, mapped technology badges, and action buttons.</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:#ffffff; white-space:nowrap;">ProjectList</strong></td>
+                            <td><span class="spec-code">{ projects }</span></td>
+                            <td><span style="white-space:nowrap;">Array of objects</span></td>
+                            <td>Maps over the filtered dataset using unique <span class="spec-code">key={project.id}</span>; presents an empty state fallback if the count is zero.</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:#ffffff; white-space:nowrap;">FilterBar</strong></td>
+                            <td><span class="spec-code">{ categories, activeFilter, onSelectFilter }</span></td>
+                            <td><span style="white-space:nowrap;">Array, String, Fn</span></td>
+                            <td>Renders technology pill buttons, calculates matching items, and invokes parent state updates via callback parameter.</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:#ffffff; white-space:nowrap;">App (Container)</strong></td>
+                            <td><span class="spec-code">None (Root)</span></td>
+                            <td><span style="white-space:nowrap;">Root Component</span></td>
+                            <td>Manages <span class="spec-code">activeFilter</span> state, computes derived filtered arrays, and composes children.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Web Programming Course · Week 11_1 · HW2: Portfolio Gallery Component
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        const projectsData = [
+            {
+                id: 'bridgify',
+                title: 'Bridgify',
+                domain: 'Full Stack',
+                description: 'Event management & intergenerational booking platform with calendar scheduling, RBAC, and capacity control.',
+                techStack: ['Flask', 'SQLite', 'FullCalendar', 'JavaScript', 'Jinja2'],
+                caseStudyLink: 'https://kahlen2008.github.io/kahlensdigitalportfolio/bridgify-study.html'
+            },
+            {
+                id: 'factoriq',
+                title: 'FactorIQ',
+                domain: 'AI & Cloud',
+                description: 'Smart facility management platform with real-time sensor monitoring, predictive alerting, and HACCP compliance.',
+                techStack: ['Next.js', 'Firebase', 'Firestore', 'Scikit-Learn', 'Vertex AI'],
+                caseStudyLink: 'https://kahlen2008.github.io/kahlensdigitalportfolio/factoriq-study.html'
+            },
+            {
+                id: 'motivation-app',
+                title: 'A-Level Motivation Web App',
+                domain: 'Web App',
+                description: 'Interactive student motivation platform featuring mood-based prompts, peer message board, and study timers.',
+                techStack: ['JavaScript', 'Tailwind CSS', 'Firebase', 'Firestore', 'HTML5'],
+                githubLink: 'https://github.com/kahlen2008/motivationalboard',
+                demoLink: 'https://motivationalboard.netlify.app/'
+            },
+            {
+                id: 'student-profile-card',
+                title: 'Student Directory Component',
+                domain: 'React UI',
+                description: 'Vite + React component architecture showcasing 5-prop parameter contracts, verified student identity, and custom CSS styling.',
+                techStack: ['React', 'Vite', 'JavaScript', 'CSS3'],
+                githubLink: 'https://github.com/kahlen2008/studentprofilecard',
+                demoLink: 'https://kahlen2008.github.io/studentprofilecard/'
+            },
+            {
+                id: 'recipeplan',
+                title: 'RecipePlan',
+                domain: 'Coursework',
+                description: 'Smart recipe discovery and weekly meal planner featuring Firebase Auth, Firestore security rules, dietary safeguards, and onboarding flows.',
+                techStack: ['Tailwind CSS', 'Firebase', 'Firestore', 'JavaScript', 'TheMealDB API'],
+                githubLink: 'https://github.com/kahlen2008/webprogproject',
+                demoLink: 'https://kahlen2008.github.io/webprogproject/'
+            },
+            {
+                id: 'book-finder',
+                title: 'Book Finder Application',
+                domain: 'API Integration',
+                description: 'Asynchronous book search app consuming Open Library REST APIs with debounced search query and dynamic book preview modals.',
+                techStack: ['JavaScript', 'REST API', 'HTML5', 'CSS3'],
+                githubLink: 'https://github.com/kahlen2008/webpro-book-search',
+                demoLink: 'https://kahlen2008.github.io/webpro-book-search/'
+            }
+        ];
+
+        // Comprehensive technology filters covering every technology across all projects
+        const CATEGORIES = [
+            'All',
+            'React',
+            'JavaScript',
+            'Next.js',
+            'Tailwind CSS',
+            'Firebase',
+            'Firestore',
+            'Flask',
+            'HTML5',
+            'CSS3',
+            'Vite',
+            'SQLite',
+            'FullCalendar',
+            'Jinja2',
+            'REST API',
+            'Scikit-Learn',
+            'Vertex AI',
+            'TheMealDB API'
+        ];
+
+        let activeFilter = 'All';
+
+        function renderFilterBar() {
+            const container = document.getElementById('filter-buttons');
+            container.innerHTML = '';
+
+            CATEGORIES.forEach(cat => {
+                const count = cat === 'All' 
+                    ? projectsData.length 
+                    : projectsData.filter(p => p.techStack.includes(cat)).length;
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `filter-pill ${activeFilter === cat ? 'active' : ''}`;
+                btn.innerHTML = `${cat} <span class="filter-count">${count}</span>`;
+                btn.onclick = () => {
+                    activeFilter = cat;
+                    renderFilterBar();
+                    renderProjects();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('project-list-container');
+            const counter = document.getElementById('filter-counter');
+            container.innerHTML = '';
+
+            const filtered = activeFilter === 'All'
+                ? projectsData
+                : projectsData.filter(p => p.techStack.includes(activeFilter));
+
+            counter.innerHTML = `<span class="pulse-dot"></span> Showing ${filtered.length} of ${projectsData.length} projects`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No projects match the "${activeFilter}" technology filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(proj => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+
+                const footerButtons = proj.caseStudyLink
+                    ? `<a href="${proj.caseStudyLink}" target="_blank" rel="noopener noreferrer" class="btn-card-link btn-study">
+                           Explore Full Study ↗
+                       </a>`
+                    : `<a href="${proj.githubLink}" target="_blank" rel="noopener noreferrer" class="btn-card-link btn-repo">
+                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                           GitHub Repo
+                       </a>
+                       <a href="${proj.demoLink}" target="_blank" rel="noopener noreferrer" class="btn-card-link btn-demo">
+                           Live Demo ↗
+                       </a>`;
+
+                card.innerHTML = `
+                    <div class="project-card-top">
+                        <div class="project-header-row">
+                            <h3 class="project-title">${proj.title}</h3>
+                            <span class="project-domain-tag">${proj.domain}</span>
+                        </div>
+                        <p class="project-desc">${proj.description}</p>
+                        <div class="tech-stack-row">
+                            ${proj.techStack.map(t => `
+                                <span class="tech-badge ${t === activeFilter ? 'match' : ''}">${t}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="project-card-footer">
+                        ${footerButtons}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.code-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.code-tab-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            const targetContent = document.getElementById(`tab-${tabId}`);
+            if (targetContent) targetContent.classList.add('active');
+        }
+
+        function copySnippet(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            navigator.clipboard.writeText(el.innerText).then(() => {
+                alert('Code copied to clipboard!');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+            });
+        }
+
+        // Initialize
+        renderFilterBar();
+        renderProjects();
+    </script>
+</body>
+</html>
+
