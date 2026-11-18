@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Week 12_1 · Interactive Shopping Cart Showcase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- React 18 & Babel for Live In-Browser Runtime (pinned versions so the page can't break on a new release) -->
+    <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+    <style>
+        :root {
+            color-scheme: dark;
+            /* Surfaces */
+            --bg-body: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.85);
+            --bg-card-sub: rgba(30, 41, 59, 0.5);
+            --bg-inset: rgba(2, 6, 23, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(255, 255, 255, 0.14);
+            --border-hover: rgba(56, 189, 248, 0.45);
+            /* Accents */
+            --blue: #38bdf8;
+            --blue-soft: rgba(56, 189, 248, 0.12);
+            --blue-line: rgba(56, 189, 248, 0.3);
+            --purple: #c084fc;
+            --purple-soft: rgba(168, 85, 247, 0.15);
+            --purple-line: rgba(168, 85, 247, 0.35);
+            --emerald: #34d399;
+            --emerald-soft: rgba(16, 185, 129, 0.14);
+            --emerald-line: rgba(16, 185, 129, 0.35);
+            --rose: #fb7185;
+            --rose-soft: rgba(244, 63, 94, 0.12);
+            /* Text */
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            /* Shape */
+            --radius-card: 20px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+            /* Type: one body face, one display face, one code face */
+            --font-main: 'Plus Jakarta Sans', system-ui, sans-serif;
+            --font-heading: 'Outfit', var(--font-main);
+            --font-mono: 'Fira Code', ui-monospace, monospace;
+            --fs-xs: 0.75rem;
+            --fs-sm: 0.875rem;
+            --fs-base: 1rem;
+            --fs-lg: 1.125rem;
+            --fs-xl: 1.375rem;
+            --fs-2xl: 2.25rem;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* Form controls don't inherit fonts by default — this keeps every button on the page font */
+        button, input, select, textarea { font: inherit; color: inherit; }
+        button { cursor: pointer; }
+        button:disabled { cursor: not-allowed; }
+
+        :focus-visible {
+            outline: 2px solid var(--blue);
+            outline-offset: 2px;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.25;
+            text-wrap: balance;
+        }
+        p { text-wrap: pretty; }
+
+        .skip-link {
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1000;
+            background: var(--blue);
+            color: #041324;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: var(--fs-sm);
+            border-radius: 8px;
+            text-decoration: none;
+            transform: translateY(-200%);
+            opacity: 0;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+
+        .skip-link:focus-visible {
+            transform: translateY(0);
+            opacity: 1;
+            outline: 3px solid #ffffff;
+            outline-offset: 3px;
+        }
+
+        html {
+            background-color: var(--bg-body);
+            min-height: 100%;
+        }
+
+        body {
+            font-family: var(--font-main);
+            font-size: var(--fs-base);
+            line-height: 1.5;
+            background-color: var(--bg-body);
+            background-image:
+                radial-gradient(circle at 12% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 88% 12%, rgba(168, 85, 247, 0.1) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 80px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1240px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* ---------- Shared small pieces ---------- */
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-sub);
+        }
+        .pill--blue { background: var(--blue-soft); border-color: var(--blue-line); color: var(--blue); }
+        .pill--purple { background: var(--purple-soft); border-color: var(--purple-line); color: var(--purple); }
+        .pill--upper { text-transform: uppercase; letter-spacing: 0.06em; }
+
+        .price {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: var(--blue);
+        }
+
+        /* ---------- Top navigation ---------- */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.2s;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--blue);
+            background: var(--blue-soft);
+            transform: translateX(-2px);
+        }
+
+        /* ---------- Hero ---------- */
+        .hero-card {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(15, 23, 42, 0.85));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 36px 40px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: var(--fs-2xl);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            color: var(--text-sub);
+            font-size: var(--fs-base);
+            line-height: 1.65;
+            max-width: 820px;
+        }
+
+        /* ---------- Section shell ---------- */
+        .section-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .section-icon {
+            flex: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: var(--blue-soft);
+            border: 1px solid var(--blue-line);
+            display: grid;
+            place-items: center;
+            color: var(--blue);
+        }
+
+        .section-heading { font-size: var(--fs-xl); }
+
+        .section-sub {
+            font-size: var(--fs-sm);
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .loading-note {
+            color: var(--text-sub);
+            text-align: center;
+            padding: 48px 16px;
+            font-size: var(--fs-sm);
+        }
+
+        /* ---------- Shop layout ---------- */
+        .sc-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 380px;
+            gap: 28px;
+            align-items: start;
+        }
+
+        .sc-products-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .sc-products-title { font-size: var(--fs-lg); }
+
+        .sc-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        /* Product card */
+        .sc-product-card {
+            background: var(--bg-card-sub);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .sc-product-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-hover);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        .sc-product-card.is-in-cart { border-color: var(--purple-line); }
+
+        .sc-img-wrap {
+            position: relative;
+            aspect-ratio: 16 / 10;
+            background: #020617;
+            overflow: hidden;
+        }
+
+        .sc-img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+
+        .sc-product-card:hover .sc-img { transform: scale(1.05); }
+
+        .sc-cat-badge,
+        .sc-incart-badge {
+            position: absolute;
+            top: 10px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            backdrop-filter: blur(6px);
+        }
+
+        .sc-cat-badge {
+            left: 10px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid var(--border-strong);
+            color: var(--blue);
+        }
+
+        .sc-incart-badge {
+            right: 10px;
+            background: rgba(88, 28, 135, 0.85);
+            border: 1px solid var(--purple-line);
+            color: #f3e8ff;
+        }
+
+        .sc-info {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .sc-title {
+            font-size: var(--fs-base);
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+        .sc-desc {
+            font-size: var(--fs-sm);
+            color: var(--text-sub);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .sc-bottom-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 6px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sc-bottom-bar .price { font-size: var(--fs-lg); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-btn);
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            line-height: 1;
+            transition: transform 0.15s, filter 0.15s, box-shadow 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
+        }
+
+        .btn:active:not(:disabled) { transform: translateY(1px); }
+
+        .btn-add {
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            color: #041324;
+            padding: 9px 14px;
+        }
+
+        .btn-add:hover:not(:disabled) {
+            filter: brightness(1.1);
+            box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+        }
+
+        .btn-add:disabled {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--border);
+            color: var(--text-dim);
+        }
+
+        /* ---------- Cart sidebar ---------- */
+        .sc-sidebar {
+            background: var(--bg-card-sub);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: sticky;
+            top: 24px;
+        }
+
+        .sc-sidebar-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sc-sidebar-title {
+            font-size: var(--fs-lg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sc-sidebar-title svg { color: var(--blue); }
+
+        .sc-state-box {
+            padding: 32px 12px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sc-state-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+
+        .sc-state-icon--success {
+            background: var(--emerald-soft);
+            border-color: var(--emerald-line);
+            color: var(--emerald);
+        }
+
+        .sc-state-title { font-size: var(--fs-base); }
+
+        .sc-state-sub {
+            font-size: var(--fs-sm);
+            color: var(--text-sub);
+            max-width: 250px;
+        }
+
+        .sc-state-sub strong { color: #ffffff; font-variant-numeric: tabular-nums; }
+
+        .sc-cart-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 360px;
+            overflow-y: auto;
+            margin-right: -6px;
+            padding-right: 6px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+        }
+
+        .sc-cart-item {
+            background: var(--bg-inset);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: 56px minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .sc-item-img {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #020617;
+        }
+
+        .sc-item-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .sc-item-name {
+            font-family: var(--font-main);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sc-item-unit {
+            font-size: var(--fs-xs);
+            color: var(--text-sub);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .sc-qty-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 2px;
+        }
+
+        .sc-qty-group {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .sc-btn-q {
+            background: transparent;
+            border: none;
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            color: var(--text-main);
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .sc-btn-q:hover:not(:disabled) { background: var(--blue-soft); color: var(--blue); }
+        .sc-btn-q.is-remove:hover { background: var(--rose-soft); color: var(--rose); }
+        .sc-btn-q:disabled { color: var(--text-dim); }
+
+        .sc-qty-val {
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            min-width: 26px;
+            text-align: center;
+        }
+
+        .sc-qty-row .price { font-size: var(--fs-sm); }
+
+        .sc-btn-del {
+            align-self: start;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: grid;
+            place-items: center;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .sc-btn-del:hover { color: var(--rose); background: var(--rose-soft); }
+
+        /* Summary */
+        .sc-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sc-sum-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--fs-sm);
+            color: var(--text-sub);
+        }
+
+        .sc-sum-row strong { color: #ffffff; font-variant-numeric: tabular-nums; }
+
+        .sc-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-strong);
+        }
+
+        .sc-total-label {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: var(--fs-base);
+        }
+
+        .sc-total-row .price {
+            font-size: 1.6rem;
+            font-weight: 800;
+            text-shadow: 0 0 18px rgba(56, 189, 248, 0.3);
+        }
+
+        .sc-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        /* Checkout and Clear Cart share the same box so they render at identical size */
+        .sc-actions .btn {
+            width: 100%;
+            min-height: 46px;
+            padding: 0 16px;
+            font-size: var(--fs-base);
+            border-width: 1px;
+        }
+
+        .btn-checkout {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-checkout:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border-color: var(--border-strong);
+            color: var(--text-sub);
+        }
+
+        .btn-ghost:hover { color: #ffffff; border-color: var(--blue-line); background: var(--blue-soft); }
+        .btn-ghost.is-danger:hover { background: var(--rose-soft); color: var(--rose); border-color: rgba(244, 63, 94, 0.35); }
+
+        /* ---------- Confirmation modal ---------- */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            display: grid;
+            place-items: center;
+            padding: 16px;
+            background: rgba(2, 6, 23, 0.72);
+            backdrop-filter: blur(6px);
+            animation: fade-in 0.18s ease-out;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 400px;
+            background: #111827;
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-card);
+            padding: 28px 24px 24px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            animation: pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: var(--rose-soft);
+            border: 1px solid rgba(244, 63, 94, 0.35);
+            color: var(--rose);
+            margin-bottom: 4px;
+        }
+
+        .modal-title { font-size: var(--fs-xl); }
+
+        .modal-text {
+            font-size: var(--fs-sm);
+            color: var(--text-sub);
+            max-width: 300px;
+        }
+
+        .modal-text strong { color: #ffffff; font-variant-numeric: tabular-nums; }
+
+        .modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .modal-actions .btn {
+            min-height: 46px;
+            padding: 0 16px;
+            font-size: var(--fs-base);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f43f5e, #e11d48);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(244, 63, 94, 0.25);
+        }
+
+        .btn-danger:hover { filter: brightness(1.1); }
+
+        @keyframes fade-in { from { opacity: 0; } }
+        @keyframes pop-in { from { opacity: 0; transform: translateY(8px) scale(0.97); } }
+
+        /* ---------- Code viewer ---------- */
+        .code-tabs-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 4px;
+            background: var(--bg-inset);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            scrollbar-width: thin;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-sub);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: color 0.2s, background 0.2s, border-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.04); }
+
+        .tab-btn[aria-selected="true"] {
+            color: var(--blue);
+            background: var(--blue-soft);
+            border-color: var(--blue-line);
+        }
+
+        .tab-pane[hidden] { display: none; }
+
+        .code-block-wrap {
+            background: #020617;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            overflow: hidden;
+        }
+
+        .code-titlebar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+            background: rgba(15, 23, 42, 0.9);
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: var(--fs-xs);
+            color: var(--text-sub);
+        }
+
+        .code-titlebar > span:first-child {
+            font-family: var(--font-mono);
+            color: var(--text-main);
+        }
+
+        pre {
+            padding: 18px 20px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.84rem;
+            line-height: 1.65;
+            color: #e2e8f0;
+            tab-size: 2;
+        }
+
+        code { font-family: var(--font-mono); }
+
+        p code {
+            font-size: 0.88em;
+            padding: 1px 6px;
+            border-radius: 5px;
+            background: var(--blue-soft);
+            color: var(--blue);
+        }
+
+        .c-kw { color: #f472b6; }
+        .c-fn { color: #38bdf8; }
+        .c-str { color: #34d399; }
+        .c-prop { color: #fbbf24; }
+        .c-com { color: #64748b; font-style: italic; }
+        .c-num { color: #c084fc; }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 1020px) {
+            .sc-layout { grid-template-columns: 1fr; }
+            .sc-sidebar { position: static; }
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 16px 16px 60px; }
+            .hero-card { padding: 26px 20px; }
+            .hero-title { font-size: 1.8rem; }
+            .section-box { padding: 20px 16px; }
+            .section-head > .pill { display: none; }
+            .sc-products-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition: none !important; }
+        }
+</style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to Shopping Cart Showcase</a>
+
+    <div class="container" id="main-content">
+        <!-- Top Navigation -->
+        <nav class="topbar" aria-label="Navigation Header">
+            <div class="nav-actions">
+                <a href="index.html" class="back-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Week 12_1 Hub</span>
+                </a>
+                <a href="../../index.html" class="back-link">
+                    <span>Course Portal</span>
+                </a>
+            </div>
+            <span class="pill pill--blue pill--upper">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                Week 12_1 Homework
+            </span>
+        </nav>
+
+        <!-- Hero Header -->
+        <header class="hero-card">
+            <h1 class="hero-title">Interactive Shopping Cart</h1>
+            <p class="hero-desc">
+                A modular React shopping app: the parent <code>ShoppingCart</code> owns the cart array in state, passes it down as props, and children report changes back up through callbacks. Totals are derived from that state on every render.
+            </p>
+        </header>
+
+        <!-- Live In-Browser React Application -->
+        <section class="section-box" aria-labelledby="live-app-heading">
+            <div class="section-head">
+                <div class="section-title-wrap">
+                    <div class="section-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 id="live-app-heading" class="section-heading">Live Interactive Shopping Cart</h2>
+                        <p class="section-sub">
+                            Add products, change quantities and check out — everything runs in this page.
+                        </p>
+                    </div>
+                </div>
+                <span class="pill pill--upper">React 18 · in-browser</span>
+            </div>
+
+            <!-- React Target Container -->
+            <div id="shopping-cart-root">
+                <p class="loading-note">Loading the React app…</p>
+            </div>
+        </section>
+
+        <!-- Tabbed Source Code Viewer -->
+        <section class="section-box" aria-labelledby="code-heading">
+            <div class="section-head">
+                <div class="section-title-wrap">
+                    <div class="section-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 id="code-heading" class="section-heading">Component Source Implementation</h2>
+                        <p class="section-sub">
+                            How the cart is split into components, written as separate files for a React project (styling markup trimmed for readability).
+                        </p>
+                    </div>
+                </div>
+                <span class="pill pill--upper">React · JSX</span>
+            </div>
+
+            <!-- Tabs Nav -->
+            <div class="code-tabs-header" role="tablist" aria-label="Source files">
+                <button type="button" class="tab-btn" role="tab" id="btn-shoppingcart" aria-selected="true" aria-controls="tab-shoppingcart">ShoppingCart.jsx</button>
+                <button type="button" class="tab-btn" role="tab" id="btn-cartsidebar" aria-selected="false" aria-controls="tab-cartsidebar" tabindex="-1">CartSidebar.jsx</button>
+                <button type="button" class="tab-btn" role="tab" id="btn-cartitem" aria-selected="false" aria-controls="tab-cartitem" tabindex="-1">CartItem.jsx</button>
+                <button type="button" class="tab-btn" role="tab" id="btn-productlist" aria-selected="false" aria-controls="tab-productlist" tabindex="-1">ProductList.jsx</button>
+                <button type="button" class="tab-btn" role="tab" id="btn-productcard" aria-selected="false" aria-controls="tab-productcard" tabindex="-1">ProductCard.jsx</button>
+                <button type="button" class="tab-btn" role="tab" id="btn-productsdata" aria-selected="false" aria-controls="tab-productsdata" tabindex="-1">products.js</button>
+            </div>
+
+            <!-- Tab 1: ShoppingCart.jsx -->
+            <div class="tab-pane" id="tab-shoppingcart" role="tabpanel" aria-labelledby="btn-shoppingcart">
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/components/ShoppingCart.jsx</span>
+                        <span>Composite Parent Component (Tasks 2 &amp; 5)</span>
+                    </div>
+                    <pre><code><span class="c-kw">import</span> { useState } <span class="c-kw">from</span> <span class="c-str">'react'</span>;
+<span class="c-kw">import</span> { products <span class="c-kw">as</span> initialProducts } <span class="c-kw">from</span> <span class="c-str">'../data/products'</span>;
+<span class="c-kw">import</span> ProductList <span class="c-kw">from</span> <span class="c-str">'./ProductList'</span>;
+<span class="c-kw">import</span> CartSidebar <span class="c-kw">from</span> <span class="c-str">'./CartSidebar'</span>;
+
+<span class="c-kw">function</span> <span class="c-fn">ShoppingCart</span>() {
+  <span class="c-com">// Task 2: State manages an array of cart items</span>
+  <span class="c-kw">const</span> [cartItems, setCartItems] = <span class="c-fn">useState</span>([]);
+
+  <span class="c-com">// Task 2: Add to cart with quantity increment</span>
+  <span class="c-kw">const</span> <span class="c-fn">handleAddToCart</span> = (product) =&gt; {
+    <span class="c-fn">setCartItems</span>((prevItems) =&gt; {
+      <span class="c-kw">const</span> existing = prevItems.<span class="c-fn">find</span>((item) =&gt; item.id === product.id);
+      <span class="c-kw">if</span> (existing) {
+        <span class="c-kw">return</span> prevItems.<span class="c-fn">map</span>((item) =&gt;
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      <span class="c-kw">return</span> [...prevItems, { ...product, quantity: 1 }];
+    });
+  };
+
+  <span class="c-com">// Task 2: Remove item from cart state</span>
+  <span class="c-kw">const</span> <span class="c-fn">handleRemoveFromCart</span> = (productId) =&gt; {
+    <span class="c-fn">setCartItems</span>((prevItems) =&gt; prevItems.<span class="c-fn">filter</span>((item) =&gt; item.id !== productId));
+  };
+
+  <span class="c-com">// Task 4: Quantity controls (+ and - per item)</span>
+  <span class="c-kw">const</span> <span class="c-fn">handleUpdateQuantity</span> = (productId, delta) =&gt; {
+    <span class="c-fn">setCartItems</span>((prevItems) =&gt;
+      prevItems
+        .<span class="c-fn">map</span>((item) =&gt; {
+          <span class="c-kw">if</span> (item.id === productId) {
+            <span class="c-kw">const</span> nextQty = item.quantity + delta;
+            <span class="c-kw">return</span> nextQty &gt; 0 ? { ...item, quantity: nextQty } : null;
+          }
+          <span class="c-kw">return</span> item;
+        })
+        .<span class="c-fn">filter</span>(Boolean)
+    );
+  };
+
+  <span class="c-kw">const</span> <span class="c-fn">handleClearCart</span> = () =&gt; <span class="c-fn">setCartItems</span>([]);
+
+  <span class="c-kw">return</span> (
+    &lt;<span class="c-kw">div</span> <span class="c-prop">className</span>=<span class="c-str">"shopping-cart-container"</span>&gt;
+      {<span class="c-com">/* Task 1: Product list component */</span>}
+      &lt;<span class="c-fn">ProductList</span> <span class="c-prop">products</span>={initialProducts} <span class="c-prop">onAddToCart</span>={handleAddToCart} /&gt;
+
+      {<span class="c-com">/* Task 3: Cart sidebar component */</span>}
+      &lt;<span class="c-fn">CartSidebar</span>
+        <span class="c-prop">cartItems</span>={cartItems}
+        <span class="c-prop">onUpdateQuantity</span>={handleUpdateQuantity}
+        <span class="c-prop">onRemoveFromCart</span>={handleRemoveFromCart}
+        <span class="c-prop">onClearCart</span>={handleClearCart}
+      /&gt;
+    &lt;/<span class="c-kw">div</span>&gt;
+  );
+}
+
+<span class="c-kw">export default</span> ShoppingCart;</code></pre>
+                </div>
+            </div>
+
+            <!-- Tab 2: CartSidebar.jsx -->
+            <div class="tab-pane" id="tab-cartsidebar" role="tabpanel" aria-labelledby="btn-cartsidebar" hidden>
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/components/CartSidebar.jsx</span>
+                        <span>Sidebar with Total Price Computed from State (Task 3)</span>
+                    </div>
+                    <pre><code><span class="c-kw">import</span> CartItem <span class="c-kw">from</span> <span class="c-str">'./CartItem'</span>;
+
+<span class="c-kw">function</span> <span class="c-fn">CartSidebar</span>({ cartItems, onUpdateQuantity, onRemoveFromCart, onClearCart }) {
+  <span class="c-com">// Task 3: Dynamically computed values derived directly from state</span>
+  <span class="c-kw">const</span> totalItems = cartItems.<span class="c-fn">reduce</span>((sum, item) =&gt; sum + item.quantity, 0);
+  <span class="c-kw">const</span> totalPrice = cartItems.<span class="c-fn">reduce</span>((sum, item) =&gt; sum + item.price * item.quantity, 0);
+
+  <span class="c-kw">return</span> (
+    &lt;<span class="c-kw">aside</span> <span class="c-prop">className</span>=<span class="c-str">"cart-sidebar"</span>&gt;
+      &lt;<span class="c-kw">div</span> <span class="c-prop">className</span>=<span class="c-str">"cart-header"</span>&gt;
+        &lt;<span class="c-kw">h2</span>&gt;Your Cart&lt;/<span class="c-kw">h2</span>&gt;
+        &lt;<span class="c-kw">span</span> <span class="c-prop">className</span>=<span class="c-str">"cart-badge"</span>&gt;{totalItems} items&lt;/<span class="c-kw">span</span>&gt;
+      &lt;/<span class="c-kw">div</span>&gt;
+
+      {cartItems.length === 0 ? (
+        &lt;<span class="c-kw">p</span> <span class="c-prop">className</span>=<span class="c-str">"empty-text"</span>&gt;Your cart is empty.&lt;/<span class="c-kw">p</span>&gt;
+      ) : (
+        &lt;&gt;
+          &lt;<span class="c-kw">ul</span> <span class="c-prop">className</span>=<span class="c-str">"cart-items-list"</span>&gt;
+            {cartItems.<span class="c-fn">map</span>((item) =&gt; (
+              &lt;<span class="c-fn">CartItem</span>
+                <span class="c-prop">key</span>={item.id}
+                <span class="c-prop">item</span>={item}
+                <span class="c-prop">onUpdateQuantity</span>={onUpdateQuantity}
+                <span class="c-prop">onRemoveFromCart</span>={onRemoveFromCart}
+              /&gt;
+            ))}
+          &lt;/<span class="c-kw">ul</span>&gt;
+
+          &lt;<span class="c-kw">div</span> <span class="c-prop">className</span>=<span class="c-str">"cart-total-box"</span>&gt;
+            &lt;<span class="c-kw">span</span>&gt;Total Price:&lt;/<span class="c-kw">span</span>&gt;
+            &lt;<span class="c-kw">span</span> <span class="c-prop">className</span>=<span class="c-str">"total-amount"</span>&gt;${totalPrice.<span class="c-fn">toFixed</span>(2)}&lt;/<span class="c-kw">span</span>&gt;
+          &lt;/<span class="c-kw">div</span>&gt;
+        &lt;/&gt;
+      )}
+    &lt;/<span class="c-kw">aside</span>&gt;
+  );
+}
+
+<span class="c-kw">export default</span> CartSidebar;</code></pre>
+                </div>
+            </div>
+
+            <!-- Tab 3: CartItem.jsx -->
+            <div class="tab-pane" id="tab-cartitem" role="tabpanel" aria-labelledby="btn-cartitem" hidden>
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/components/CartItem.jsx</span>
+                        <span>Quantity Controls + Remove Button (Tasks 2 &amp; 4)</span>
+                    </div>
+                    <pre><code><span class="c-kw">function</span> <span class="c-fn">CartItem</span>({ item, onUpdateQuantity, onRemoveFromCart }) {
+  <span class="c-kw">const</span> { id, name, price, image, quantity } = item;
+
+  <span class="c-kw">return</span> (
+    &lt;<span class="c-kw">li</span> <span class="c-prop">className</span>=<span class="c-str">"cart-item"</span>&gt;
+      &lt;<span class="c-kw">img</span> <span class="c-prop">src</span>={image} <span class="c-prop">alt</span>={name} <span class="c-prop">className</span>=<span class="c-str">"cart-item-img"</span> /&gt;
+      &lt;<span class="c-kw">div</span> <span class="c-prop">className</span>=<span class="c-str">"cart-item-details"</span>&gt;
+        &lt;<span class="c-kw">h4</span>&gt;{name}&lt;/<span class="c-kw">h4</span>&gt;
+        &lt;<span class="c-kw">span</span>&gt;${price.<span class="c-fn">toFixed</span>(2)} each&lt;/<span class="c-kw">span</span>&gt;
+
+        {<span class="c-com">/* Task 4: Quantity controls */</span>}
+        &lt;<span class="c-kw">div</span> <span class="c-prop">className</span>=<span class="c-str">"qty-group"</span>&gt;
+          &lt;<span class="c-kw">button</span> <span class="c-prop">onClick</span>={() =&gt; <span class="c-fn">onUpdateQuantity</span>(id, -1)}&gt;−&lt;/<span class="c-kw">button</span>&gt;
+          &lt;<span class="c-kw">span</span>&gt;{quantity}&lt;/<span class="c-kw">span</span>&gt;
+          &lt;<span class="c-kw">button</span> <span class="c-prop">onClick</span>={() =&gt; <span class="c-fn">onUpdateQuantity</span>(id, 1)}&gt;+&lt;/<span class="c-kw">button</span>&gt;
+        &lt;/<span class="c-kw">div</span>&gt;
+      &lt;/<span class="c-kw">div</span>&gt;
+
+      {<span class="c-com">/* Task 2: Remove button */</span>}
+      &lt;<span class="c-kw">button</span> <span class="c-prop">className</span>=<span class="c-str">"btn-remove"</span> <span class="c-prop">onClick</span>={() =&gt; <span class="c-fn">onRemoveFromCart</span>(id)}&gt;✕&lt;/<span class="c-kw">button</span>&gt;
+    &lt;/<span class="c-kw">li</span>&gt;
+  );
+}
+
+<span class="c-kw">export default</span> CartItem;</code></pre>
+                </div>
+            </div>
+
+            <!-- Tab 4: ProductList.jsx -->
+            <div class="tab-pane" id="tab-productlist" role="tabpanel" aria-labelledby="btn-productlist" hidden>
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/components/ProductList.jsx</span>
+                        <span>Product List Rendering at Least 5 Items (Task 1)</span>
+                    </div>
+                    <pre><code><span class="c-kw">import</span> ProductCard <span class="c-kw">from</span> <span class="c-str">'./ProductCard'</span>;
+
+<span class="c-kw">function</span> <span class="c-fn">ProductList</span>({ products, onAddToCart }) {
+  <span class="c-kw">return</span> (
+    &lt;<span class="c-kw">section</span> <span class="c-prop">className</span>=<span class="c-str">"product-list"</span>&gt;
+      &lt;<span class="c-kw">h2</span>&gt;Available Products ({products.length})&lt;/<span class="c-kw">h2</span>&gt;
+      &lt;<span class="c-kw">div</span> <span class="c-prop">className</span>=<span class="c-str">"products-grid"</span>&gt;
+        {products.<span class="c-fn">map</span>((product) =&gt; (
+          &lt;<span class="c-fn">ProductCard</span>
+            <span class="c-prop">key</span>={product.id}
+            <span class="c-prop">product</span>={product}
+            <span class="c-prop">onAddToCart</span>={onAddToCart}
+          /&gt;
+        ))}
+      &lt;/<span class="c-kw">div</span>&gt;
+    &lt;/<span class="c-kw">section</span>&gt;
+  );
+}
+
+<span class="c-kw">export default</span> ProductList;</code></pre>
+                </div>
+            </div>
+
+            <!-- Tab 5: ProductCard.jsx -->
+            <div class="tab-pane" id="tab-productcard" role="tabpanel" aria-labelledby="btn-productcard" hidden>
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/components/ProductCard.jsx</span>
+                        <span>Name, Price, Image URL + Add to Cart Button (Tasks 1 &amp; 2)</span>
+                    </div>
+                    <pre><code><span class="c-kw">function</span> <span class="c-fn">ProductCard</span>({ product, onAddToCart }) {
+  <span class="c-kw">const</span> { id, name, price, image, category, description } = product;
+
+  <span class="c-kw">return</span> (
+    &lt;<span class="c-kw">div</span> <span class="c-prop">className</span>=<span class="c-str">"product-card"</span>&gt;
+      &lt;<span class="c-kw">img</span> <span class="c-prop">src</span>={image} <span class="c-prop">alt</span>={name} <span class="c-prop">className</span>=<span class="c-str">"product-img"</span> /&gt;
+      &lt;<span class="c-kw">div</span> <span class="c-prop">className</span>=<span class="c-str">"product-content"</span>&gt;
+        &lt;<span class="c-kw">h3</span>&gt;{name}&lt;/<span class="c-kw">h3</span>&gt;
+        &lt;<span class="c-kw">p</span>&gt;{description}&lt;/<span class="c-kw">p</span>&gt;
+        &lt;<span class="c-kw">div</span> <span class="c-prop">className</span>=<span class="c-str">"product-footer"</span>&gt;
+          &lt;<span class="c-kw">span</span> <span class="c-prop">className</span>=<span class="c-str">"price"</span>&gt;${price.<span class="c-fn">toFixed</span>(2)}&lt;/<span class="c-kw">span</span>&gt;
+          {<span class="c-com">/* Task 2: Add to Cart button */</span>}
+          &lt;<span class="c-kw">button</span> <span class="c-prop">onClick</span>={() =&gt; <span class="c-fn">onAddToCart</span>(product)}&gt;Add to Cart&lt;/<span class="c-kw">button</span>&gt;
+        &lt;/<span class="c-kw">div</span>&gt;
+      &lt;/<span class="c-kw">div</span>&gt;
+    &lt;/<span class="c-kw">div</span>&gt;
+  );
+}
+
+<span class="c-kw">export default</span> ProductCard;</code></pre>
+                </div>
+            </div>
+
+            <!-- Tab 6: products.js -->
+            <div class="tab-pane" id="tab-productsdata" role="tabpanel" aria-labelledby="btn-productsdata" hidden>
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/data/products.js</span>
+                        <span>Product Dataset (Task 1: &ge; 5 items with name, price, image)</span>
+                    </div>
+                    <pre><code><span class="c-kw">export const</span> products = [
+  {
+    id: <span class="c-num">1</span>,
+    name: <span class="c-str">"Keychron Q1 Pro Wireless Mechanical Keyboard"</span>,
+    price: <span class="c-num">199.99</span>,
+    image: <span class="c-str">"https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80"</span>,
+    category: <span class="c-str">"Keyboards"</span>,
+    description: <span class="c-str">"Full-aluminum wireless custom mechanical keyboard with hot-swappable switches and QMK/VIA support."</span>
+  },
+  {
+    id: <span class="c-num">2</span>,
+    name: <span class="c-str">"Sony WH-1000XM5 Wireless Headphones"</span>,
+    price: <span class="c-num">399.99</span>,
+    image: <span class="c-str">"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80"</span>,
+    category: <span class="c-str">"Audio"</span>,
+    description: <span class="c-str">"Industry-leading noise canceling headphones with dual processors, 8 microphones, and 30-hour battery life."</span>
+  },
+  {
+    id: <span class="c-num">3</span>,
+    name: <span class="c-str">"Logitech MX Master 3S Wireless Mouse"</span>,
+    price: <span class="c-num">99.99</span>,
+    image: <span class="c-str">"https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80"</span>,
+    category: <span class="c-str">"Peripherals"</span>,
+    description: <span class="c-str">"Quiet click ergonomic mouse with an 8K DPI any-surface track sensor and MagSpeed electromagnetic scroll."</span>
+  },
+  {
+    id: <span class="c-num">4</span>,
+    name: <span class="c-str">"Dell UltraSharp 27\" 4K USB-C Hub Monitor"</span>,
+    price: <span class="c-num">579.99</span>,
+    image: <span class="c-str">"https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=600&q=80"</span>,
+    category: <span class="c-str">"Displays"</span>,
+    description: <span class="c-str">"IPS Black technology with 2000:1 contrast ratio, 98% DCI-P3 color gamut, and 90W power delivery over USB-C."</span>
+  },
+  {
+    id: <span class="c-num">5</span>,
+    name: <span class="c-str">"Anker Prime 100W GaN Fast Charger"</span>,
+    price: <span class="c-num">84.99</span>,
+    image: <span class="c-str">"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80"</span>,
+    category: <span class="c-str">"Power"</span>,
+    description: <span class="c-str">"Ultra-compact 3-port fast wall charger with GaN technology, capable of powering laptops, tablets, and phones."</span>
+  },
+  {
+    id: <span class="c-num">6</span>,
+    name: <span class="c-str">"CalDigit TS4 18-Port Thunderbolt 4 Dock"</span>,
+    price: <span class="c-num">399.99</span>,
+    image: <span class="c-str">"https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80"</span>,
+    category: <span class="c-str">"Docks"</span>,
+    description: <span class="c-str">"Flagship Thunderbolt 4 dock featuring 18 connectivity ports, 98W host charging, and dual 4K / single 8K display support."</span>
+  }
+];</code></pre>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Live React Standalone Implementation (Babel) -->
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const MAX_QTY = 99;
+        const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&q=80";
+
+        // Prices are stored in dollars but summed in whole cents, so totals never drift (0.1 + 0.2 !== 0.3)
+        const toCents = (dollars) => Math.round(dollars * 100);
+        const formatPrice = (cents) =>
+            (cents / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+        // Task 1: Product catalog with at least 5 items: name, price, image URL
+        // (matches the products.js tab below)
+        const products = [
+            {
+                id: 1,
+                name: "Keychron Q1 Pro Wireless Mechanical Keyboard",
+                price: 199.99,
+                image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80",
+                category: "Keyboards",
+                description: "Full-aluminum wireless custom mechanical keyboard with hot-swappable switches and QMK/VIA support."
+            },
+            {
+                id: 2,
+                name: "Sony WH-1000XM5 Wireless Headphones",
+                price: 399.99,
+                image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
+                category: "Audio",
+                description: "Industry-leading noise canceling headphones with dual processors, 8 microphones, and 30-hour battery life."
+            },
+            {
+                id: 3,
+                name: "Logitech MX Master 3S Wireless Mouse",
+                price: 99.99,
+                image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80",
+                category: "Peripherals",
+                description: "Quiet click ergonomic mouse with an 8K DPI any-surface track sensor and MagSpeed electromagnetic scroll."
+            },
+            {
+                id: 4,
+                name: "Dell UltraSharp 27\" 4K USB-C Hub Monitor",
+                price: 579.99,
+                image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=600&q=80",
+                category: "Displays",
+                description: "IPS Black technology with 2000:1 contrast ratio, 98% DCI-P3 color gamut, and 90W power delivery over USB-C."
+            },
+            {
+                id: 5,
+                name: "Anker Prime 100W GaN Fast Charger",
+                price: 84.99,
+                image: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80",
+                category: "Power",
+                description: "Ultra-compact 3-port fast wall charger with GaN technology, capable of powering laptops, tablets, and phones."
+            },
+            {
+                id: 6,
+                name: "CalDigit TS4 18-Port Thunderbolt 4 Dock",
+                price: 399.99,
+                image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80",
+                category: "Docks",
+                description: "Flagship Thunderbolt 4 dock featuring 18 connectivity ports, 98W host charging, and dual 4K / single 8K display support."
+            }
+        ];
+
+        // Image that swaps to a fallback once. React's onError prop is not the DOM onerror,
+        // so `e.target.onerror = null` cannot stop a retry loop — local state does.
+        function SafeImage({ src, alt, className }) {
+            const [failed, setFailed] = useState(false);
+            return (
+                <img
+                    src={failed ? FALLBACK_IMAGE : src}
+                    alt={alt}
+                    className={className}
+                    loading="lazy"
+                    onError={() => { if (!failed) setFailed(true); }}
+                />
+            );
+        }
+
+        const CartIcon = ({ size = 18 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+        );
+
+        const TrashIcon = () => (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                <path d="M10 11v6M14 11v6"></path>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+            </svg>
+        );
+
+        // Task 1 & 2: ProductCard Component
+        function ProductCard({ product, quantityInCart, onAddToCart }) {
+            const { name, price, image, category, description } = product;
+            const atMax = quantityInCart >= MAX_QTY;
+
+            return (
+                <article className={`sc-product-card${quantityInCart > 0 ? ' is-in-cart' : ''}`}>
+                    <div className="sc-img-wrap">
+                        <SafeImage src={image} alt={name} className="sc-img" />
+                        <span className="sc-cat-badge">{category}</span>
+                        {quantityInCart > 0 && (
+                            <span className="sc-incart-badge">{quantityInCart} in cart</span>
+                        )}
+                    </div>
+                    <div className="sc-info">
+                        <h4 className="sc-title">{name}</h4>
+                        <p className="sc-desc">{description}</p>
+                        <div className="sc-bottom-bar">
+                            <span className="price">{formatPrice(toCents(price))}</span>
+                            {/* Task 2: Add button */}
+                            <button
+                                type="button"
+                                className="btn btn-add"
+                                onClick={() => onAddToCart(product)}
+                                disabled={atMax}
+                                aria-label={atMax ? `${name}: maximum quantity reached` : `Add ${name} to cart`}
+                            >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>{atMax ? 'Max reached' : quantityInCart > 0 ? 'Add another' : 'Add to Cart'}</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            );
+        }
+
+        // Task 1: ProductList Component
+        function ProductList({ products, cartItems, onAddToCart }) {
+            const qtyById = Object.fromEntries(cartItems.map((item) => [item.id, item.quantity]));
+
+            return (
+                <div>
+                    <div className="sc-products-header">
+                        <h3 className="sc-products-title">Product Catalog</h3>
+                        <span className="pill pill--blue">{products.length} items available</span>
+                    </div>
+                    <div className="sc-products-grid">
+                        {products.map((p) => (
+                            <ProductCard
+                                key={p.id}
+                                product={p}
+                                quantityInCart={qtyById[p.id] || 0}
+                                onAddToCart={onAddToCart}
+                            />
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // Task 2 & 4: CartItem Component
+        function CartItem({ item, onUpdateQuantity, onRemoveFromCart }) {
+            const { id, name, price, image, quantity } = item;
+            const willRemove = quantity === 1;
+
+            return (
+                <li className="sc-cart-item">
+                    <SafeImage src={image} alt="" className="sc-item-img" />
+                    <div className="sc-item-meta">
+                        <h4 className="sc-item-name" title={name}>{name}</h4>
+                        <span className="sc-item-unit">{formatPrice(toCents(price))} each</span>
+
+                        {/* Task 4: Quantity Controls */}
+                        <div className="sc-qty-row">
+                            <div className="sc-qty-group" role="group" aria-label={`Quantity of ${name}`}>
+                                <button
+                                    type="button"
+                                    className={`sc-btn-q${willRemove ? ' is-remove' : ''}`}
+                                    onClick={() => onUpdateQuantity(id, -1)}
+                                    aria-label={willRemove ? `Remove ${name} from cart` : `Decrease ${name} quantity`}
+                                    title={willRemove ? 'Remove item' : 'Decrease quantity'}
+                                >
+                                    {willRemove ? <TrashIcon /> : '−'}
+                                </button>
+                                <span className="sc-qty-val" aria-live="polite">{quantity}</span>
+                                <button
+                                    type="button"
+                                    className="sc-btn-q"
+                                    onClick={() => onUpdateQuantity(id, 1)}
+                                    disabled={quantity >= MAX_QTY}
+                                    aria-label={`Increase ${name} quantity`}
+                                    title="Increase quantity"
+                                >
+                                    +
+                                </button>
+                            </div>
+                            <span className="price">{formatPrice(toCents(price) * quantity)}</span>
+                        </div>
+                    </div>
+
+                    {/* Task 2: Remove Button */}
+                    <button
+                        type="button"
+                        className="sc-btn-del"
+                        onClick={() => onRemoveFromCart(id)}
+                        aria-label={`Remove ${name} from cart`}
+                        title="Remove item"
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </li>
+            );
+        }
+
+        // Confirmation dialog. Rendered into <body> through a portal: the section card uses
+        // backdrop-filter, which would otherwise trap a position:fixed overlay inside the card.
+        function ConfirmModal({ title, confirmLabel, onConfirm, onCancel, children }) {
+            const dialogRef = useRef(null);
+            const cancelRef = useRef(null);
+
+            useEffect(() => {
+                const opener = document.activeElement;
+                const prevOverflow = document.body.style.overflow;
+                document.body.style.overflow = 'hidden';
+                cancelRef.current?.focus();
+
+                const onKey = (e) => {
+                    if (e.key === 'Escape') { e.preventDefault(); onCancel(); return; }
+                    if (e.key !== 'Tab') return;
+                    // Keep keyboard focus inside the dialog
+                    const focusables = dialogRef.current.querySelectorAll('button');
+                    const first = focusables[0];
+                    const last = focusables[focusables.length - 1];
+                    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                };
+                document.addEventListener('keydown', onKey);
+
+                return () => {
+                    document.removeEventListener('keydown', onKey);
+                    document.body.style.overflow = prevOverflow;
+                    if (opener && opener.isConnected) opener.focus();
+                };
+            }, []);
+
+            return ReactDOM.createPortal(
+                <div className="modal-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) onCancel(); }}>
+                    <div
+                        ref={dialogRef}
+                        className="modal"
+                        role="alertdialog"
+                        aria-modal="true"
+                        aria-labelledby="modal-title"
+                        aria-describedby="modal-text"
+                    >
+                        <div className="modal-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                <path d="M10 11v6M14 11v6"></path>
+                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                            </svg>
+                        </div>
+                        <h2 id="modal-title" className="modal-title">{title}</h2>
+                        <p id="modal-text" className="modal-text">{children}</p>
+                        <div className="modal-actions">
+                            <button ref={cancelRef} type="button" className="btn btn-ghost" onClick={onCancel}>
+                                Cancel
+                            </button>
+                            <button type="button" className="btn btn-danger" onClick={onConfirm}>
+                                {confirmLabel}
+                            </button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            );
+        }
+
+        // Task 3: CartSidebar Component
+        function CartSidebar({ cartItems, lastOrder, onUpdateQuantity, onRemoveFromCart, onClearCart, onCheckout }) {
+            // Task 3: Derived totals, computed from state on every render (never stored separately)
+            const totalCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+            const totalCents = cartItems.reduce((acc, item) => acc + toCents(item.price) * item.quantity, 0);
+
+            const [showClearModal, setShowClearModal] = useState(false);
+
+            return (
+                <aside className="sc-sidebar" aria-labelledby="live-cart-title">
+                    {showClearModal && (
+                        <ConfirmModal
+                            title="Clear your cart?"
+                            confirmLabel="Clear Cart"
+                            onCancel={() => setShowClearModal(false)}
+                            onConfirm={() => { setShowClearModal(false); onClearCart(); }}
+                        >
+                            This removes <strong>{totalCount} {totalCount === 1 ? 'item' : 'items'}</strong> worth{' '}
+                            <strong>{formatPrice(totalCents)}</strong>. You can't undo this.
+                        </ConfirmModal>
+                    )}
+
+                    <div className="sc-sidebar-head">
+                        <h3 id="live-cart-title" className="sc-sidebar-title">
+                            <CartIcon size={20} />
+                            Your Cart
+                        </h3>
+                        <span className="pill pill--purple" aria-live="polite">
+                            {totalCount} {totalCount === 1 ? 'item' : 'items'}
+                        </span>
+                    </div>
+
+                    {cartItems.length === 0 ? (
+                        lastOrder ? (
+                            <div className="sc-state-box" role="status">
+                                <div className="sc-state-icon sc-state-icon--success">
+                                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <h4 className="sc-state-title">Order confirmed</h4>
+                                <p className="sc-state-sub">
+                                    {lastOrder.count} {lastOrder.count === 1 ? 'item' : 'items'} · <strong>{formatPrice(lastOrder.totalCents)}</strong>
+                                    <br />Thanks for shopping! Add something new to start another order.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="sc-state-box">
+                                <div className="sc-state-icon"><CartIcon size={24} /></div>
+                                <h4 className="sc-state-title">Your cart is empty</h4>
+                                <p className="sc-state-sub">Click “Add to Cart” on any product to start shopping.</p>
+                            </div>
+                        )
+                    ) : (
+                        <>
+                            <ul className="sc-cart-list" aria-label="Items in your cart">
+                                {cartItems.map((item) => (
+                                    <CartItem
+                                        key={item.id}
+                                        item={item}
+                                        onUpdateQuantity={onUpdateQuantity}
+                                        onRemoveFromCart={onRemoveFromCart}
+                                    />
+                                ))}
+                            </ul>
+
+                            <div className="sc-summary">
+                                <div className="sc-sum-row">
+                                    <span>Products</span>
+                                    <strong>{cartItems.length}</strong>
+                                </div>
+                                <div className="sc-sum-row">
+                                    <span>Total quantity</span>
+                                    <strong>{totalCount}</strong>
+                                </div>
+                                <div className="sc-total-row">
+                                    <span className="sc-total-label">Total Price</span>
+                                    {/* Task 3: Total price dynamically computed from state */}
+                                    <span className="price" aria-live="polite">{formatPrice(totalCents)}</span>
+                                </div>
+
+                                <div className="sc-actions">
+                                    <button
+                                        type="button"
+                                        className="btn btn-checkout"
+                                        onClick={() => onCheckout({ count: totalCount, totalCents })}
+                                    >
+                                        Checkout · {formatPrice(totalCents)}
+                                    </button>
+                                    <button type="button" className="btn btn-ghost is-danger" onClick={() => setShowClearModal(true)}>
+                                        Clear Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </aside>
+            );
+        }
+
+        // Task 5: ShoppingCart Composite Component (owns all cart state)
+        function ShoppingCart() {
+            // Task 2: State manages an array of cart items — starts empty, same as ShoppingCart.jsx
+            const [cartItems, setCartItems] = useState([]);
+            const [lastOrder, setLastOrder] = useState(null);
+
+            // Task 2: Add to cart (increments quantity if the product is already in the cart)
+            const handleAddToCart = (product) => {
+                setLastOrder(null);
+                setCartItems((prevItems) => {
+                    const existing = prevItems.find((item) => item.id === product.id);
+                    if (existing) {
+                        return prevItems.map((item) =>
+                            item.id === product.id
+                                ? { ...item, quantity: Math.min(item.quantity + 1, MAX_QTY) }
+                                : item
+                        );
+                    }
+                    return [...prevItems, { ...product, quantity: 1 }];
+                });
+            };
+
+            // Task 2: Remove button
+            const handleRemoveFromCart = (productId) => {
+                setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId));
+            };
+
+            // Task 4: Quantity controls (+ and − per item). Dropping to 0 removes the item; capped at MAX_QTY.
+            const handleUpdateQuantity = (productId, delta) => {
+                setCartItems((prevItems) =>
+                    prevItems
+                        .map((item) =>
+                            item.id === productId
+                                ? { ...item, quantity: Math.min(item.quantity + delta, MAX_QTY) }
+                                : item
+                        )
+                        .filter((item) => item.quantity > 0)
+                );
+            };
+
+            const handleClearCart = () => setCartItems([]);
+
+            const handleCheckout = (summary) => {
+                setLastOrder(summary);
+                setCartItems([]);
+            };
+
+            return (
+                <div className="sc-layout">
+                    {/* Task 1: Product List */}
+                    <ProductList
+                        products={products}
+                        cartItems={cartItems}
+                        onAddToCart={handleAddToCart}
+                    />
+
+                    {/* Task 3 & 4: Cart Sidebar */}
+                    <CartSidebar
+                        cartItems={cartItems}
+                        lastOrder={lastOrder}
+                        onUpdateQuantity={handleUpdateQuantity}
+                        onRemoveFromCart={handleRemoveFromCart}
+                        onClearCart={handleClearCart}
+                        onCheckout={handleCheckout}
+                    />
+                </div>
+            );
+        }
+
+        // Mount React Root
+        const rootElement = document.getElementById('shopping-cart-root');
+        if (rootElement) {
+            ReactDOM.createRoot(rootElement).render(<ShoppingCart />);
+        }
+</script>
+
+    <!-- Tab Switching Script (click + arrow-key navigation) -->
+    <script>
+        const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+
+        function selectTab(tab, moveFocus) {
+            tabs.forEach((t) => {
+                const selected = t === tab;
+                t.setAttribute('aria-selected', String(selected));
+                t.tabIndex = selected ? 0 : -1;
+                document.getElementById(t.getAttribute('aria-controls')).hidden = !selected;
+            });
+            if (moveFocus) tab.focus();
+        }
+
+        tabs.forEach((tab, i) => {
+            tab.addEventListener('click', () => selectTab(tab, false));
+            tab.addEventListener('keydown', (e) => {
+                const keys = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 };
+                if (!(e.key in keys)) return;
+                e.preventDefault();
+                selectTab(tabs[(keys[e.key] + tabs.length) % tabs.length], true);
+            });
+        });
+    </script>
+</body>
+</html>

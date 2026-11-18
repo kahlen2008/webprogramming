@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Week 12_1 · React State &amp; Interactive Shopping Cart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(59, 130, 246, 0.35);
+            --purple: #a855f7;
+            --purple-light: #c084fc;
+            --purple-glow: rgba(168, 85, 247, 0.25);
+            --blue: #38bdf8;
+            --blue-glow: rgba(56, 189, 248, 0.25);
+            --green: #10b981;
+            --green-glow: rgba(16, 185, 129, 0.25);
+            --amber: #fbbf24;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 22px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+            --font-main: 'Plus Jakarta Sans', system-ui, sans-serif;
+            --font-heading: 'Outfit', var(--font-main);
+            --font-mono: 'Fira Code', ui-monospace, monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        button, input { font: inherit; }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.88em;
+            padding: 1px 6px;
+            border-radius: 5px;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--blue);
+        }
+
+        h1, h2, h3, h4, .badge, .session-badge { text-wrap: balance; }
+        p, .desc { text-wrap: pretty; }
+
+        .skip-link {
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1000;
+            background: var(--blue);
+            color: #041324;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+            transform: translateY(-200%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+
+        .skip-link:focus-visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            outline: 3px solid #ffffff;
+            outline-offset: 3px;
+        }
+
+        html {
+            background-color: var(--bg-body);
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: var(--font-main);
+            line-height: 1.5;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.1) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px 20px 80px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--blue);
+            background: rgba(56, 189, 248, 0.12);
+            transform: translateX(-2px);
+        }
+
+        .session-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--blue);
+            white-space: nowrap;
+        }
+
+        header.header-title {
+            text-align: center;
+            max-width: 860px;
+            margin-bottom: 34px;
+        }
+
+        header.header-title h1 {
+            font-family: var(--font-heading);
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 30%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header.header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.55;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* Homework Featured Hero Card */
+        .hw-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .hw-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.35) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: var(--radius-card);
+            padding: 30px 36px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .hero-card:hover {
+            border-color: rgba(56, 189, 248, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--blue-glow);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 740px;
+            flex: 1 1 480px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--amber);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-title {
+            font-family: var(--font-heading);
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.35;
+        }
+
+        .hero-desc {
+            color: var(--text-sub);
+            font-size: 0.94rem;
+            line-height: 1.5;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            color: #041324;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 14px 24px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 16px rgba(56, 189, 248, 0.35);
+            white-space: nowrap;
+        }
+
+        .hero-cta:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(56, 189, 248, 0.45);
+        }
+
+        /* Learning Concepts Grid */
+        .grid-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .section-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-heading-text {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+        }
+
+        .concept-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            backdrop-filter: blur(12px);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-hover);
+        }
+
+        .concept-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue);
+        }
+
+        .concept-title {
+            font-family: var(--font-heading);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .concept-desc {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        .code-snippet {
+            background: #020617;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--blue);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to Content</a>
+
+    <div class="topbar">
+        <a href="../../index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Course Portal</span>
+        </a>
+        <span class="session-badge">Week 12 · Session 1</span>
+    </div>
+
+    <header class="header-title">
+        <h1>React State &amp; Interactive Shopping Cart</h1>
+        <p>
+            Mastering component state management with <code>useState</code>, unidirectional data flow, immutable array transformations, and derived state in composite React applications.
+        </p>
+    </header>
+
+    <main class="main-container" id="main-content">
+        <!-- Featured Homework Section -->
+        <section class="hw-section" aria-labelledby="hw-heading">
+            <div class="hw-section-title" id="hw-heading">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <span>Week 12_1 Homework Submission</span>
+            </div>
+
+            <article class="hero-card">
+                <div class="hero-content">
+                    <span class="hero-tag">★ Featured Homework</span>
+                    <h2 class="hero-title">Homework: Interactive Shopping Cart (Tasks 1–5)</h2>
+                    <p class="hero-desc">
+                        Complete implementation of the React Interactive Shopping Cart featuring a 6-item product catalog, array-based cart state, real-time cart sidebar with dynamically computed total price, item quantity controls (+/−), and composite ShoppingCart component architecture.
+                    </p>
+                </div>
+
+                <a href="hw-shopping-cart.html" class="hero-cta">
+                    <span>Open Interactive Showcase</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+            </article>
+        </section>
+    </main>
+</body>
+</html>
