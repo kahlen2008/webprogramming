@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>E7: Form Object State — Week 11_2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #38bdf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        h1, h2, h3, h4, .nav-badge, .exercise-tag { text-wrap: balance; }
+        p, li, .desc { text-wrap: pretty; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: #ffffff;
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .nav-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 6px 14px;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+        }
+
+        /* Card container */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 30px 34px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .exercise-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .block-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .task-spec {
+            background: rgba(56, 189, 248, 0.08);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 4px 10px 10px 4px;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .task-spec strong {
+            color: var(--accent-blue);
+        }
+
+        .inline-code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88em;
+            color: var(--accent-blue);
+        }
+
+        /* Live Component Demo Canvas */
+        .demo-canvas {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px dashed rgba(56, 189, 248, 0.3);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            display: block;
+        }
+
+
+        /* Code block */
+        .code-container {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        pre {
+            margin: 0;
+            padding: 18px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.84rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .code-kw { color: #f472b6; font-weight: 600; }
+        .code-fn { color: #60a5fa; }
+        .code-pr { color: #38bdf8; }
+        .code-st { color: #a7f3d0; }
+        .code-cm { color: #64748b; font-style: italic; }
+        .code-prompt { color: var(--text-muted); user-select: none; }
+
+        /* Filled-in blanks */
+        .blank {
+            background: rgba(251, 191, 36, 0.14);
+            color: var(--accent-amber);
+            border-bottom: 2px solid rgba(251, 191, 36, 0.5);
+            border-radius: 3px;
+            padding: 0 3px;
+        }
+
+        /* Key Takeaways list */
+        .key-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .key-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+
+        .key-item strong { color: #ffffff; }
+
+        .key-icon {
+            color: var(--accent-blue);
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+
+        /* Live demo widgets */
+        .demo-box {
+            width: 100%;
+            max-width: 560px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .demo-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.02em;
+        }
+
+        .demo-field { display: flex; flex-direction: column; gap: 6px; }
+
+        .demo-input,
+        .demo-textarea {
+            width: 100%;
+            font: inherit;
+            font-size: 0.92rem;
+            color: var(--text-primary);
+            background: #0b0f19;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .demo-textarea { min-height: 120px; resize: vertical; }
+
+        .demo-input:focus,
+        .demo-textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .demo-input[aria-invalid="true"] { border-color: #f87171; }
+
+        .btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+        .demo-btn {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .demo-btn:hover:not(:disabled) {
+            border-color: var(--border-highlight);
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .demo-btn:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+
+        .demo-btn.primary {
+            color: #0b0f19;
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .demo-btn.primary:hover:not(:disabled) { background: #7dd3fc; }
+
+        .demo-btn.small { padding: 5px 12px; font-size: 0.78rem; }
+
+        .demo-btn[aria-pressed="true"] {
+            color: #0b0f19;
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        .demo-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .demo-status {
+            font-size: 0.86rem;
+            color: var(--text-secondary);
+            min-height: 1.4em;
+        }
+
+        .demo-status strong { color: var(--accent-emerald); }
+        .demo-status.error { color: #f87171; }
+
+        .big-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.4rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--accent-blue);
+        }
+
+        .demo-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .demo-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-size: 0.9rem;
+        }
+
+        .demo-list label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .demo-list input[type="checkbox"] { accent-color: var(--accent-emerald); width: 16px; height: 16px; }
+        .demo-list .done { color: var(--text-muted); text-decoration: line-through; }
+
+        .hint-panel {
+            background: rgba(192, 132, 252, 0.08);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            font-size: 0.92rem;
+            color: #e2e8f0;
+        }
+
+        .hint-panel strong { color: var(--accent-purple); }
+
+        @media (max-width: 768px) {
+            body { padding: 18px 14px 60px 14px; }
+            .card { padding: 22px 18px; }
+            h1 { font-size: 1.6rem; }
+            .demo-canvas { padding: 20px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Top Navigation -->
+        <nav class="navbar" aria-label="Page Navigation">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Week 11_2 Overview
+            </a>
+            <span class="nav-badge">Exercise 7 · Form Object State</span>
+        </nav>
+
+        <!-- Main Card -->
+        <main class="card">
+            <div>
+                <span class="exercise-tag">React State &amp; Events · Lab E7</span>
+                <h1>Check Your Lab Profile</h1>
+            </div>
+
+            <!-- Task Specification Box -->
+            <div class="task-spec">
+                <strong>Task Specification:</strong> Keep a <span class="inline-code">name</span> and <span class="inline-code">email</span> field together in <strong>one state object</strong>, updated by a single <span class="inline-code">handleChange</span> function. On submit, run a simple check (both fields filled, email contains <span class="inline-code">@</span>) and show either an error or a confirmation message.
+            </div>
+
+            <!-- Live Demo -->
+            <div>
+                <h3 class="block-title">Live Demo</h3>
+                <div class="demo-canvas">
+                    <div class="demo-box">
+                        <form class="demo-box" id="profile-form" novalidate>
+                            <div class="demo-field">
+                                <label class="demo-label" for="p-name">Name</label>
+                                <input class="demo-input" id="p-name" name="name" type="text" placeholder="Your name" autocomplete="name">
+                            </div>
+                            <div class="demo-field">
+                                <label class="demo-label" for="p-email">Email</label>
+                                <input class="demo-input" id="p-email" name="email" type="email" placeholder="you@example.com" autocomplete="email">
+                            </div>
+                            <div class="btn-row">
+                                <button type="submit" class="demo-btn primary">Check profile</button>
+                            </div>
+                            <p class="demo-status" id="profile-msg" aria-live="polite"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Component Code Showcase -->
+            <div class="code-container">
+                <div class="code-header">
+                    <span>LabProfile.jsx</span>
+                    <span>React + Vite</span>
+                </div>
+                <pre><code><span class="code-kw">import</span> { useState } <span class="code-kw">from</span> <span class="code-st">'react'</span>;
+
+<span class="code-kw">function</span> <span class="code-fn">LabProfile</span>() {
+  <span class="code-kw">const</span> [form, setForm] = <span class="code-fn">useState</span>({ name: <span class="code-st">''</span>, email: <span class="code-st">''</span> });
+  <span class="code-kw">const</span> [message, setMessage] = <span class="code-fn">useState</span>(<span class="code-st">''</span>);
+
+  <span class="code-cm">// One handler for both fields, using the input's name attribute</span>
+  <span class="code-kw">function</span> <span class="code-fn">handleChange</span>(e) {
+    <span class="code-kw">const</span> { name, value } = e.target;
+    <span class="code-fn">setForm</span>(prev =&gt; ({ ...prev, [name]: value }));
+  }
+
+  <span class="code-kw">function</span> <span class="code-fn">handleSubmit</span>(e) {
+    e.<span class="code-fn">preventDefault</span>();
+    <span class="code-kw">if</span> (!form.name.<span class="code-fn">trim</span>() || !form.email.<span class="code-fn">trim</span>()) {
+      <span class="code-fn">setMessage</span>(<span class="code-st">'Please fill in both fields.'</span>);
+    } <span class="code-kw">else if</span> (!form.email.<span class="code-fn">includes</span>(<span class="code-st">'@'</span>)) {
+      <span class="code-fn">setMessage</span>(<span class="code-st">'That email address looks incomplete.'</span>);
+    } <span class="code-kw">else</span> {
+      <span class="code-fn">setMessage</span>(<span class="code-st">`Profile looks good, ${form.name}!`</span>);
+    }
+  }
+
+  <span class="code-kw">return</span> (
+    &lt;<span class="code-kw">form</span> <span class="code-pr">onSubmit</span>={handleSubmit}&gt;
+      &lt;<span class="code-kw">input</span> <span class="code-pr">name</span>=<span class="code-st">"name"</span> <span class="code-pr">value</span>={form.name} <span class="code-pr">onChange</span>={handleChange} /&gt;
+      &lt;<span class="code-kw">input</span> <span class="code-pr">name</span>=<span class="code-st">"email"</span> <span class="code-pr">value</span>={form.email} <span class="code-pr">onChange</span>={handleChange} /&gt;
+      &lt;<span class="code-kw">button</span> <span class="code-pr">type</span>=<span class="code-st">"submit"</span>&gt;Check profile&lt;/<span class="code-kw">button</span>&gt;
+      {message &amp;&amp; &lt;<span class="code-kw">p</span>&gt;{message}&lt;/<span class="code-kw">p</span>&gt;}
+    &lt;/<span class="code-kw">form</span>&gt;
+  );
+}
+
+<span class="code-kw">export default</span> LabProfile;</code></pre>
+            </div>
+
+            <!-- Key Takeaways -->
+            <div>
+                <h3 class="block-title">Key Takeaways</h3>
+                <ul class="key-list">
+                    <li class="key-item">
+                        <svg class="key-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span><strong>Object state:</strong> related fields live in one object, so the whole form can be read, reset, or sent in one go.</span>
+                    </li>
+                    <li class="key-item">
+                        <svg class="key-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span><strong>Copy, then change:</strong> <span class="inline-code">{ ...prev, [name]: value }</span> keeps the other field and overwrites only the one that changed. The computed key <span class="inline-code">[name]</span> comes from the input's <span class="inline-code">name</span> attribute.</span>
+                    </li>
+                    <li class="key-item">
+                        <svg class="key-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span><strong>Validation on submit:</strong> the check runs in <span class="inline-code">handleSubmit</span> and the result is stored in <span class="inline-code">message</span> state for display.</span>
+                    </li>
+                </ul>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+const form = document.getElementById('profile-form');
+        const nameEl = document.getElementById('p-name');
+        const emailEl = document.getElementById('p-email');
+        const msg = document.getElementById('profile-msg');
+        let state = { name: '', email: '' };
+
+        [nameEl, emailEl].forEach(el => el.addEventListener('input', (e) => {
+            state = { ...state, [e.target.name]: e.target.value };
+            e.target.removeAttribute('aria-invalid');
+        }));
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            msg.className = 'demo-status error';
+            nameEl.removeAttribute('aria-invalid');
+            emailEl.removeAttribute('aria-invalid');
+            if (!state.name.trim() || !state.email.trim()) {
+                if (!state.name.trim()) nameEl.setAttribute('aria-invalid', 'true');
+                if (!state.email.trim()) emailEl.setAttribute('aria-invalid', 'true');
+                msg.textContent = 'Please fill in both fields.';
+            } else if (!state.email.includes('@')) {
+                emailEl.setAttribute('aria-invalid', 'true');
+                msg.textContent = 'That email address looks incomplete.';
+            } else {
+                msg.className = 'demo-status';
+                msg.innerHTML = '';
+                const strong = document.createElement('strong');
+                strong.textContent = 'Profile looks good, ' + state.name.trim() + '!';
+                msg.append(strong);
+            }
+        });
+    </script>
+
+</body>
+</html>
