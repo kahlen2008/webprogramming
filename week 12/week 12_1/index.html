@@ -20,8 +20,8 @@
             --purple: #a855f7;
             --purple-light: #c084fc;
             --purple-glow: rgba(168, 85, 247, 0.25);
-            --blue: #38bdf8;
-            --blue-glow: rgba(56, 189, 248, 0.25);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.25);
             --green: #10b981;
             --green-glow: rgba(16, 185, 129, 0.25);
             --amber: #fbbf24;
@@ -31,23 +31,9 @@
             --radius-card: 22px;
             --radius-sub: 14px;
             --radius-btn: 10px;
-            --font-main: 'Plus Jakarta Sans', system-ui, sans-serif;
-            --font-heading: 'Outfit', var(--font-main);
-            --font-mono: 'Fira Code', ui-monospace, monospace;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        button, input { font: inherit; }
-
-        code {
-            font-family: var(--font-mono);
-            font-size: 0.88em;
-            padding: 1px 6px;
-            border-radius: 5px;
-            background: rgba(56, 189, 248, 0.12);
-            color: var(--blue);
-        }
 
         h1, h2, h3, h4, .badge, .session-badge { text-wrap: balance; }
         p, .desc { text-wrap: pretty; }
@@ -58,13 +44,13 @@
             left: 14px;
             z-index: 1000;
             background: var(--blue);
-            color: #041324;
+            color: #ffffff;
             padding: 10px 18px;
             font-weight: 700;
             font-size: 0.9rem;
             border-radius: 8px;
             text-decoration: none;
-            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
             transform: translateY(-200%);
             opacity: 0;
             pointer-events: none;
@@ -86,13 +72,11 @@
         }
 
         body {
-            font-family: var(--font-main);
-            line-height: 1.5;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-body);
             background-image: 
-                radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
-                radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.1) 0%, transparent 45%),
-                radial-gradient(circle at 50% 90%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+                radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.12) 0%, transparent 45%);
             background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
@@ -129,7 +113,7 @@
         .back-link:hover {
             color: #ffffff;
             border-color: var(--blue);
-            background: rgba(56, 189, 248, 0.12);
+            background: rgba(59, 130, 246, 0.15);
             transform: translateX(-2px);
         }
 
@@ -140,9 +124,9 @@
             letter-spacing: 0.06em;
             padding: 6px 14px;
             border-radius: 999px;
-            background: rgba(56, 189, 248, 0.15);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            color: var(--blue);
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
             white-space: nowrap;
         }
 
@@ -153,7 +137,7 @@
         }
 
         header.header-title h1 {
-            font-family: var(--font-heading);
+            font-family: 'Outfit', sans-serif;
             font-size: 2.4rem;
             font-weight: 800;
             letter-spacing: -0.02em;
@@ -196,8 +180,8 @@
         }
 
         .hero-card {
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.35) 0%, rgba(18, 24, 38, 0.95) 100%);
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             border-radius: var(--radius-card);
             padding: 30px 36px;
             backdrop-filter: blur(16px);
@@ -210,10 +194,13 @@
             flex-wrap: wrap;
             transition: all 0.3s ease;
             width: 100%;
+            box-sizing: border-box;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .hero-card:hover {
-            border-color: rgba(56, 189, 248, 0.6);
+            border-color: rgba(96, 165, 250, 0.6);
             transform: translateY(-2px);
             box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--blue-glow);
         }
@@ -222,7 +209,9 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-width: 740px;
+            max-width: 840px;
+            width: 100%;
+            min-width: 0;
             flex: 1 1 480px;
         }
 
@@ -238,8 +227,8 @@
         }
 
         .hero-title {
-            font-family: var(--font-heading);
-            font-size: 1.55rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.45rem;
             font-weight: 700;
             color: #ffffff;
             line-height: 1.35;
@@ -247,167 +236,569 @@
 
         .hero-desc {
             color: var(--text-sub);
-            font-size: 0.94rem;
+            font-size: 0.92rem;
             line-height: 1.5;
         }
 
-        .hero-cta {
+        .hero-url-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            min-width: 0;
+            margin-top: 6px;
+        }
+
+        .hero-url-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .hero-url-pill:hover {
+            color: #ffffff;
+            background: rgba(59, 130, 246, 0.25);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .hero-url-pill-live {
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.14);
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+
+        .hero-url-pill-live:hover {
+            color: #ffffff;
+            background: rgba(16, 185, 129, 0.28);
+            border-color: rgba(16, 185, 129, 0.6);
+        }
+
+        .pill-badge {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, #0284c7, #38bdf8);
-            color: #041324;
+            gap: 6px;
             font-weight: 700;
-            font-size: 0.95rem;
-            padding: 14px 24px;
-            border-radius: var(--radius-btn);
-            text-decoration: none;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 16px rgba(56, 189, 248, 0.35);
-            white-space: nowrap;
+            font-size: 0.74rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.06);
         }
 
-        .hero-cta:hover {
-            filter: brightness(1.1);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(56, 189, 248, 0.45);
+        .hero-url-pill-live .pill-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
         }
 
-        /* Learning Concepts Grid */
-        .grid-section {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .pill-url {
+            overflow-wrap: anywhere;
+            word-break: break-all;
+            min-width: 0;
+            flex: 1;
+            font-size: 0.78rem;
+            line-height: 1.4;
         }
 
-        .section-header-row {
+        .pill-ext-icon {
+            flex-shrink: 0;
+            opacity: 0.7;
+            transition: transform 0.2s;
+        }
+
+        .hero-url-pill:hover .pill-ext-icon {
+            transform: translate(2px, -2px);
+            opacity: 1;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulseGlow 2s infinite ease-in-out;
+            display: inline-block;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(0.85); }
+        }
+
+        .hero-actions {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
         }
 
-        .section-heading-text {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            display: flex;
+        .btn-launch-hero {
+            display: inline-flex;
             align-items: center;
             gap: 8px;
+            background: linear-gradient(135deg, #1a56db 0%, #2563eb 100%);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            white-space: nowrap;
+            transition: all 0.2s ease;
         }
 
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 18px;
+        .btn-launch-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
         }
 
-        .concept-card {
+        .btn-launch-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 22px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch-live:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+
+        .section-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: var(--radius-sub);
-            padding: 22px;
+            border-radius: var(--radius-card);
+            padding: 30px 32px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            backdrop-filter: blur(12px);
-            transition: transform 0.2s, border-color 0.2s;
+            gap: 18px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .concept-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--border-hover);
+        .topics-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .concept-icon {
-            width: 36px;
-            height: 36px;
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .item-num {
+            width: 40px;
+            height: 40px;
             border-radius: 10px;
-            background: rgba(56, 189, 248, 0.12);
-            border: 1px solid rgba(56, 189, 248, 0.25);
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: #60a5fa;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--blue);
+            flex-shrink: 0;
         }
 
-        .concept-title {
-            font-family: var(--font-heading);
-            font-size: 1.15rem;
+        .item-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .item-title {
+            font-size: 1rem;
             font-weight: 700;
             color: #ffffff;
         }
 
-        .concept-desc {
-            font-size: 0.88rem;
+        .item-desc {
+            font-size: 0.86rem;
             color: var(--text-sub);
-            line-height: 1.5;
+            line-height: 1.45;
         }
 
-        .code-snippet {
-            background: #020617;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-family: var(--font-mono);
+        .code-tag {
+            font-family: 'Fira Code', monospace;
             font-size: 0.78rem;
-            color: var(--blue);
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Content Grid: Side by Side (Like Week 10_1 & Week 9_1) */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+            width: 100%;
+        }
+
+        @media (max-width: 960px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            gap: 16px;
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .topic-item:hover {
+            background: rgba(168, 85, 247, 0.08);
+            border-color: rgba(168, 85, 247, 0.35);
+            transform: translateX(4px);
+        }
+
+        .topic-item .item-arrow {
+            color: var(--text-dim);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .topic-item:hover .item-arrow {
+            color: #c084fc;
+            transform: translateX(3px);
+        }
+
+        .topic-num {
+            background: rgba(168, 85, 247, 0.15) !important;
+            border: 1px solid rgba(168, 85, 247, 0.3) !important;
+            color: #c084fc !important;
+        }
+
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            gap: 16px;
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .exercise-item:hover {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.35);
+            transform: translateX(4px);
+        }
+
+        .exercise-item .item-arrow {
+            color: var(--text-dim);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .exercise-item:hover .item-arrow {
+            color: #60a5fa;
+            transform: translateX(3px);
+        }
+
+        .exercise-num {
+            background: rgba(59, 130, 246, 0.15) !important;
+            border: 1px solid rgba(59, 130, 246, 0.3) !important;
+            color: #60a5fa !important;
+        }
+
+        /* Mobile Layout */
+        @media (max-width: 768px) {
+            body { padding: 18px 14px 60px 14px; }
+            header.header-title h1 { font-size: 1.85rem; }
+            header.header-title p { font-size: 0.92rem; }
+            .hero-card { padding: 20px 16px; gap: 18px; }
+            .hero-title { font-size: 1.22rem; }
+            .hero-desc { font-size: 0.88rem; }
+            .hero-actions { width: 100%; flex-direction: column; align-items: stretch; gap: 10px; }
+            .btn-launch-hero, .btn-launch-live { width: 100%; justify-content: center; box-sizing: border-box; padding: 12px 16px; font-size: 0.9rem; }
+            .section-card { padding: 20px 16px; }
+            .concept-item { padding: 14px 16px; gap: 12px; }
+            .exercise-item { padding: 12px 14px; gap: 12px; }
+            .item-num { width: 36px; height: 36px; font-size: 0.9rem; }
+            .item-title { font-size: 0.95rem; }
+            .item-desc { font-size: 0.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 14px 10px 50px 10px; }
+            .hero-card { padding: 16px 12px; }
+            .section-card { padding: 16px 12px; }
+            .hero-url-pill { padding: 8px 10px; gap: 6px; }
+            .pill-url { font-size: 0.72rem; }
+            .exercise-item { padding: 10px; gap: 10px; }
+        }
+
+        .content-grid.single { grid-template-columns: 1fr; }
+
+        /* In-class activity code banner */
+        .activity-card {
+            background: linear-gradient(135deg, rgba(6, 95, 70, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+
+        .activity-card:hover {
+            border-color: rgba(52, 211, 153, 0.6);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--green-glow);
+        }
+
+        .activity-card .hero-tag { color: #34d399; }
+
+        .activity-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
             margin-top: 4px;
+        }
+
+        .activity-meta span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .activity-meta strong { color: #ffffff; }
+
+        .activity-code-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .activity-code {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            color: #34d399;
+            background: rgba(2, 6, 23, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            border-radius: var(--radius-sub);
+            padding: 14px 22px 14px 28px;
+            white-space: nowrap;
+        }
+
+        .btn-copy-code {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 7px 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy-code:hover {
+            color: #ffffff;
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.12);
+        }
+
+        @media (max-width: 768px) {
+            .activity-code-box { width: 100%; }
+            .activity-code { font-size: 1.25rem; letter-spacing: 0.14em; padding: 12px 16px; width: 100%; text-align: center; }
+        }
+
+        footer {
+            margin-top: 50px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <a href="#main-content" class="skip-link">Skip to Content</a>
 
-    <div class="topbar">
+    <!-- Accessible Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Top Navigation -->
+    <nav class="topbar" aria-label="Page Navigation">
         <a href="../../index.html" class="back-link">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            <span>Course Portal</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Coursework Hub
         </a>
-        <span class="session-badge">Week 12 · Session 1</span>
-    </div>
+        <div class="session-badge">Week 12_1 · React State</div>
+    </nav>
 
+    <!-- Header Section -->
     <header class="header-title">
         <h1>React State &amp; Interactive Shopping Cart</h1>
-        <p>
-            Mastering component state management with <code>useState</code>, unidirectional data flow, immutable array transformations, and derived state in composite React applications.
-        </p>
+        <p>Managing component state with <code>useState</code>: boolean toggles, array updates without mutation, lifting state up to a parent, and values calculated from&nbsp;state.</p>
     </header>
 
     <main class="main-container" id="main-content">
-        <!-- Featured Homework Section -->
+
+        <!-- Homework & Code Challenge Featured Banners -->
         <section class="hw-section" aria-labelledby="hw-heading">
             <div class="hw-section-title" id="hw-heading">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg>
-                <span>Week 12_1 Homework Submission</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Homework &amp; Code Challenge
             </div>
 
-            <article class="hero-card">
+            <div class="hero-card">
                 <div class="hero-content">
-                    <span class="hero-tag">★ Featured Homework</span>
-                    <h2 class="hero-title">Homework: Interactive Shopping Cart (Tasks 1–5)</h2>
+                    <span class="hero-tag">⭐ Homework · React State</span>
+                    <h2 class="hero-title">Interactive Shopping Cart (Tasks 1–5)</h2>
                     <p class="hero-desc">
-                        Complete implementation of the React Interactive Shopping Cart featuring a 6-item product catalog, array-based cart state, real-time cart sidebar with dynamically computed total price, item quantity controls (+/−), and composite ShoppingCart component architecture.
+                        A 6-item product catalog with cart state stored as an array, a cart sidebar with a live total price, +/− quantity controls, and a <code>ShoppingCart</code> component that brings it all&nbsp;together.
                     </p>
                 </div>
+                <div class="hero-actions">
+                    <a href="hw-shopping-cart.html" class="btn-launch-hero">
+                        Open Showcase
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
 
-                <a href="hw-shopping-cart.html" class="hero-cta">
-                    <span>Open Interactive Showcase</span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                </a>
-            </article>
+            <div class="hero-card" style="margin-top: 14px; background: linear-gradient(135deg, rgba(88, 28, 135, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%); border-color: rgba(168, 85, 247, 0.35);">
+                <div class="hero-content">
+                    <span class="hero-tag" style="color: var(--purple-light);">⚡ Code Challenge · History &amp; Undo</span>
+                    <h2 class="hero-title">Counter with History &amp; Undo</h2>
+                    <p class="hero-desc">
+                        A <code>Counter</code> with +1, −1 and Reset, a history of the last 5 values, and an Undo button, built with two state variables: <code>count</code> and a <code>history</code>&nbsp;array.
+                    </p>
+                </div>
+                <div class="hero-actions">
+                    <a href="code-challenge-counter.html" class="btn-launch-hero" style="background: linear-gradient(135deg, #a855f7, #6366f1);">
+                        Open Challenge
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
         </section>
+
+        <!-- Content Grid: Practice Exercises -->
+        <div class="content-grid single">
+
+            <!-- Practice Exercises -->
+            <section class="section-card" aria-labelledby="exercises-head">
+                <div class="hw-section-title" id="exercises-head" style="color: #60a5fa;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Practice Exercises
+                </div>
+
+                <ul class="topics-list">
+                    <li>
+                        <a href="e1-toggle-detail.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E1</span>
+                                <div class="item-text">
+                                    <span class="item-title">Show &amp; Hide Details</span>
+                                    <span class="item-desc">A button switches between Show details and Hide details, toggling a paragraph with boolean&nbsp;state.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="e2-task-list.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E2</span>
+                                <div class="item-text">
+                                    <span class="item-title">Add &amp; Remove Tasks</span>
+                                    <span class="item-desc">A text input adds tasks to an array in state, and each task's <code>✕</code> button removes it with <code>filter</code>.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="e3-score-board.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E3</span>
+                                <div class="item-text">
+                                    <span class="item-title">Lifting State to a Score Board</span>
+                                    <span class="item-desc">A parent <code>ScoreBoard</code> holds both players' scores, passes them to two <code>PlayerScore</code> children, and shows the&nbsp;total.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+
+        </div>
+
     </main>
+
+    <!-- Footer -->
+    <footer>
+        Web Programming Course · Week 12_1 · React State &amp; Interactive Shopping Cart
+    </footer>
+
 </body>
 </html>

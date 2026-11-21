@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>E2: Task List — Week 12_1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.94);
+            --bg-code: #0b0f19;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(56, 189, 248, 0.4);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #38bdf8;
+            --accent-purple: #c084fc;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        h1, h2, h3, h4, .nav-badge, .exercise-tag { text-wrap: balance; }
+        p, li, .desc, .task-spec, .key-item, .demo-status, .history-legend { text-wrap: pretty; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: #ffffff;
+            border-color: var(--border-highlight);
+            transform: translateX(-3px);
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .nav-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 6px 14px;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+        }
+
+        /* Card container */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 30px 34px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .exercise-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .block-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .task-spec {
+            background: rgba(56, 189, 248, 0.08);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 4px 10px 10px 4px;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .task-spec strong {
+            color: var(--accent-blue);
+        }
+
+        .inline-code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.88em;
+            color: var(--accent-blue);
+        }
+
+        /* Live Component Demo Canvas */
+        .demo-canvas {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px dashed rgba(56, 189, 248, 0.3);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            display: block;
+        }
+
+
+        /* Code block */
+        .code-container {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        pre {
+            margin: 0;
+            padding: 18px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.84rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .code-kw { color: #f472b6; font-weight: 600; }
+        .code-fn { color: #60a5fa; }
+        .code-pr { color: #38bdf8; }
+        .code-st { color: #a7f3d0; }
+        .code-cm { color: #64748b; font-style: italic; }
+        .code-prompt { color: var(--text-muted); user-select: none; }
+
+        /* Filled-in blanks */
+        .blank {
+            background: rgba(251, 191, 36, 0.14);
+            color: var(--accent-amber);
+            border-bottom: 2px solid rgba(251, 191, 36, 0.5);
+            border-radius: 3px;
+            padding: 0 3px;
+        }
+
+        /* Key Takeaways list */
+        .key-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .key-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+
+        .key-item strong { color: #ffffff; }
+
+        .key-icon {
+            color: var(--accent-blue);
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+
+        /* Live demo widgets */
+        .demo-box {
+            width: 100%;
+            max-width: 560px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .demo-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.02em;
+        }
+
+        .demo-field { display: flex; flex-direction: column; gap: 6px; }
+
+        .demo-input,
+        .demo-textarea {
+            width: 100%;
+            font: inherit;
+            font-size: 0.92rem;
+            color: var(--text-primary);
+            background: #0b0f19;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .demo-textarea { min-height: 120px; resize: vertical; }
+
+        .demo-input:focus,
+        .demo-textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .demo-input[aria-invalid="true"] { border-color: #f87171; }
+
+        .btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+        .demo-btn {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .demo-btn:hover:not(:disabled) {
+            border-color: var(--border-highlight);
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .demo-btn:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+
+        .demo-btn.primary {
+            color: #0b0f19;
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .demo-btn.primary:hover:not(:disabled) { background: #7dd3fc; }
+
+        .demo-btn.small { padding: 5px 12px; font-size: 0.78rem; }
+
+        /* Centered layout for single-control demos */
+        .demo-box.centered { align-items: center; text-align: center; }
+        .demo-box.centered .btn-row { justify-content: center; }
+        .demo-box.centered .demo-btn { min-width: 110px; }
+        .demo-box.centered .hint-panel { text-align: left; width: 100%; }
+        .big-number { font-variant-numeric: tabular-nums; }
+
+        .demo-btn[aria-pressed="true"] {
+            color: #0b0f19;
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        .demo-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .demo-status {
+            font-size: 0.86rem;
+            color: var(--text-secondary);
+            min-height: 1.4em;
+        }
+
+        .demo-status strong { color: var(--accent-emerald); }
+        .demo-status.error { color: #f87171; }
+
+        .big-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--accent-blue);
+        }
+
+        .demo-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .demo-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-size: 0.9rem;
+        }
+
+        .demo-list label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .demo-list input[type="checkbox"] { accent-color: var(--accent-emerald); width: 16px; height: 16px; }
+        .demo-list .done { color: var(--text-muted); text-decoration: line-through; }
+
+        .hint-panel {
+            background: rgba(192, 132, 252, 0.08);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            font-size: 0.92rem;
+            color: #e2e8f0;
+        }
+
+        .hint-panel strong { color: var(--accent-purple); }
+
+        @media (max-width: 768px) {
+            body { padding: 18px 14px 60px 14px; }
+            .card { padding: 22px 18px; }
+            h1 { font-size: 1.6rem; }
+            .demo-canvas { padding: 20px 14px; }
+        }
+
+        /* E2-specific styles */
+        .add-row { display: flex; gap: 10px; }
+        .add-row .demo-input { flex: 1; min-width: 0; }
+        .sr-only {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+        }
+        .demo-list li span { min-width: 0; overflow-wrap: anywhere; }
+        .remove-btn {
+            flex-shrink: 0; width: 30px; height: 30px; border-radius: var(--radius-sm);
+            background: rgba(248, 113, 113, 0.08); border: 1px solid rgba(248, 113, 113, 0.3);
+            color: #f87171; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease;
+        }
+        .remove-btn:hover { background: rgba(248, 113, 113, 0.18); border-color: #f87171; }
+        .remove-btn:focus-visible { outline: 2px solid #f87171; outline-offset: 2px; }
+        .empty-note {
+            text-align: center; font-size: 0.88rem; color: var(--text-muted);
+            border: 1px dashed var(--border-subtle); border-radius: var(--radius-sm); padding: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Top Navigation -->
+        <nav class="navbar" aria-label="Page Navigation">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Week 12_1 Overview
+            </a>
+            <span class="nav-badge">Exercise 2 · Task List</span>
+        </nav>
+
+        <!-- Main Card -->
+        <main class="card">
+            <div>
+                <span class="exercise-tag">Array State · Lab E2</span>
+                <h1>Add &amp; Remove Tasks</h1>
+            </div>
+
+            <!-- Task Specification Box -->
+            <div class="task-spec">
+                <strong>Task Specification:</strong> Build a component with a text input and an <span class="inline-code">Add</span> button. Items typed in the input are added to an <strong>array stored in state</strong>. Each item has a <span class="inline-code">✕</span> button that removes it from the&nbsp;list.
+            </div>
+
+            <!-- Live Demo -->
+            <div>
+                <h3 class="block-title">Live Demo</h3>
+                <div class="demo-canvas">
+                    <div class="demo-box">
+                        <div class="add-row">
+                            <label class="sr-only" for="task-input">New task</label>
+                            <input class="demo-input" id="task-input" type="text" placeholder="New task" autocomplete="off">
+                            <button type="button" class="demo-btn primary" id="add">Add</button>
+                        </div>
+                        <div class="demo-status" id="status" aria-live="polite"></div>
+                        <ul class="demo-list" id="list"></ul>
+                        <p class="empty-note" id="empty">No tasks yet. Type one above and press Add or&nbsp;Enter.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Component Code Showcase -->
+            <div class="code-container">
+                <div class="code-header">
+                    <span>TaskList.jsx</span>
+                    <span>React + Vite</span>
+                </div>
+                <pre><code><span class="code-kw">import</span> { useState } <span class="code-kw">from</span> <span class="code-st">&#x27;react&#x27;</span>;
+
+<span class="code-kw">function</span> <span class="code-fn">TaskList</span>() {
+  <span class="code-kw">const</span> [tasks, setTasks] = <span class="code-fn">useState</span>([]);
+  <span class="code-kw">const</span> [input, setInput] = <span class="code-fn">useState</span>(<span class="code-st">&#x27;&#x27;</span>);
+
+  <span class="code-kw">function</span> <span class="code-fn">addTask</span>() {
+    <span class="code-kw">if</span> (!input.<span class="code-fn">trim</span>()) <span class="code-kw">return</span>;
+    <span class="code-fn">setTasks</span>(prev =&gt; [...prev, { id: Date.<span class="code-fn">now</span>(), text: input.<span class="code-fn">trim</span>() }]);
+    <span class="code-fn">setInput</span>(<span class="code-st">&#x27;&#x27;</span>);
+  }
+
+  <span class="code-kw">function</span> <span class="code-fn">removeTask</span>(id) {
+    <span class="code-fn">setTasks</span>(prev =&gt; prev.<span class="code-fn">filter</span>(t =&gt; t.id !== id));
+  }
+
+  <span class="code-kw">return</span> (
+    &lt;<span class="code-kw">div</span>&gt;
+      &lt;<span class="code-kw">input</span> <span class="code-pr">value</span>={input} <span class="code-pr">onChange</span>={e =&gt; <span class="code-fn">setInput</span>(e.target.value)}
+        <span class="code-pr">onKeyDown</span>={e =&gt; e.key === <span class="code-st">'Enter'</span> &amp;&amp; <span class="code-fn">addTask</span>()} <span class="code-cm">// Enter also adds</span>
+        <span class="code-pr">placeholder</span>=<span class="code-st">&quot;New task&quot;</span> /&gt;
+      &lt;<span class="code-kw">button</span> <span class="code-pr">onClick</span>={addTask}&gt;Add&lt;/<span class="code-kw">button</span>&gt;
+      &lt;<span class="code-kw">ul</span>&gt;
+        {tasks.<span class="code-fn">map</span>(task =&gt; (
+          &lt;<span class="code-kw">li</span> <span class="code-pr">key</span>={task.id}&gt;
+            {task.text}
+            &lt;<span class="code-kw">button</span> <span class="code-pr">onClick</span>={() =&gt; <span class="code-fn">removeTask</span>(task.id)}&gt;✕&lt;/<span class="code-kw">button</span>&gt;
+          &lt;/<span class="code-kw">li</span>&gt;
+        ))}
+      &lt;/<span class="code-kw">ul</span>&gt;
+    &lt;/<span class="code-kw">div</span>&gt;
+  );
+}
+
+<span class="code-kw">export</span> <span class="code-kw">default</span> TaskList;</code></pre>
+            </div>
+
+            <!-- Key Takeaways -->
+            <div>
+                <h3 class="block-title">Key Takeaways</h3>
+                <ul class="key-list">
+                    <li class="key-item">
+                        <svg class="key-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span><strong>Controlled input:</strong> <span class="inline-code">value={input}</span> plus <span class="inline-code">onChange</span> keeps the text box and the <span class="inline-code">input</span> state in sync, so <span class="inline-code">setInput('')</span> clears it after&nbsp;adding.</span>
+                    </li>
+                    <li class="key-item">
+                        <svg class="key-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span><strong>Enter to add:</strong> <span class="inline-code">onKeyDown</span> checks <span class="inline-code">e.key === 'Enter'</span> and calls the same <span class="inline-code">addTask</span> as the button, so both ways follow the same&nbsp;rules.</span>
+                    </li>
+                    <li class="key-item">
+                        <svg class="key-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span><strong>Add with spread:</strong> <span class="inline-code">[...prev, newTask]</span> creates a new array with the task on the end. Blank input is ignored by the <span class="inline-code">trim()</span>&nbsp;check.</span>
+                    </li>
+                    <li class="key-item">
+                        <svg class="key-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span><strong>Remove with filter:</strong> <span class="inline-code">prev.filter(t =&gt; t.id !== id)</span> returns a new array without that task. The original array is never&nbsp;changed.</span>
+                    </li>
+                    <li class="key-item">
+                        <svg class="key-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span><strong>Stable keys:</strong> each task gets an <span class="inline-code">id</span> from <span class="inline-code">Date.now()</span>, used as <span class="inline-code">key</span> so React can tell the items apart when one is&nbsp;removed.</span>
+                    </li>
+                </ul>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Same logic as TaskList.jsx, written in plain JS for the live demo
+        let tasks = [];
+        const input = document.getElementById('task-input');
+        const list = document.getElementById('list');
+        const empty = document.getElementById('empty');
+        const status = document.getElementById('status');
+
+        function render() {
+            list.replaceChildren(...tasks.map(task => {
+                const li = document.createElement('li');
+                const text = document.createElement('span');
+                text.textContent = task.text;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'remove-btn';
+                btn.textContent = '✕';
+                btn.setAttribute('aria-label', 'Remove ' + task.text);
+                btn.addEventListener('click', () => removeTask(task.id));
+                li.append(text, btn);
+                return li;
+            }));
+            empty.hidden = tasks.length > 0;
+            status.innerHTML = tasks.length
+                ? '<strong>' + tasks.length + '</strong> task' + (tasks.length === 1 ? '' : 's') + ' in&nbsp;state'
+                : '';
+        }
+
+        function addTask() {
+            const text = input.value.trim();
+            if (!text) { input.focus(); return; }
+            tasks = [...tasks, { id: Date.now(), text }];
+            input.value = '';
+            input.focus();
+            render();
+        }
+
+        function removeTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            render();
+            input.focus();
+        }
+
+        document.getElementById('add').addEventListener('click', addTask);
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+        render();
+    </script>
+
+</body>
+</html>
