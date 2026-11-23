@@ -701,11 +701,11 @@
 
     <main class="main-container" id="main-content">
 
-        <!-- Homework Featured Banner -->
+        <!-- Homework & Code Challenge Featured Banners -->
         <section class="hw-section" aria-labelledby="hw-heading">
             <div class="hw-section-title" id="hw-heading">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                Homework
+                Homework &amp; Code Challenge
             </div>
 
             <div class="hero-card">
@@ -723,7 +723,75 @@
                     </a>
                 </div>
             </div>
+
+            <div class="hero-card" style="margin-top: 14px; background: linear-gradient(135deg, rgba(88, 28, 135, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%); border-color: rgba(168, 85, 247, 0.35);">
+                <div class="hero-content">
+                    <span class="hero-tag" style="color: var(--purple-light);">⚡ Code Challenge · Debounce &amp; Abort</span>
+                    <h2 class="hero-title">GitHub User Lookup</h2>
+                    <p class="hero-desc">
+                        Type a username and fetch <code>api.github.com/users/{username}</code> on Search or after a 500ms debounce. Shows the avatar, name, bio, followers and public repos, with a loading state, a 404 message, and an <code>AbortController</code> that cancels the previous&nbsp;request.
+                    </p>
+                </div>
+                <div class="hero-actions">
+                    <a href="code-challenge-github-lookup.html" class="btn-launch-hero" style="background: linear-gradient(135deg, #a855f7, #6366f1);">
+                        Open Challenge
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
         </section>
+
+        <!-- Content Grid: Practice Exercises -->
+        <div class="content-grid single">
+
+            <!-- Practice Exercises -->
+            <section class="section-card" aria-labelledby="exercises-head">
+                <div class="hw-section-title" id="exercises-head" style="color: #60a5fa;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Practice Exercises
+                </div>
+
+                <ul class="topics-list">
+                    <li>
+                        <a href="e1-page-title-sync.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E1</span>
+                                <div class="item-text">
+                                    <span class="item-title">Page Title Sync</span>
+                                    <span class="item-desc">A text input sets <code>document.title</code> in a <code>useEffect</code>, and the cleanup puts it back to <code>WebPro</code> on&nbsp;unmount.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="e2-fetch-user.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E2</span>
+                                <div class="item-text">
+                                    <span class="item-title">Fetch a User from an API</span>
+                                    <span class="item-desc">Fetches <code>jsonplaceholder</code> user 1 once on mount and shows the name and email, with Loading… and error&nbsp;states.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="e3-stopwatch.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E3</span>
+                                <div class="item-text">
+                                    <span class="item-title">Stopwatch with Cleanup</span>
+                                    <span class="item-desc">Start, Stop and Reset drive a <code>setInterval</code> inside <code>useEffect</code>, cleared with <code>clearInterval</code> to avoid&nbsp;leaks.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+
+        </div>
 
     </main>
 
