@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Week 13_1 · Student Profile Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- React 18 & Babel for Live In-Browser Runtime (pinned versions so the page can't break on a new release) -->
+    <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+    <style>
+        :root {
+            color-scheme: dark;
+            /* Surfaces */
+            --bg-body: #090d16;
+            --bg-card: rgba(17, 24, 39, 0.85);
+            --bg-card-sub: rgba(30, 41, 59, 0.5);
+            --bg-inset: rgba(2, 6, 23, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(255, 255, 255, 0.14);
+            --border-hover: rgba(56, 189, 248, 0.45);
+            /* Accents */
+            --blue: #38bdf8;
+            --blue-soft: rgba(56, 189, 248, 0.12);
+            --blue-line: rgba(56, 189, 248, 0.3);
+            --purple: #c084fc;
+            --purple-soft: rgba(168, 85, 247, 0.15);
+            --purple-line: rgba(168, 85, 247, 0.35);
+            --emerald: #34d399;
+            --emerald-soft: rgba(16, 185, 129, 0.14);
+            --emerald-line: rgba(16, 185, 129, 0.35);
+            --amber: #fbbf24;
+            --amber-soft: rgba(245, 158, 11, 0.12);
+            --amber-line: rgba(245, 158, 11, 0.35);
+            --rose: #fb7185;
+            --rose-soft: rgba(244, 63, 94, 0.12);
+            --rose-line: rgba(244, 63, 94, 0.35);
+            /* Text */
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            /* Shape */
+            --radius-card: 20px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+            /* Type: one body face, one display face, one code face */
+            --font-main: 'Plus Jakarta Sans', system-ui, sans-serif;
+            --font-heading: 'Outfit', var(--font-main);
+            --font-mono: 'Fira Code', ui-monospace, monospace;
+            --fs-xs: 0.75rem;
+            --fs-sm: 0.875rem;
+            --fs-base: 1rem;
+            --fs-lg: 1.125rem;
+            --fs-xl: 1.375rem;
+            --fs-2xl: 2.25rem;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        button, input, select, textarea { font: inherit; color: inherit; }
+        button { cursor: pointer; }
+        button:disabled { cursor: not-allowed; }
+
+        :focus-visible {
+            outline: 2px solid var(--blue);
+            outline-offset: 2px;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.25;
+            text-wrap: balance;
+        }
+        p { text-wrap: pretty; }
+
+        .skip-link {
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1000;
+            background: var(--blue);
+            color: #041324;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: var(--fs-sm);
+            border-radius: 8px;
+            text-decoration: none;
+            transform: translateY(-200%);
+            opacity: 0;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+
+        .skip-link:focus-visible {
+            transform: translateY(0);
+            opacity: 1;
+            outline: 3px solid #ffffff;
+            outline-offset: 3px;
+        }
+
+        html {
+            background-color: var(--bg-body);
+            min-height: 100%;
+        }
+
+        body {
+            font-family: var(--font-main);
+            font-size: var(--fs-base);
+            line-height: 1.5;
+            background-color: var(--bg-body);
+            background-image:
+                radial-gradient(circle at 12% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 88% 12%, rgba(168, 85, 247, 0.1) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 80px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1240px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+        }
+
+        /* ---------- Shared small pieces ---------- */
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-sub);
+        }
+        .pill--blue { background: var(--blue-soft); border-color: var(--blue-line); color: var(--blue); }
+        .pill--purple { background: var(--purple-soft); border-color: var(--purple-line); color: var(--purple); }
+        .pill--upper { text-transform: uppercase; letter-spacing: 0.06em; }
+
+        /* ---------- Top navigation ---------- */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.2s;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--blue);
+            background: var(--blue-soft);
+            transform: translateX(-2px);
+        }
+
+        /* ---------- Hero ---------- */
+        .hero-card {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(15, 23, 42, 0.85));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 36px 40px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .hero-title {
+            font-size: var(--fs-2xl);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            color: var(--text-sub);
+            font-size: var(--fs-base);
+            line-height: 1.65;
+            max-width: 820px;
+        }
+
+        /* ---------- Section shell ---------- */
+        .section-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .section-icon {
+            flex: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: var(--blue-soft);
+            border: 1px solid var(--blue-line);
+            display: grid;
+            place-items: center;
+            color: var(--blue);
+        }
+
+        .section-heading { font-size: var(--fs-xl); }
+
+        .section-sub {
+            font-size: var(--fs-sm);
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .loading-note {
+            color: var(--text-sub);
+            text-align: center;
+            padding: 48px 16px;
+            font-size: var(--fs-sm);
+        }
+
+        /* ---------- Buttons ---------- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-btn);
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            line-height: 1;
+            min-height: 42px;
+            padding: 0 16px;
+            transition: transform 0.15s, filter 0.15s, box-shadow 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
+        }
+
+        .btn:active:not(:disabled) { transform: translateY(1px); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            color: #041324;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            filter: brightness(1.1);
+            box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+        }
+
+        .btn-primary:disabled {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--border);
+            color: var(--text-dim);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border-color: var(--border-strong);
+            color: var(--text-sub);
+        }
+
+        .btn-ghost:hover:not(:disabled) { color: #ffffff; border-color: var(--blue-line); background: var(--blue-soft); }
+        .btn-ghost:disabled { color: var(--text-dim); }
+
+        .btn-geo {
+            width: 100%;
+            background: var(--emerald-soft);
+            border-color: var(--emerald-line);
+            color: var(--emerald);
+        }
+
+        .btn-geo:hover:not(:disabled) { background: rgba(16, 185, 129, 0.22); color: #a7f3d0; }
+
+        .btn-sm { min-height: 34px; padding: 0 12px; font-size: var(--fs-xs); }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            animation: spin 0.7s linear infinite;
+            flex: none;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .pill--emerald { background: var(--emerald-soft); border-color: var(--emerald-line); color: var(--emerald); }
+        .pill--amber { background: var(--amber-soft); border-color: var(--amber-line); color: var(--amber); }
+
+        /* ---------- Profile editor layout ---------- */
+        .pe-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 380px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .pe-form {
+            background: var(--bg-card-sub);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pe-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .pe-field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            min-width: 0;
+            border: 0;
+        }
+
+        .pe-label-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .pe-label {
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-sub);
+            padding: 0;
+        }
+
+        .pe-req { color: var(--rose); margin-left: 2px; }
+
+        .pe-optional {
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: 0;
+            color: var(--text-dim);
+            margin-left: 4px;
+        }
+
+        .pe-counter {
+            font-family: var(--font-mono);
+            font-size: var(--fs-xs);
+            color: var(--text-dim);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            transition: color 0.15s;
+        }
+
+        .pe-counter.is-ok { color: var(--emerald); }
+        .pe-counter.is-near { color: var(--amber); }
+        .pe-counter.is-over { color: var(--rose); font-weight: 600; }
+
+        .pe-input {
+            width: 100%;
+            min-height: 44px;
+            padding: 0 14px;
+            background: var(--bg-inset);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-btn);
+            font-size: var(--fs-sm);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .pe-input::placeholder { color: var(--text-dim); }
+        .pe-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+        .pe-input[aria-invalid="true"] { border-color: var(--rose); }
+        .pe-input[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px var(--rose-soft); }
+
+        .pe-input--mono { font-family: var(--font-mono); letter-spacing: 0.06em; }
+
+        select.pe-input {
+            appearance: none;
+            padding-right: 40px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+
+        select.pe-input option { background: #0f172a; color: var(--text-main); }
+
+        textarea.pe-input {
+            min-height: 120px;
+            padding: 12px 14px;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        .pe-meter {
+            height: 4px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            overflow: hidden;
+        }
+
+        .pe-meter > span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: var(--emerald);
+            transition: width 0.15s, background 0.15s;
+        }
+
+        .pe-meter.is-near > span { background: var(--amber); }
+        .pe-meter.is-over > span { background: var(--rose); }
+
+        .pe-error {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            font-size: var(--fs-xs);
+            color: var(--rose);
+            line-height: 1.45;
+        }
+
+        .pe-error svg { flex: none; margin-top: 1px; }
+
+        .pe-hint { font-size: var(--fs-xs); color: var(--text-dim); line-height: 1.45; }
+
+        /* Year: radio buttons drawn as a segmented control */
+        .pe-years {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 4px;
+            padding: 4px;
+            background: var(--bg-inset);
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            transition: border-color 0.15s;
+        }
+
+        .pe-years.is-invalid { border-color: var(--rose); }
+
+        .pe-year { position: relative; }
+
+        .pe-year input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .pe-year span {
+            display: block;
+            text-align: center;
+            padding: 9px 6px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--text-sub);
+            transition: color 0.15s, background 0.15s, border-color 0.15s;
+        }
+
+        .pe-year:hover span { color: #ffffff; }
+        .pe-year input:checked + span { color: var(--blue); background: var(--blue-soft); border-color: var(--blue-line); }
+        .pe-year input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 1px; }
+
+        /* Photo: file input + preview */
+        .pe-photo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px;
+            background: var(--bg-inset);
+            border: 1px dashed var(--border-strong);
+            border-radius: var(--radius-sub);
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .pe-photo.is-drag { border-color: var(--blue); background: var(--blue-soft); }
+        .pe-photo.is-invalid { border-color: var(--rose); }
+
+        .pe-photo-thumb {
+            flex: none;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-strong);
+            color: var(--text-dim);
+        }
+
+        .pe-photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+        .pe-photo-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+        .pe-photo-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+        .pe-photo-name {
+            font-size: var(--fs-xs);
+            color: var(--text-sub);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .pe-file-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .pe-file-input:focus-visible + label { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+        /* Skills: tag input */
+        .pe-tags-box {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            min-height: 44px;
+            padding: 6px 8px;
+            background: var(--bg-inset);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-btn);
+            cursor: text;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .pe-tags-box:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+
+        .pe-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            padding: 3px 4px 3px 10px;
+            border-radius: 999px;
+            background: var(--emerald-soft);
+            border: 1px solid var(--emerald-line);
+            color: var(--emerald);
+            font-family: var(--font-mono);
+            font-size: var(--fs-xs);
+            font-weight: 500;
+        }
+
+        .pe-tag button {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            display: grid;
+            place-items: center;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .pe-tag button:hover { background: var(--rose-soft); color: var(--rose); }
+
+        .pe-tags-input {
+            flex: 1;
+            min-width: 140px;
+            min-height: 30px;
+            border: 0;
+            background: transparent;
+            font-size: var(--fs-sm);
+            padding: 0 6px;
+        }
+
+        .pe-tags-input:focus { outline: none; }
+        .pe-tags-input::placeholder { color: var(--text-dim); }
+
+        /* Summary + actions */
+        .pe-summary {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: var(--fs-sm);
+            background: var(--rose-soft);
+            border: 1px solid var(--rose-line);
+            color: #fecdd3;
+        }
+
+        .pe-summary svg { flex: none; color: var(--rose); margin-top: 2px; }
+
+        .pe-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+        }
+
+        .pe-actions .btn-primary { flex: 1; min-width: 180px; }
+
+        /* ---------- Profile preview ---------- */
+        .pe-preview {
+            position: sticky;
+            top: 20px;
+            background: linear-gradient(160deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.75));
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-sub);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .pe-preview-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            min-height: 26px;
+        }
+
+        .pe-preview-label {
+            font-family: var(--font-main);
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-sub);
+        }
+
+        .pe-preview-label:focus { outline: none; }
+
+        .pe-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            padding: 36px 16px;
+            border: 1px dashed var(--border-strong);
+            border-radius: var(--radius-sub);
+            color: var(--text-sub);
+            font-size: var(--fs-sm);
+        }
+
+        .pe-empty-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: var(--blue-soft);
+            border: 1px solid var(--blue-line);
+            color: var(--blue);
+        }
+
+        .pe-empty strong { color: #ffffff; font-family: var(--font-heading); font-size: var(--fs-lg); }
+
+        .pe-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-strong);
+            border-radius: 16px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: card-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes card-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+        .pe-card-top { display: flex; align-items: center; gap: 16px; }
+
+        .pe-avatar {
+            flex: none;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            color: #ffffff;
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 2px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .pe-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .pe-card-ident { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+
+        .pe-card-name {
+            font-size: var(--fs-xl);
+            overflow-wrap: anywhere;
+        }
+
+        .pe-card-meta {
+            font-size: var(--fs-sm);
+            color: var(--text-sub);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .pe-card-major { font-size: var(--fs-sm); font-weight: 700; color: var(--blue); }
+
+        .pe-card-count {
+            font-family: var(--font-mono);
+            font-size: var(--fs-xs);
+            color: var(--text-dim);
+        }
+
+        .pe-card-bio {
+            font-size: var(--fs-sm);
+            color: var(--text-main);
+            line-height: 1.65;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .pe-card-tags {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            font-family: var(--font-mono);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--emerald);
+        }
+
+        .pe-card-foot {
+            font-size: var(--fs-xs);
+            color: var(--text-dim);
+        }
+
+        /* ---------- Code viewer ---------- */
+        .code-tabs-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 4px;
+            background: var(--bg-inset);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            scrollbar-width: thin;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-sub);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: color 0.2s, background 0.2s, border-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover { color: #ffffff; background: rgba(255, 255, 255, 0.04); }
+
+        .tab-btn[aria-selected="true"] {
+            color: var(--blue);
+            background: var(--blue-soft);
+            border-color: var(--blue-line);
+        }
+
+        .tab-pane[hidden] { display: none; }
+
+        .code-block-wrap {
+            background: #020617;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            overflow: hidden;
+        }
+
+        .code-titlebar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+            background: rgba(15, 23, 42, 0.9);
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: var(--fs-xs);
+            color: var(--text-sub);
+        }
+
+        .code-titlebar > span:first-child {
+            font-family: var(--font-mono);
+            color: var(--text-main);
+        }
+
+        pre {
+            padding: 18px 20px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.84rem;
+            line-height: 1.65;
+            color: #e2e8f0;
+            tab-size: 2;
+        }
+
+        code { font-family: var(--font-mono); }
+
+        p code {
+            font-size: 0.88em;
+            padding: 1px 6px;
+            border-radius: 5px;
+            background: var(--blue-soft);
+            color: var(--blue);
+        }
+
+        .c-kw { color: #f472b6; }
+        .c-fn { color: #38bdf8; }
+        .c-str { color: #34d399; }
+        .c-prop { color: #fbbf24; }
+        .c-com { color: #64748b; font-style: italic; }
+        .c-num { color: #c084fc; }
+
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 980px) {
+            .pe-layout { grid-template-columns: 1fr; }
+            .pe-preview { position: static; }
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 16px 16px 60px; }
+            .hero-card { padding: 26px 20px; }
+            .hero-title { font-size: 1.8rem; }
+            .section-box { padding: 20px 16px; }
+            .section-head > .pill { display: none; }
+            .pe-form { padding: 18px; }
+            .pe-row { grid-template-columns: 1fr; }
+            .pe-years { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .pe-card { padding: 18px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition: none !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to Student Profile Editor</a>
+
+    <div class="container" id="main-content">
+
+        <!-- Top Navigation -->
+        <nav class="topbar" aria-label="Navigation Header">
+            <div class="nav-actions">
+                <a href="index.html" class="back-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Week 13_1 Hub</span>
+                </a>
+                <a href="../../index.html" class="back-link">
+                    <span>Course Portal</span>
+                </a>
+            </div>
+            <span class="pill pill--blue pill--upper">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Week 13_1 Homework
+            </span>
+        </nav>
+
+        <!-- Hero Header -->
+        <header class="hero-card">
+            <h1 class="hero-title">Student Profile Editor</h1>
+            <p class="hero-desc">
+                A complete form for a student management system, built with controlled React inputs. Every field is required: the student ID must be exactly 10 digits and the bio has a live character counter capped at 200. Validation runs on every keystroke but only shows once you leave a field or press Save. A valid submit renders the <code>ProfilePreview</code> card, and skills can be added as tags with Enter and removed with ×.
+            </p>
+        </header>
+
+        <!-- Live In-Browser React Application -->
+        <section class="section-box" aria-labelledby="live-app-heading">
+            <div class="section-head">
+                <div class="section-title-wrap">
+                    <div class="section-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 id="live-app-heading" class="section-heading">Live Profile Editor</h2>
+                        <p class="section-sub">
+                            Fill in the form and press Save profile. Try an 8-digit ID or a 201-character bio to see the validation.
+                        </p>
+                    </div>
+                </div>
+                <span class="pill pill--upper">React 18 · in-browser</span>
+            </div>
+
+            <!-- React Target Container -->
+            <div id="profile-root">
+                <p class="loading-note">Loading the React app…</p>
+            </div>
+        </section>
+
+        <!-- Tabbed Source Code Viewer -->
+        <section class="section-box" aria-labelledby="code-heading">
+            <div class="section-head">
+                <div class="section-title-wrap">
+                    <div class="section-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 id="code-heading" class="section-heading">Component Source Implementation</h2>
+                        <p class="section-sub">
+                            The editor split into separate files for a React project (styling markup trimmed for readability).
+                        </p>
+                    </div>
+                </div>
+                <span class="pill pill--upper">React · JSX</span>
+            </div>
+
+            <div class="code-tabs-header" role="tablist" aria-label="Source files">
+                <button type="button" class="tab-btn" role="tab" id="btn-editor" aria-selected="true" aria-controls="tab-editor">StudentProfileEditor.jsx</button>
+                <button type="button" class="tab-btn" role="tab" id="btn-skills" aria-selected="false" aria-controls="tab-skills" tabindex="-1">SkillsInput.jsx</button>
+                <button type="button" class="tab-btn" role="tab" id="btn-preview" aria-selected="false" aria-controls="tab-preview" tabindex="-1">ProfilePreview.jsx</button>
+                <button type="button" class="tab-btn" role="tab" id="btn-validate" aria-selected="false" aria-controls="tab-validate" tabindex="-1">validate.js</button>
+            </div>
+
+            <div class="tab-pane" id="tab-editor" role="tabpanel" aria-labelledby="btn-editor">
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/components/StudentProfileEditor.jsx</span>
+                        <span>Parent: owns the form state, validation display and submit</span>
+                    </div>
+                    <pre><code data-src="src-editor"></code></pre>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab-skills" role="tabpanel" aria-labelledby="btn-skills" hidden>
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/components/SkillsInput.jsx</span>
+                        <span>Stretch: Enter to add a tag, × to remove</span>
+                    </div>
+                    <pre><code data-src="src-skills"></code></pre>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab-preview" role="tabpanel" aria-labelledby="btn-preview" hidden>
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/components/ProfilePreview.jsx</span>
+                        <span>The card shown after a valid submit</span>
+                    </div>
+                    <pre><code data-src="src-preview"></code></pre>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab-validate" role="tabpanel" aria-labelledby="btn-validate" hidden>
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/validate.js</span>
+                        <span>Pure function: form values in, error messages out</span>
+                    </div>
+                    <pre><code data-src="src-validate"></code></pre>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ================= Source shown in the code viewer (plain text, highlighted at load) ================= -->
+    <script type="text/plain" id="src-editor">
+import { useState, useRef } from 'react';
+import { validate, BIO_MAX, MAJORS, FIELD_ORDER } from '../validate';
+import SkillsInput from './SkillsInput';
+import ProfilePreview from './ProfilePreview';
+
+const EMPTY = { name: '', studentId: '', major: '', year: '', bio: '', photo: null, skills: [] };
+
+function StudentProfileEditor() {
+  const [values, setValues] = useState(EMPTY);
+  const [touched, setTouched] = useState({});        // fields the user has left
+  const [submitted, setSubmitted] = useState(false); // pressed Save at least once
+  const [profile, setProfile] = useState(null);      // last saved snapshot
+  const previewRef = useRef(null);
+
+  // Derived on every render, never stored in state
+  const errors = validate(values);
+  const showError = (field) => (touched[field] || submitted) && errors[field];
+
+  const update = (field, value) => setValues((v) => ({ ...v, [field]: value }));
+  const touch = (field) => setTouched((t) => ({ ...t, [field]: true }));
+
+  function handlePhoto(e) {
+    const file = e.target.files[0];
+    touch('photo');
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => update('photo', { name: file.name, url: reader.result });
+    reader.readAsDataURL(file); // data URL works as an <img src> preview
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    setSubmitted(true);
+    const firstInvalid = FIELD_ORDER.find((field) => errors[field]);
+    if (firstInvalid) {
+      document.getElementById(`pe-${firstInvalid}`).focus();
+      return;
+    }
+    setProfile({ ...values, name: values.name.trim(), savedAt: new Date() });
+    previewRef.current.focus();
+  }
+
+  const bioLength = values.bio.length;
+
+  return (
+    <div className="pe-layout">
+      <form className="pe-form" noValidate onSubmit={handleSubmit}>
+        <label htmlFor="pe-name">Name</label>
+        <input id="pe-name" value={values.name}
+          onChange={(e) => update('name', e.target.value)}
+          onBlur={() => touch('name')}
+          aria-invalid={!!showError('name')} />
+        {showError('name') && <p className="pe-error">{errors.name}</p>}
+
+        <label htmlFor="pe-studentId">Student ID</label>
+        <input id="pe-studentId" inputMode="numeric" maxLength={10} value={values.studentId}
+          onChange={(e) => update('studentId', e.target.value)}
+          onBlur={() => touch('studentId')} />
+        {showError('studentId') && <p className="pe-error">{errors.studentId}</p>}
+
+        <label htmlFor="pe-major">Major</label>
+        <select id="pe-major" value={values.major}
+          onChange={(e) => { update('major', e.target.value); touch('major'); }}>
+          <option value="">Choose a major…</option>
+          {MAJORS.map((m) => <option key={m}>{m}</option>)}
+        </select>
+
+        <fieldset>
+          <legend>Year</legend>
+          {[1, 2, 3, 4].map((y) => (
+            <label key={y}>
+              <input type="radio" name="year" value={y}
+                checked={values.year === String(y)}
+                onChange={(e) => { update('year', e.target.value); touch('year'); }} />
+              Year {y}
+            </label>
+          ))}
+        </fieldset>
+
+        <label htmlFor="pe-photo">Photo</label>
+        {values.photo && <img src={values.photo.url} alt="Photo preview" />}
+        <input id="pe-photo" type="file" accept="image/*" onChange={handlePhoto} />
+
+        <label htmlFor="pe-bio">Bio</label>
+        <span className="pe-counter">{bioLength} / {BIO_MAX}</span>  {/* live counter */}
+        <textarea id="pe-bio" value={values.bio}
+          onChange={(e) => update('bio', e.target.value)}
+          onBlur={() => touch('bio')} />
+        {showError('bio') && <p className="pe-error">{errors.bio}</p>}
+
+        <SkillsInput skills={values.skills} onChange={(skills) => update('skills', skills)} />
+
+        <button type="submit">Save profile</button>
+      </form>
+
+      <ProfilePreview ref={previewRef} profile={profile} />
+    </div>
+  );
+}
+
+export default StudentProfileEditor;
+</script>
+
+    <script type="text/plain" id="src-skills">
+import { useState, useRef } from 'react';
+
+const MAX_SKILLS = 10;
+
+function SkillsInput({ skills, onChange }) {
+  const [draft, setDraft] = useState('');
+  const inputRef = useRef(null);
+
+  function addSkill() {
+    const skill = draft.trim();
+    if (!skill) return;
+    const exists = skills.some((s) => s.toLowerCase() === skill.toLowerCase());
+    if (!exists && skills.length < MAX_SKILLS) onChange([...skills, skill]);
+    setDraft('');
+  }
+
+  function removeSkill(index) {
+    onChange(skills.filter((_, i) => i !== index));
+    inputRef.current.focus();
+  }
+
+  function handleKeyDown(e) {
+    if (e.nativeEvent.isComposing) return; // let Korean IME finish the syllable first
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault(); // Enter must add a tag, not submit the form
+      addSkill();
+    } else if (e.key === 'Backspace' && draft === '' && skills.length > 0) {
+      onChange(skills.slice(0, -1));
+    }
+  }
+
+  return (
+    <div className="pe-field">
+      <label htmlFor="pe-skills">Skills</label>
+      <div className="pe-tags-box" onClick={() => inputRef.current.focus()}>
+        {skills.map((skill, i) => (
+          <span className="pe-tag" key={skill}>
+            {skill}
+            <button type="button" aria-label={`Remove ${skill}`} onClick={() => removeSkill(i)}>×</button>
+          </span>
+        ))}
+        <input id="pe-skills" ref={inputRef} value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="e.g. react, then Enter" />
+      </div>
+    </div>
+  );
+}
+
+export default SkillsInput;
+</script>
+
+    <script type="text/plain" id="src-preview">
+import { forwardRef } from 'react';
+import { BIO_MAX } from '../validate';
+
+function initials(name) {
+  return name.split(/\s+/).filter(Boolean).slice(0, 2)
+    .map((word) => word[0].toUpperCase()).join('');
+}
+
+const ProfilePreview = forwardRef(function ProfilePreview({ profile }, ref) {
+  return (
+    <aside className="pe-preview">
+      <h3 ref={ref} tabIndex={-1}>Profile Preview</h3>
+
+      {!profile ? (
+        <p>Save the form to see the profile card here.</p>
+      ) : (
+        <article className="pe-card">
+          <div className="pe-avatar">
+            {profile.photo
+              ? <img src={profile.photo.url} alt={profile.name} />
+              : initials(profile.name)}
+          </div>
+          <h4>{profile.name}</h4>
+          <p>ID {profile.studentId} · Year {profile.year}</p>
+          <p className="pe-card-major">{profile.major}</p>
+          <p className="pe-card-count">bio: {profile.bio.length} / {BIO_MAX}</p>
+          <p className="pe-card-bio">{profile.bio}</p>
+
+          <ul className="pe-card-tags">
+            {profile.skills.map((skill) => <li key={skill}>[{skill}]</li>)}
+          </ul>
+        </article>
+      )}
+    </aside>
+  );
+});
+
+export default ProfilePreview;
+</script>
+
+    <script type="text/plain" id="src-validate">
+export const BIO_MAX = 200;
+export const ID_LENGTH = 10;
+
+export const MAJORS = [
+  'Computer Engineering',
+  'Computer Science',
+  'Software Engineering',
+  'Electrical Engineering',
+  'Mechanical Engineering',
+  'Industrial Design',
+  'Business Administration',
+  'Mathematics',
+];
+
+// The order fields appear in, so a failed submit focuses the first problem
+export const FIELD_ORDER = ['name', 'studentId', 'major', 'year', 'photo', 'bio'];
+
+export function validate(values) {
+  const errors = {};
+
+  if (!values.name.trim()) errors.name = 'Name is required.';
+
+  const id = values.studentId.trim();
+  if (!id) errors.studentId = 'Student ID is required.';
+  else if (!/^\d+$/.test(id)) errors.studentId = 'Student ID can only contain digits.';
+  else if (id.length !== ID_LENGTH)
+    errors.studentId = `Student ID must be exactly ${ID_LENGTH} digits (you have ${id.length}).`;
+
+  if (!values.major) errors.major = 'Choose a major.';
+  if (!values.year) errors.year = 'Choose your year (1–4).';
+  if (!values.photo) errors.photo = 'Upload a profile photo.';
+
+  if (!values.bio.trim()) errors.bio = 'Bio is required.';
+  else if (values.bio.length > BIO_MAX)
+    errors.bio = `Bio must be ${BIO_MAX} characters or fewer (${values.bio.length - BIO_MAX} over).`;
+
+  return errors;
+}
+</script>
+
+    <!-- ================= Live React app ================= -->
+    <script type="text/babel">
+        const { useState, useRef } = React;
+
+        // ---------- Data + validation ----------
+        const BIO_MAX = 200;
+        const BIO_WARN = 180;
+        const ID_LENGTH = 10;
+        const MAX_SKILLS = 10;
+        const MAX_SKILL_LENGTH = 24;
+        const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+
+        const MAJORS = [
+            'Computer Engineering',
+            'Computer Science',
+            'Software Engineering',
+            'Electrical Engineering',
+            'Mechanical Engineering',
+            'Industrial Design',
+            'Business Administration',
+            'Mathematics',
+        ];
+
+        const YEARS = ['1', '2', '3', '4'];
+        const FIELD_ORDER = ['name', 'studentId', 'major', 'year', 'photo', 'bio'];
+        // Element that receives focus for each field when a submit fails
+        const FOCUS_ID = { name: 'pe-name', studentId: 'pe-studentId', major: 'pe-major', year: 'pe-year-1', photo: 'pe-photo', bio: 'pe-bio' };
+
+        const EMPTY = { name: '', studentId: '', major: '', year: '', bio: '', photo: null, skills: [] };
+
+        function validate(values) {
+            const errors = {};
+
+            if (!values.name.trim()) errors.name = 'Name is required.';
+
+            const id = values.studentId.trim();
+            if (!id) errors.studentId = 'Student ID is required.';
+            else if (!/^\d+$/.test(id)) errors.studentId = 'Student ID can only contain digits.';
+            else if (id.length !== ID_LENGTH) errors.studentId = `Student ID must be exactly ${ID_LENGTH} digits (you have ${id.length}).`;
+
+            if (!values.major) errors.major = 'Choose a major.';
+            if (!values.year) errors.year = 'Choose your year (1–4).';
+            if (!values.photo) errors.photo = 'Upload a profile photo.';
+
+            if (!values.bio.trim()) errors.bio = 'Bio is required.';
+            else if (values.bio.length > BIO_MAX) errors.bio = `Bio must be ${BIO_MAX} characters or fewer (${values.bio.length - BIO_MAX} over).`;
+
+            return errors;
+        }
+
+        function initials(name) {
+            return name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
+        }
+
+        // Compare what matters for "unsaved changes"
+        const snapshot = (v) => JSON.stringify([v.name.trim(), v.studentId.trim(), v.major, v.year, v.bio, v.photo && v.photo.url, v.skills]);
+
+        const describedBy = (id, error, hint) => (error ? `${id}-error` : hint ? `${id}-hint` : undefined);
+
+        // ---------- Small pieces ----------
+        function AlertIcon({ size = 14 }) {
+            return (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            );
+        }
+
+        function FieldMessage({ id, error, hint }) {
+            if (error) return <p className="pe-error" id={`${id}-error`}><AlertIcon />{error}</p>;
+            if (hint) return <p className="pe-hint" id={`${id}-hint`}>{hint}</p>;
+            return null;
+        }
+
+        function Field({ id, label, error, hint, aside, children }) {
+            return (
+                <div className="pe-field">
+                    <div className="pe-label-row">
+                        <label htmlFor={id} className="pe-label">{label}<span className="pe-req" aria-hidden="true">*</span></label>
+                        {aside}
+                    </div>
+                    {children}
+                    <FieldMessage id={id} error={error} hint={hint} />
+                </div>
+            );
+        }
+
+        // ---------- Skills (stretch) ----------
+        function SkillsInput({ skills, onChange }) {
+            const [draft, setDraft] = useState('');
+            const [note, setNote] = useState('');
+            const inputRef = useRef(null);
+
+            function addSkill() {
+                const skill = draft.trim().replace(/^#/, '');
+                if (!skill) return;
+                if (skills.some((s) => s.toLowerCase() === skill.toLowerCase())) {
+                    setNote(`“${skill}” is already in the list.`);
+                    setDraft('');
+                    return;
+                }
+                if (skills.length >= MAX_SKILLS) {
+                    setNote(`You can add up to ${MAX_SKILLS} skills.`);
+                    return;
+                }
+                onChange([...skills, skill]);
+                setDraft('');
+                setNote('');
+            }
+
+            function removeSkill(index) {
+                onChange(skills.filter((_, i) => i !== index));
+                setNote('');
+                inputRef.current.focus();
+            }
+
+            function handleKeyDown(e) {
+                if (e.nativeEvent.isComposing) return; // let Korean IME finish the syllable first
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault(); // Enter adds a tag instead of submitting the form
+                    addSkill();
+                } else if (e.key === 'Backspace' && draft === '' && skills.length > 0) {
+                    onChange(skills.slice(0, -1));
+                }
+            }
+
+            return (
+                <div className="pe-field">
+                    <div className="pe-label-row">
+                        <label htmlFor="pe-skills" className="pe-label">Skills<span className="pe-optional">optional</span></label>
+                        <span className="pe-counter">{skills.length} / {MAX_SKILLS}</span>
+                    </div>
+                    <div className="pe-tags-box" onClick={() => inputRef.current.focus()}>
+                        {skills.map((skill, i) => (
+                            <span className="pe-tag" key={skill}>
+                                {skill}
+                                <button type="button" aria-label={`Remove ${skill}`} onClick={(e) => { e.stopPropagation(); removeSkill(i); }}>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </button>
+                            </span>
+                        ))}
+                        <input
+                            id="pe-skills"
+                            ref={inputRef}
+                            className="pe-tags-input"
+                            value={draft}
+                            maxLength={MAX_SKILL_LENGTH}
+                            onChange={(e) => { setDraft(e.target.value); if (note) setNote(''); }}
+                            onKeyDown={handleKeyDown}
+                            onBlur={addSkill}
+                            placeholder={skills.length ? 'Add another…' : 'e.g. react, then Enter'}
+                            aria-describedby="pe-skills-hint"
+                            autoComplete="off"
+                        />
+                    </div>
+                    <p className="pe-hint" id="pe-skills-hint" aria-live="polite">
+                        {note || 'Press Enter to add a skill, × to remove one.'}
+                    </p>
+                </div>
+            );
+        }
+
+        // ---------- Preview ----------
+        function ProfileCard({ profile }) {
+            const savedAt = profile.savedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return (
+                <article className="pe-card" aria-label={`Profile of ${profile.name}`}>
+                    <div className="pe-card-top">
+                        <div className="pe-avatar">
+                            {profile.photo
+                                ? <img src={profile.photo.url} alt={`Photo of ${profile.name}`} />
+                                : <span aria-hidden="true">{initials(profile.name)}</span>}
+                        </div>
+                        <div className="pe-card-ident">
+                            <h4 className="pe-card-name">{profile.name}</h4>
+                            <p className="pe-card-meta">ID {profile.studentId} · Year {profile.year}</p>
+                            <p className="pe-card-major">{profile.major}</p>
+                            <p className="pe-card-count">bio: {profile.bio.length} / {BIO_MAX}</p>
+                        </div>
+                    </div>
+                    <p className="pe-card-bio">{profile.bio}</p>
+                    {profile.skills.length > 0 && (
+                        <ul className="pe-card-tags" aria-label="Skills">
+                            {profile.skills.map((skill) => <li key={skill}>[{skill}]</li>)}
+                        </ul>
+                    )}
+                    <p className="pe-card-foot">Saved at {savedAt}</p>
+                </article>
+            );
+        }
+
+        function ProfilePreview({ profile, isDirty, headingRef }) {
+            return (
+                <aside className="pe-preview" aria-labelledby="pe-preview-heading">
+                    <div className="pe-preview-head">
+                        <h3 id="pe-preview-heading" className="pe-preview-label" ref={headingRef} tabIndex={-1}>Profile Preview</h3>
+                        {profile && (isDirty
+                            ? <span className="pill pill--amber">Unsaved changes</span>
+                            : <span className="pill pill--emerald">Saved</span>)}
+                    </div>
+                    {profile ? <ProfileCard profile={profile} /> : (
+                        <div className="pe-empty">
+                            <span className="pe-empty-icon" aria-hidden="true">
+                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </span>
+                            <strong>No profile yet</strong>
+                            <p>Fill in every field and press Save profile. The card appears here.</p>
+                        </div>
+                    )}
+                </aside>
+            );
+        }
+
+        // ---------- Editor ----------
+        function StudentProfileEditor() {
+            const [values, setValues] = useState(EMPTY);
+            const [touched, setTouched] = useState({});
+            const [submitted, setSubmitted] = useState(false);
+            const [profile, setProfile] = useState(null);
+            const [photoNotice, setPhotoNotice] = useState('');
+            const [dragging, setDragging] = useState(false);
+            const fileRef = useRef(null);
+            const previewHeadingRef = useRef(null);
+            const summaryRef = useRef(null);
+
+            const errors = validate(values);
+            const errorCount = Object.keys(errors).length;
+            const show = (field) => ((touched[field] || submitted) ? errors[field] : undefined);
+            const isDirty = profile !== null && snapshot(values) !== snapshot(profile);
+
+            const update = (field, value) => setValues((v) => ({ ...v, [field]: value }));
+            const touch = (field) => setTouched((t) => (t[field] ? t : { ...t, [field]: true }));
+
+            function loadPhoto(file) {
+                touch('photo');
+                if (!file) return;
+                if (!file.type.startsWith('image/')) {
+                    setPhotoNotice(`“${file.name}” is not an image. Choose a JPG, PNG, GIF or WebP file.`);
+                    return;
+                }
+                if (file.size > MAX_PHOTO_BYTES) {
+                    setPhotoNotice('That image is larger than 5 MB. Choose a smaller one.');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = () => {
+                    setPhotoNotice('');
+                    update('photo', { name: file.name, url: reader.result });
+                };
+                reader.onerror = () => setPhotoNotice('Could not read that file. Try another image.');
+                reader.readAsDataURL(file);
+            }
+
+            function handlePhotoInput(e) {
+                loadPhoto(e.target.files[0]);
+                e.target.value = ''; // so choosing the same file again still fires onChange
+            }
+
+            function handleDrop(e) {
+                e.preventDefault();
+                setDragging(false);
+                loadPhoto(e.dataTransfer.files[0]);
+            }
+
+            function removePhoto() {
+                update('photo', null);
+                setPhotoNotice('');
+                fileRef.current.focus();
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                setSubmitted(true);
+                const firstInvalid = FIELD_ORDER.find((field) => errors[field]);
+                if (firstInvalid) {
+                    document.getElementById(FOCUS_ID[firstInvalid]).focus();
+                    return;
+                }
+                setProfile({ ...values, name: values.name.trim(), studentId: values.studentId.trim(), skills: [...values.skills], savedAt: new Date() });
+                requestAnimationFrame(() => previewHeadingRef.current && previewHeadingRef.current.focus());
+            }
+
+            function handleReset() {
+                setValues(EMPTY);
+                setTouched({});
+                setSubmitted(false);
+                setPhotoNotice('');
+                document.getElementById('pe-name').focus();
+            }
+
+            // Live counters
+            const idDigits = values.studentId.trim().length;
+            const bioLength = values.bio.length;
+            const bioState = bioLength > BIO_MAX ? 'is-over' : bioLength >= BIO_WARN ? 'is-near' : bioLength > 0 ? 'is-ok' : '';
+            const idState = idDigits === 0 ? '' : (idDigits === ID_LENGTH && !errors.studentId) ? 'is-ok' : idDigits > ID_LENGTH ? 'is-over' : '';
+
+            const photoError = photoNotice || show('photo');
+            const yearError = show('year');
+
+            return (
+                <div className="pe-layout">
+                    <form className="pe-form" noValidate onSubmit={handleSubmit} aria-label="Student profile">
+                        {submitted && errorCount > 0 && (
+                            <div className="pe-summary" role="alert" ref={summaryRef}>
+                                <AlertIcon size={16} />
+                                <span>{errorCount === 1 ? '1 field needs' : `${errorCount} fields need`} attention before the profile can be saved.</span>
+                            </div>
+                        )}
+
+                        <div className="pe-row">
+                            <Field id="pe-name" label="Name" error={show('name')}>
+                                <input
+                                    id="pe-name"
+                                    className="pe-input"
+                                    value={values.name}
+                                    onChange={(e) => update('name', e.target.value)}
+                                    onBlur={() => touch('name')}
+                                    placeholder="e.g. Kim Minho"
+                                    autoComplete="name"
+                                    aria-required="true"
+                                    aria-invalid={!!show('name')}
+                                    aria-describedby={describedBy('pe-name', show('name'))}
+                                />
+                            </Field>
+
+                            <Field
+                                id="pe-studentId"
+                                label="Student ID"
+                                error={show('studentId')}
+                                hint="Exactly 10 digits, e.g. 2024123456"
+                                aside={<span className={`pe-counter ${idState}`}>{idDigits} / {ID_LENGTH}</span>}
+                            >
+                                <input
+                                    id="pe-studentId"
+                                    className="pe-input pe-input--mono"
+                                    value={values.studentId}
+                                    onChange={(e) => update('studentId', e.target.value)}
+                                    onBlur={() => touch('studentId')}
+                                    inputMode="numeric"
+                                    maxLength={ID_LENGTH + 2}
+                                    placeholder="2024123456"
+                                    autoComplete="off"
+                                    aria-required="true"
+                                    aria-invalid={!!show('studentId')}
+                                    aria-describedby={describedBy('pe-studentId', show('studentId'), true)}
+                                />
+                            </Field>
+                        </div>
+
+                        <Field id="pe-major" label="Major" error={show('major')}>
+                            <select
+                                id="pe-major"
+                                className="pe-input"
+                                value={values.major}
+                                onChange={(e) => { update('major', e.target.value); touch('major'); }}
+                                onBlur={() => touch('major')}
+                                aria-required="true"
+                                aria-invalid={!!show('major')}
+                                aria-describedby={describedBy('pe-major', show('major'))}
+                            >
+                                <option value="">Choose a major…</option>
+                                {MAJORS.map((m) => <option key={m} value={m}>{m}</option>)}
+                            </select>
+                        </Field>
+
+                        <fieldset className="pe-field" aria-describedby={describedBy('pe-year', yearError)}>
+                            <legend className="pe-label" style={{ marginBottom: 7 }}>Year<span className="pe-req" aria-hidden="true">*</span></legend>
+                            <div className={`pe-years ${yearError ? 'is-invalid' : ''}`}>
+                                {YEARS.map((y) => (
+                                    <label className="pe-year" key={y}>
+                                        <input
+                                            type="radio"
+                                            id={`pe-year-${y}`}
+                                            name="year"
+                                            value={y}
+                                            checked={values.year === y}
+                                            onChange={(e) => { update('year', e.target.value); touch('year'); }}
+                                            aria-invalid={!!yearError}
+                                        />
+                                        <span>Year {y}</span>
+                                    </label>
+                                ))}
+                            </div>
+                            <FieldMessage id="pe-year" error={yearError} />
+                        </fieldset>
+
+                        <div className="pe-field">
+                            <div className="pe-label-row">
+                                <span className="pe-label" id="pe-photo-label">Photo<span className="pe-req" aria-hidden="true">*</span></span>
+                            </div>
+                            <div
+                                className={`pe-photo ${dragging ? 'is-drag' : ''} ${photoError ? 'is-invalid' : ''}`}
+                                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                                onDragLeave={() => setDragging(false)}
+                                onDrop={handleDrop}
+                            >
+                                <div className="pe-photo-thumb">
+                                    {values.photo
+                                        ? <img src={values.photo.url} alt="Selected photo preview" />
+                                        : <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>}
+                                </div>
+                                <div className="pe-photo-body">
+                                    <div className="pe-photo-actions">
+                                        <input
+                                            id="pe-photo"
+                                            ref={fileRef}
+                                            type="file"
+                                            accept="image/*"
+                                            className="pe-file-input"
+                                            onChange={handlePhotoInput}
+                                            aria-labelledby="pe-photo-label pe-photo-btn"
+                                            aria-required="true"
+                                            aria-invalid={!!photoError}
+                                            aria-describedby={describedBy('pe-photo', photoError, true)}
+                                        />
+                                        <label htmlFor="pe-photo" id="pe-photo-btn" className="btn btn-ghost btn-sm">
+                                            {values.photo ? 'Change photo' : 'Choose photo'}
+                                        </label>
+                                        {values.photo && (
+                                            <button type="button" className="btn btn-ghost btn-sm" onClick={removePhoto}>Remove</button>
+                                        )}
+                                    </div>
+                                    <span className="pe-photo-name">
+                                        {values.photo ? values.photo.name : 'or drop an image here (max 5 MB)'}
+                                    </span>
+                                </div>
+                            </div>
+                            <FieldMessage id="pe-photo" error={photoError} hint="JPG, PNG, GIF or WebP" />
+                        </div>
+
+                        <Field
+                            id="pe-bio"
+                            label="Bio"
+                            error={show('bio')}
+                            aside={<span className={`pe-counter ${bioState}`} aria-hidden="true">{bioLength} / {BIO_MAX}</span>}
+                        >
+                            <textarea
+                                id="pe-bio"
+                                className="pe-input"
+                                value={values.bio}
+                                onChange={(e) => update('bio', e.target.value)}
+                                onBlur={() => touch('bio')}
+                                placeholder="A few sentences about you, your interests and what you are studying."
+                                aria-required="true"
+                                aria-invalid={!!show('bio')}
+                                aria-describedby={`pe-bio-count ${describedBy('pe-bio', show('bio')) || ''}`.trim()}
+                            />
+                            <div className={`pe-meter ${bioState}`} aria-hidden="true">
+                                <span style={{ width: `${Math.min(bioLength / BIO_MAX, 1) * 100}%` }}></span>
+                            </div>
+                            <span className="sr-only" id="pe-bio-count">{bioLength} of {BIO_MAX} characters used</span>
+                        </Field>
+
+                        <SkillsInput skills={values.skills} onChange={(skills) => update('skills', skills)} />
+
+                        <div className="pe-actions">
+                            <button type="submit" className="btn btn-primary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                {profile ? 'Update profile' : 'Save profile'}
+                            </button>
+                            <button type="button" className="btn btn-ghost" onClick={handleReset}>Clear form</button>
+                        </div>
+                    </form>
+
+                    <ProfilePreview profile={profile} isDirty={isDirty} headingRef={previewHeadingRef} />
+                </div>
+            );
+        }
+
+        const rootElement = document.getElementById('profile-root');
+        if (rootElement) {
+            ReactDOM.createRoot(rootElement).render(<StudentProfileEditor />);
+        }
+    </script>
+
+    <!-- Syntax highlighter for the code viewer -->
+    <script>
+        (function () {
+            const KEYWORDS = new Set(['import', 'from', 'export', 'default', 'function', 'const', 'let', 'return', 'if', 'else', 'try', 'catch', 'finally', 'throw', 'new', 'async', 'await', 'class', 'extends', 'super', 'this', 'null', 'true', 'false', 'undefined']);
+            const TOKEN = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|('(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|`(?:\\.|[^`\\])*`)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)/g;
+            const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            function highlight(src) {
+                let out = '';
+                let last = 0;
+                let m;
+                TOKEN.lastIndex = 0;
+                while ((m = TOKEN.exec(src))) {
+                    out += esc(src.slice(last, m.index));
+                    last = TOKEN.lastIndex;
+                    const [tok, com, str, num, word] = m;
+                    let cls = null;
+                    if (com) cls = 'c-com';
+                    else if (str) cls = 'c-str';
+                    else if (num) cls = 'c-num';
+                    else if (word) {
+                        const before = src.slice(Math.max(0, m.index - 2), m.index);
+                        const after = src.slice(last).match(/^\s*(.)/);
+                        if (KEYWORDS.has(word)) cls = 'c-kw';
+                        else if (/<\/?$/.test(before)) cls = 'c-kw'; // JSX tag name
+                        else if (after && after[1] === '(') cls = 'c-fn';
+                    }
+                    out += cls ? `<span class="${cls}">${esc(tok)}</span>` : esc(tok);
+                }
+                return out + esc(src.slice(last));
+            }
+
+            document.querySelectorAll('code[data-src]').forEach((el) => {
+                const src = document.getElementById(el.dataset.src).textContent.replace(/^\n/, '').replace(/\s+$/, '');
+                el.innerHTML = highlight(src);
+            });
+        })();
+    </script>
+
+    <!-- Tab Switching Script (click + arrow-key navigation) -->
+    <script>
+        const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+
+        function selectTab(tab, moveFocus) {
+            tabs.forEach((t) => {
+                const selected = t === tab;
+                t.setAttribute('aria-selected', String(selected));
+                t.tabIndex = selected ? 0 : -1;
+                document.getElementById(t.getAttribute('aria-controls')).hidden = !selected;
+            });
+            if (moveFocus) tab.focus();
+        }
+
+        tabs.forEach((tab, i) => {
+            tab.addEventListener('click', () => selectTab(tab, false));
+            tab.addEventListener('keydown', (e) => {
+                const keys = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 };
+                if (!(e.key in keys)) return;
+                e.preventDefault();
+                selectTab(tabs[(keys[e.key] + tabs.length) % tabs.length], true);
+            });
+        });
+    </script>
+</body>
+</html>

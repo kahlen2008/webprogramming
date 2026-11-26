@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#090d16">
+    <title>Week 13_1 · Forms &amp; Student Profile Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-body: #090d16;
+            --card-bg: rgba(18, 24, 38, 0.85);
+            --card-sub: rgba(26, 34, 52, 0.65);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(59, 130, 246, 0.35);
+            --purple: #a855f7;
+            --purple-light: #c084fc;
+            --purple-glow: rgba(168, 85, 247, 0.25);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.25);
+            --green: #10b981;
+            --green-glow: rgba(16, 185, 129, 0.25);
+            --amber: #fbbf24;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --text-dim: #64748b;
+            --radius-card: 22px;
+            --radius-sub: 14px;
+            --radius-btn: 10px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        h1, h2, h3, h4, .badge, .session-badge { text-wrap: balance; }
+        p, .desc { text-wrap: pretty; }
+
+        .skip-link {
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 1000;
+            background: var(--blue);
+            color: #ffffff;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+            transform: translateY(-200%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+        }
+
+        .skip-link:focus-visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            outline: 3px solid #ffffff;
+            outline-offset: 3px;
+        }
+
+        html {
+            background-color: var(--bg-body);
+            color-scheme: dark;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.12) 0%, transparent 45%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px 20px 80px 20px;
+        }
+
+        .topbar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: var(--radius-btn);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            border-color: var(--blue);
+            background: rgba(59, 130, 246, 0.15);
+            transform: translateX(-2px);
+        }
+
+        .session-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            white-space: nowrap;
+        }
+
+        header.header-title {
+            text-align: center;
+            max-width: 860px;
+            margin-bottom: 34px;
+        }
+
+        header.header-title h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 30%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header.header-title p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.55;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* Homework Featured Hero Card */
+        .hw-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .hw-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: var(--radius-card);
+            padding: 30px 36px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .hero-card:hover {
+            border-color: rgba(96, 165, 250, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--blue-glow);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 840px;
+            width: 100%;
+            min-width: 0;
+            flex: 1 1 480px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--amber);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.35;
+        }
+
+        .hero-desc {
+            color: var(--text-sub);
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .hero-url-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            min-width: 0;
+            margin-top: 6px;
+        }
+
+        .hero-url-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .hero-url-pill:hover {
+            color: #ffffff;
+            background: rgba(59, 130, 246, 0.25);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .hero-url-pill-live {
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.14);
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+
+        .hero-url-pill-live:hover {
+            color: #ffffff;
+            background: rgba(16, 185, 129, 0.28);
+            border-color: rgba(16, 185, 129, 0.6);
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.74rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .hero-url-pill-live .pill-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .pill-url {
+            overflow-wrap: anywhere;
+            word-break: break-all;
+            min-width: 0;
+            flex: 1;
+            font-size: 0.78rem;
+            line-height: 1.4;
+        }
+
+        .pill-ext-icon {
+            flex-shrink: 0;
+            opacity: 0.7;
+            transition: transform 0.2s;
+        }
+
+        .hero-url-pill:hover .pill-ext-icon {
+            transform: translate(2px, -2px);
+            opacity: 1;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulseGlow 2s infinite ease-in-out;
+            display: inline-block;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(0.85); }
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .btn-launch-hero {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #1a56db 0%, #2563eb 100%);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        .btn-launch-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 22px;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch-live:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 30px 32px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .topics-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .item-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: #60a5fa;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .item-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .item-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .item-desc {
+            font-size: 0.86rem;
+            color: var(--text-sub);
+            line-height: 1.45;
+        }
+
+        .code-tag {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Content Grid: Side by Side (Like Week 10_1 & Week 9_1) */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+            width: 100%;
+        }
+
+        @media (max-width: 960px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            gap: 16px;
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .topic-item:hover {
+            background: rgba(168, 85, 247, 0.08);
+            border-color: rgba(168, 85, 247, 0.35);
+            transform: translateX(4px);
+        }
+
+        .topic-item .item-arrow {
+            color: var(--text-dim);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .topic-item:hover .item-arrow {
+            color: #c084fc;
+            transform: translateX(3px);
+        }
+
+        .topic-num {
+            background: rgba(168, 85, 247, 0.15) !important;
+            border: 1px solid rgba(168, 85, 247, 0.3) !important;
+            color: #c084fc !important;
+        }
+
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            gap: 16px;
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .exercise-item:hover {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.35);
+            transform: translateX(4px);
+        }
+
+        .exercise-item .item-arrow {
+            color: var(--text-dim);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .exercise-item:hover .item-arrow {
+            color: #60a5fa;
+            transform: translateX(3px);
+        }
+
+        .exercise-num {
+            background: rgba(59, 130, 246, 0.15) !important;
+            border: 1px solid rgba(59, 130, 246, 0.3) !important;
+            color: #60a5fa !important;
+        }
+
+        /* Mobile Layout */
+        @media (max-width: 768px) {
+            body { padding: 18px 14px 60px 14px; }
+            header.header-title h1 { font-size: 1.85rem; }
+            header.header-title p { font-size: 0.92rem; }
+            .hero-card { padding: 20px 16px; gap: 18px; }
+            .hero-title { font-size: 1.22rem; }
+            .hero-desc { font-size: 0.88rem; }
+            .hero-actions { width: 100%; flex-direction: column; align-items: stretch; gap: 10px; }
+            .btn-launch-hero, .btn-launch-live { width: 100%; justify-content: center; box-sizing: border-box; padding: 12px 16px; font-size: 0.9rem; }
+            .section-card { padding: 20px 16px; }
+            .concept-item { padding: 14px 16px; gap: 12px; }
+            .exercise-item { padding: 12px 14px; gap: 12px; }
+            .item-num { width: 36px; height: 36px; font-size: 0.9rem; }
+            .item-title { font-size: 0.95rem; }
+            .item-desc { font-size: 0.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 14px 10px 50px 10px; }
+            .hero-card { padding: 16px 12px; }
+            .section-card { padding: 16px 12px; }
+            .hero-url-pill { padding: 8px 10px; gap: 6px; }
+            .pill-url { font-size: 0.72rem; }
+            .exercise-item { padding: 10px; gap: 10px; }
+        }
+
+        .content-grid.single { grid-template-columns: 1fr; }
+
+        /* In-class activity code banner */
+        .activity-card {
+            background: linear-gradient(135deg, rgba(6, 95, 70, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%);
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+
+        .activity-card:hover {
+            border-color: rgba(52, 211, 153, 0.6);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--green-glow);
+        }
+
+        .activity-card .hero-tag { color: #34d399; }
+
+        .activity-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .activity-meta span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .activity-meta strong { color: #ffffff; }
+
+        .activity-code-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .activity-code {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            color: #34d399;
+            background: rgba(2, 6, 23, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            border-radius: var(--radius-sub);
+            padding: 14px 22px 14px 28px;
+            white-space: nowrap;
+        }
+
+        .btn-copy-code {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            padding: 7px 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy-code:hover {
+            color: #ffffff;
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.12);
+        }
+
+        @media (max-width: 768px) {
+            .activity-code-box { width: 100%; }
+            .activity-code { font-size: 1.25rem; letter-spacing: 0.14em; padding: 12px 16px; width: 100%; text-align: center; }
+        }
+
+        footer {
+            margin-top: 50px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Accessible Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Top Navigation -->
+    <nav class="topbar" aria-label="Page Navigation">
+        <a href="../../index.html" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Coursework Hub
+        </a>
+        <div class="session-badge">Week 13_1 · Forms in React</div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="header-title">
+        <h1>Forms &amp; Student Profile Editor</h1>
+        <p>Building a full form in React: controlled inputs, selects, radio groups and file uploads, validation messages that appear at the right moment, a live character counter, and a preview card rendered on&nbsp;submit.</p>
+    </header>
+
+    <main class="main-container" id="main-content">
+
+        <!-- Homework & Code Challenge Featured Banners -->
+        <section class="hw-section" aria-labelledby="hw-heading">
+            <div class="hw-section-title" id="hw-heading">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                Homework, Practice &amp; Code Challenge
+            </div>
+
+            <div class="hero-card">
+                <div class="hero-content">
+                    <span class="hero-tag">⭐ Homework · Controlled Forms</span>
+                    <h2 class="hero-title">Student Profile Editor</h2>
+                    <p class="hero-desc">
+                        Name, 10-digit student ID, major dropdown, year 1–4 radios, bio and photo upload with a preview. Every field is validated, the bio shows a live <code>n / 200</code> counter, and a valid submit renders a Profile Preview card. Stretch: skills as tags, added with Enter and removed with&nbsp;×.
+                    </p>
+                </div>
+                <div class="hero-actions">
+                    <a href="hw-student-profile-editor.html" class="btn-launch-hero">
+                        Open Editor
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-card" style="background: linear-gradient(135deg, rgba(6, 78, 59, 0.3) 0%, rgba(18, 24, 38, 0.95) 100%); border-color: rgba(16, 185, 129, 0.35);">
+                <div class="hero-content">
+                    <span class="hero-tag" style="color: #34d399;">🎯 Practice Challenge · Form Inputs</span>
+                    <h2 class="hero-title">Course Feedback Form</h2>
+                    <p class="hero-desc">
+                        Student name, an 8-digit student ID, a star rating with radio buttons, topic checkboxes (HTML, CSS, JavaScript, Git, React) and comments with a live 300-character count. Submitting validates the form and shows a “Thank you!” message with the student&rsquo;s name. Bonus: Submit stays disabled while any required field is&nbsp;empty.
+                    </p>
+                </div>
+                <div class="hero-actions">
+                    <a href="practice-course-feedback-form.html" class="btn-launch-hero" style="background: linear-gradient(135deg, #059669, #34d399); color: #022c22;">
+                        Open Practice
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-card" style="background: linear-gradient(135deg, rgba(113, 63, 18, 0.3) 0%, rgba(18, 24, 38, 0.95) 100%); border-color: rgba(250, 204, 21, 0.35);">
+                <div class="hero-content">
+                    <span class="hero-tag" style="color: #facc15;">👤 Personal Page · React Element</span>
+                    <h2 class="hero-title">React Contact Form on My Portfolio</h2>
+                    <p class="hero-desc">
+                        The contact form on my digital portfolio rebuilt as a React component: name, email and message validated on submit with an error under each field, then &ldquo;Thank you, {name}!&rdquo; and a reset form. Still sends to the same Formspree&nbsp;inbox.
+                    </p>
+                </div>
+                <div class="hero-actions">
+                    <a href="personal-page-contact-form.html" class="btn-launch-hero" style="background: linear-gradient(135deg, #eab308, #facc15); color: #0a0a0a;">
+                        View Integration
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-card" style="background: linear-gradient(135deg, rgba(88, 28, 135, 0.28) 0%, rgba(18, 24, 38, 0.95) 100%); border-color: rgba(168, 85, 247, 0.35);">
+                <div class="hero-content">
+                    <span class="hero-tag" style="color: var(--purple-light);">⚡ Code Challenge · Multi-Step Form</span>
+                    <h2 class="hero-title">Multi-Step Registration</h2>
+                    <p class="hero-desc">
+                        A 3-step wizard: personal info, account setup and preferences with a review summary. Each step is validated before Next is enabled, progress shows “Step 2 of 3”, Previous keeps everything you typed, and the final submit runs <code>console.log(fullFormObject)</code>.
+                    </p>
+                </div>
+                <div class="hero-actions">
+                    <a href="code-challenge-multi-step-registration.html" class="btn-launch-hero" style="background: linear-gradient(135deg, #a855f7, #6366f1);">
+                        Open Challenge
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Grid: Practice Exercises -->
+        <div class="content-grid single">
+
+            <!-- Practice Exercises -->
+            <section class="section-card" aria-labelledby="exercises-head">
+                <div class="hw-section-title" id="exercises-head" style="color: #60a5fa;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Practice Exercises
+                </div>
+
+                <ul class="topics-list">
+                    <li>
+                        <a href="e1-bio-field.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E1</span>
+                                <div class="item-text">
+                                    <span class="item-title">Bio Field with Live Count</span>
+                                    <span class="item-desc">A controlled <code>&lt;textarea&gt;</code> capped at 200 characters with a live <code>X / 200</code> count, disabled once the limit is&nbsp;reached.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="e2-contact-form.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E2</span>
+                                <div class="item-text">
+                                    <span class="item-title">Contact Form with Validation</span>
+                                    <span class="item-desc">Name, Email and Message validated on submit with an error next to each field, then a &ldquo;Thank you&rdquo; message and a reset&nbsp;form.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="e3-skill-picker.html" class="exercise-item">
+                            <div class="item-left">
+                                <span class="item-num exercise-num">E3</span>
+                                <div class="item-text">
+                                    <span class="item-title">Skill Picker with Limit</span>
+                                    <span class="item-desc">Six skill checkboxes with a live selected counter and a warning when more than 3 are&nbsp;picked.</span>
+                                </div>
+                            </div>
+                            <svg class="item-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        Web Programming Course · Week 13_1 · Forms &amp; Student Profile Editor
+    </footer>
+
+</body>
+</html>
