@@ -715,7 +715,7 @@
         .fb-ratings.is-invalid .fb-rating-card { border-color: var(--rose-line); }
 
         /* Topics: checkboxes drawn as toggle chips */
-        /* Even grid: 8 topics = 2 full rows of 4 (2 per row on phones) */
+        /* Even grid: 12 topics = 3 full rows of 4 (2 per row on phones) */
         .fb-topics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 
         .fb-topic { position: relative; }
@@ -728,28 +728,50 @@
             cursor: pointer;
         }
 
-        .fb-topic span {
+        /* Topic name on top, the week it was taught underneath */
+        .fb-topic > span {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100%;
-            white-space: nowrap;
-            gap: 6px;
-            padding: 8px 14px;
-            border-radius: 999px;
+            gap: 1px;
+            padding: 8px 10px;
+            border-radius: 12px;
             border: 1px solid var(--border-strong);
             background: var(--bg-inset);
             color: var(--text-sub);
             font-size: var(--fs-sm);
             font-weight: 600;
+            text-align: center;
             transition: color 0.15s, border-color 0.15s, background 0.15s;
         }
 
-        .fb-topic span svg { opacity: 0; width: 0; transition: opacity 0.15s, width 0.15s; }
-        .fb-topic:hover span { color: #ffffff; border-color: var(--emerald-line); }
+        .fb-topic-name { display: inline-flex; align-items: center; gap: 6px; }
+        .fb-topic-week { font-size: 0.7rem; font-weight: 500; color: var(--text-dim); }
+
+        .fb-topic svg { flex: none; opacity: 0; width: 0; transition: opacity 0.15s, width 0.15s; }
+        .fb-topic:hover > span { color: #ffffff; border-color: var(--emerald-line); }
         .fb-topic input:checked + span { color: var(--emerald); background: var(--emerald-soft); border-color: var(--emerald-line); }
         .fb-topic input:checked + span svg { opacity: 1; width: 14px; }
+        .fb-topic input:checked + span .fb-topic-week { color: inherit; opacity: 0.75; }
         .fb-topic input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+        /* "Needs More Time" picks are amber so the two lists look different */
+        .fb-topics.is-more .fb-topic:hover > span { border-color: var(--amber-line); }
+        .fb-topics.is-more .fb-topic input:checked + span { color: var(--amber); background: var(--amber-soft); border-color: var(--amber-line); }
+
+        /* Locked because it is already picked in the other list */
+        .fb-topic.is-taken input { cursor: not-allowed; }
+        .fb-topics .fb-topic.is-taken > span,
+        .fb-topics .fb-topic.is-taken:hover > span {
+            color: var(--text-dim);
+            border-style: dashed;
+            border-color: var(--border-strong);
+            background: transparent;
+            opacity: 0.55;
+            text-decoration: line-through;
+        }
 
         .btn-green {
             background: linear-gradient(135deg, #059669, #34d399);
@@ -852,14 +874,16 @@
             gap: 10px 28px;
         }
         .fb-receipt-cats li { display: flex; align-items: center; gap: 10px; font-size: var(--fs-sm); min-width: 0; }
-        .fb-receipt-cat { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fb-receipt-cat { flex: 1; min-width: 0; line-height: 1.3; }
         .fb-dots { display: flex; gap: 3px; flex: none; }
         .fb-dots i { width: 14px; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.09); }
         .fb-dots i.on.v1 { background: var(--rose); }
         .fb-dots i.on.v2 { background: var(--amber); }
         .fb-dots i.on.v3 { background: var(--blue); }
         .fb-dots i.on.v4, .fb-dots i.on.v5 { background: var(--emerald); }
-        .fb-receipt-score { flex: none; width: 34px; text-align: right; font-family: var(--font-mono); font-weight: 600; }
+        .fb-receipt-score { flex: none; width: 46px; text-align: right; font-family: var(--font-mono); font-weight: 600; }
+        .fb-receipt-note { font-size: var(--fs-sm); color: var(--text-sub); }
+        .fb-receipt-note strong { color: var(--text-main); }
         .fb-receipt-score small { color: var(--text-dim); font-weight: 400; }
 
         .fb-receipt-topics { flex-direction: row; flex-wrap: wrap; gap: 16px 32px; }
@@ -1207,7 +1231,7 @@
             border: 1px solid var(--border-strong);
             border-radius: 12px;
             box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
-            max-height: 260px;
+            max-height: 340px;
             overflow: auto;
         }
         .fb-select-list li {
@@ -1240,6 +1264,97 @@
         textarea.pe-input.fb-textarea { min-height: 100px; }
 
         .fb-form > .fb-actions { background: rgba(255, 255, 255, 0.02); border-radius: 0 0 var(--radius-sub) var(--radius-sub); }
+
+        /* Step navigation */
+        .fb-steps { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 4px; }
+        .fb-step-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 9px;
+            text-align: left;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            color: var(--text-dim);
+            font-family: inherit;
+            cursor: pointer;
+            transition: color 0.15s, background 0.15s, border-color 0.15s;
+        }
+        .fb-step-btn:disabled { cursor: not-allowed; opacity: 0.6; }
+        .fb-step-btn:not(:disabled):hover { background: rgba(255, 255, 255, 0.04); color: #ffffff; }
+        .fb-step-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+        .fb-step-dot {
+            flex: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            border: 1px solid var(--border-strong);
+            background: var(--bg-inset);
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+        }
+        .fb-step-text { display: flex; flex-direction: column; min-width: 0; }
+        .fb-step-label { font-size: var(--fs-sm); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fb-step-sub { font-size: var(--fs-xs); color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fb-step-btn.is-current { color: #ffffff; background: var(--emerald-soft); border-color: var(--emerald-line); }
+        .fb-step-btn.is-current .fb-step-dot { background: #10b981; border-color: #10b981; color: #022c22; }
+        .fb-step-btn.is-done { color: var(--text-main); }
+        .fb-step-btn.is-done .fb-step-dot { background: var(--emerald-soft); border-color: var(--emerald-line); color: var(--emerald); }
+
+        .btn-green.is-blocked,
+        .btn-green.is-blocked:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--border);
+            color: var(--text-dim);
+            filter: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        .fb-form > .fb-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .fb-actions-right { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-left: auto; }
+        .fb-form { scroll-margin-top: 16px; }
+
+        /* Statement groups (Course Design, Teaching, …) */
+        .fb-likert-scale { align-items: end; }
+        .fb-likert-scale:not(:first-child) { margin-top: 14px; }
+        .fb-likert-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-sub);
+        }
+        .fb-likert-group span {
+            font-family: var(--font-mono);
+            font-weight: 500;
+            letter-spacing: 0;
+            color: var(--text-dim);
+            padding: 1px 7px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+        }
+        .fb-likert-group span.is-done { color: var(--emerald); border-color: var(--emerald-line); background: var(--emerald-soft); }
+
+        .fb-cat-table tbody + tbody { border-top: 1px solid var(--border-strong); }
+        .fb-cat-table tr.fb-cat-group th,
+        .fb-cat-table tr.fb-cat-group td {
+            padding-top: 14px;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-sub);
+        }
+        .fb-cat-table tbody tr.fb-cat-group + tr { border-top: 0; }
+        .fb-cat-table tbody th[scope="row"] { font-weight: 500; }
 
         /* ---------- Code viewer ---------- */
         .code-tabs-header {
@@ -1348,7 +1463,14 @@
             .fb-ratings { grid-template-columns: 1fr; }
             .fb-section, .fb-results { padding: 18px 16px; }
             .fb-progress, .fb-form > .pe-actions { padding-left: 16px; padding-right: 16px; }
-            .fb-likert-scale { display: none; }
+            .fb-likert-scale { grid-template-columns: 1fr; padding: 0 4px; }
+            .fb-likert-ends { display: none; }
+            .fb-step-text { display: none; }
+            .fb-step-btn { justify-content: center; }
+            .fb-form > .fb-actions { flex-wrap: nowrap; align-items: flex-end; }
+            .fb-actions-right { flex: 1; min-width: 0; gap: 8px; }
+            .fb-actions-right .btn { flex: 1; justify-content: center; }
+            .fb-submit-note { width: 100%; text-align: right; }
             .fb-likert-row { grid-template-columns: 1fr; }
             .fb-section-body { padding-left: 0; }
             .fb-likert-row { padding: 12px; }
@@ -1404,7 +1526,7 @@
         <header class="hero-card">
             <h1 class="hero-title">Course Evaluation Form</h1>
             <p class="hero-desc">
-                A full end-of-course evaluation built from every common input type: name and an 8-digit student ID (or an anonymous switch that skips both), a 1–5 star overall rating, a 1–5 agreement scale for six parts of the course, a difficulty slider, a custom study-time dropdown, a recommend question, topic checkboxes and three text boxes with live 300-character counters. Submitting validates the form and thanks the student by name. Responses are saved in this browser and added up into a results summary that can be exported as CSV. Bonus: Submit stays disabled until every required question is answered.
+                The end-of-semester evaluation for Web Programming, split into 4 short steps with Back / Next and built from every common input type: name and a 9-digit student ID (or an anonymous switch that skips both), a 1–5 star overall rating, 14 agreement statements grouped into Course Design, Teaching, Assignments &amp; Feedback and Learning Outcomes, a difficulty slider, pace, study time, what helped most, a recommend question, the semester&rsquo;s 12 topics (Week 2 HTML to Week 13 React Forms) and four comment boxes with live 300-character counters. Submitting validates the form and thanks the student by name. Responses are saved in this browser and added up into a results summary that can be exported as CSV. Bonus: Submit stays disabled until every required question is answered.
             </p>
         </header>
 
@@ -1485,23 +1607,46 @@
 import { useState } from 'react';
 import { saveResponse } from '../evaluationStore';
 
+// 14 agreement statements in 4 groups, each rated 1 (Strongly Disagree) to 5 (Strongly Agree)
 export const CATEGORIES = [
-  { key: 'content', label: 'Course Content', question: 'Topics were relevant and well organised.' },
-  { key: 'instructor', label: 'Instructor', question: 'Explanations were clear and easy to follow.' },
-  { key: 'pace', label: 'Pace', question: 'The pace let me keep up.' },
-  { key: 'materials', label: 'Materials', question: 'Slides, examples and the course site helped me.' },
-  { key: 'assignments', label: 'Assignments', question: 'Homework helped me practise what we learned.' },
-  { key: 'support', label: 'Feedback & Support', question: 'I got useful help when I was stuck.' },
+  { key: 'goals', group: 'Course Design', label: 'Clear Goals', question: 'The goal of each week’s class was clearly explained.' },
+  { key: 'structure', group: 'Course Design', label: 'Logical Order', question: 'Topics built on each other in a logical order.' },
+  { key: 'balance', group: 'Course Design', label: 'Theory vs. Practice', question: 'There was a good balance between explanation and hands-on coding.' },
+  { key: 'clarity', group: 'Teaching', label: 'Clear Explanations', question: 'The instructor explained concepts clearly.' },
+  { key: 'demos', group: 'Teaching', label: 'Live Coding', question: 'Live coding demos helped me understand how the code works.' },
+  { key: 'questions', group: 'Teaching', label: 'Questions Welcome', question: 'I felt comfortable asking questions in class.' },
+  { key: 'support', group: 'Teaching', label: 'Help When Stuck', question: 'I could get help when I was stuck, in or outside class.' },
+  { key: 'relevance', group: 'Assignments & Feedback', label: 'Practice Matched Lessons', question: 'Exercises, code challenges and homework matched what was taught.' },
+  { key: 'instructions', group: 'Assignments & Feedback', label: 'Clear Instructions', question: 'Assignment instructions and requirements were clear.' },
+  { key: 'feedback', group: 'Assignments & Feedback', label: 'Useful Feedback', question: 'Feedback on my work was timely and helped me improve.' },
+  { key: 'fairness', group: 'Assignments & Feedback', label: 'Fair Grading', question: 'Grading was fair and the criteria were clear.' },
+  { key: 'deploy', group: 'Learning Outcomes', label: 'Build & Deploy', question: 'I can now build a website and publish it with GitHub Pages.' },
+  { key: 'react', group: 'Learning Outcomes', label: 'React Skills', question: 'I can build an interactive React app with components, state and forms.' },
+  { key: 'confidence', group: 'Learning Outcomes', label: 'Confidence', question: 'I feel confident learning new web technologies on my own.' },
 ];
 const LIKERT = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'];
-const TOPICS = ['HTML', 'CSS', 'JavaScript', 'DOM & Events', 'Git & GitHub', 'React', 'Forms', 'Fetch & APIs'];
+const PACE = ['Too Slow', 'Just Right', 'Too Fast'];
+const HELPFUL = ['Lectures & slides', 'Live coding demos', 'Weekly quizzes', 'Homework assignments',
+  'Team projects', 'Building my own portfolio', 'The professor’s GitHub repository'];
+// The topics this semester actually covered
+const TOPICS = ['HTML', 'CSS', 'DOM', 'JavaScript', 'Fetch & APIs', 'Forms & Validation',
+  'Lighthouse Audits', 'Git & GitHub', 'GitHub Pages', 'React Props', 'React State', 'React Forms'];
+const TEXT_FIELDS = ['best', 'improve', 'wish', 'comments'];  // keep doing / change / wish-list / other
 const TEXT_MAX = 300;
 
 const INITIAL = {
   anonymous: false, name: '', studentId: '',
-  rating: '', scores: {}, difficulty: 3, hours: '', recommend: '',
-  topicsWell: [], topicsMore: [], best: '', improve: '', comments: '',
+  rating: '', scores: {}, difficulty: 3, pace: '', hours: '', helpful: '', recommend: '',
+  topicsWell: [], topicsMore: [], best: '', improve: '', wish: '', comments: '',
 };
+
+// 4 steps: each one lists the fields it must get right before Next works
+const STEPS = [
+  { title: 'About You', fields: ['name', 'studentId', 'rating'] },
+  { title: 'Rate the Course', fields: CATEGORIES.map((c) => c.key) },
+  { title: 'Workload & Topics', fields: ['pace', 'hours', 'helpful', 'recommend'] },
+  { title: 'Comments', fields: TEXT_FIELDS },
+];
 
 function validate(data) {
   const errors = {};
@@ -1509,15 +1654,17 @@ function validate(data) {
   if (!data.anonymous) {
     if (!data.name.trim()) errors.name = 'Student name is required.';
     if (!data.studentId) errors.studentId = 'Student ID is required.';
-    else if (!/^\d{8}$/.test(data.studentId)) errors.studentId = 'Student ID must be exactly 8 digits.';
+    else if (!/^\d{9}$/.test(data.studentId)) errors.studentId = 'Student ID must be exactly 9 digits.';
   }
   if (!data.rating) errors.rating = 'Choose an overall rating.';
   CATEGORIES.forEach((c) => {
     if (!data.scores[c.key]) errors[c.key] = `Rate “${c.label}”.`;
   });
+  if (!data.pace) errors.pace = 'Tell us how the pace felt.';
   if (!data.hours) errors.hours = 'Choose your weekly study time.';
+  if (!data.helpful) errors.helpful = 'Choose what helped you learn most.';
   if (!data.recommend) errors.recommend = 'Would you recommend the course?';
-  ['best', 'improve', 'comments'].forEach((f) => {
+  TEXT_FIELDS.forEach((f) => {
     if (data[f].length > TEXT_MAX) errors[f] = `Keep it under ${TEXT_MAX} characters.`;
   });
   return errors;
@@ -1526,20 +1673,30 @@ function validate(data) {
 function CourseEvaluationForm() {
   const [formData, setFormData] = useState(INITIAL);
   const [submitted, setSubmitted] = useState(null);
+  const [step, setStep] = useState(0);  // formData lives here, so Back never loses answers
 
   const errors = validate(formData);
   // Bonus: Submit stays disabled while any required answer is missing
   const requiredEmpty = Object.keys(errors).length > 0;
+  const stepValid = STEPS[step].fields.every((f) => !errors[f]);
+  const isLastStep = step === STEPS.length - 1;
 
   const update = (field, value) => setFormData((d) => ({ ...d, [field]: value }));
   const setScore = (key, value) => setFormData((d) => ({ ...d, scores: { ...d.scores, [key]: value } }));
-  const toggle = (field, topic) => setFormData((d) => ({
-    ...d,
-    [field]: d[field].includes(topic) ? d[field].filter((t) => t !== topic) : [...d[field], topic],
-  }));
+  // A topic can be "taught well" or "needs more time", never both
+  const OTHER_LIST = { topicsWell: 'topicsMore', topicsMore: 'topicsWell' };
+  const toggle = (field, topic) => setFormData((d) => {
+    if (d[field].includes(topic)) return { ...d, [field]: d[field].filter((t) => t !== topic) };
+    if (d[OTHER_LIST[field]].includes(topic)) return d;
+    return { ...d, [field]: [...d[field], topic] };
+  });
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (!isLastStep) {             // Next (or Enter) on steps 1–3
+      if (stepValid) setStep((s) => s + 1);
+      return;
+    }
     if (requiredEmpty) return;
     const response = {
       ...formData,
@@ -1564,6 +1721,9 @@ function CourseEvaluationForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
+      <p>Step {step + 1} of {STEPS.length}: {STEPS[step].title}</p>
+
+      {/* Only the current step's questions are shown (all steps listed below for reading) */}
       <label>
         <input type="checkbox" checked={formData.anonymous}
           onChange={(e) => update('anonymous', e.target.checked)} />
@@ -1575,7 +1735,7 @@ function CourseEvaluationForm() {
           <label htmlFor="name">Student Name</label>
           <input id="name" value={formData.name} onChange={(e) => update('name', e.target.value)} />
           <label htmlFor="studentId">Student ID</label>
-          <input id="studentId" inputMode="numeric" maxLength={8} value={formData.studentId}
+          <input id="studentId" inputMode="numeric" maxLength={9} value={formData.studentId}
             onChange={(e) => update('studentId', e.target.value.replace(/\D/g, ''))} />  {/* digits only */}
         </>
       )}
@@ -1612,20 +1772,41 @@ function CourseEvaluationForm() {
       <input id="difficulty" type="range" min={1} max={5} value={formData.difficulty}
         onChange={(e) => update('difficulty', Number(e.target.value))} />
 
+      <fieldset>
+        <legend>How Was the Pace of the Course?</legend>
+        {PACE.map((p) => (
+          <label key={p}>
+            <input type="radio" name="pace" value={p} checked={formData.pace === p}
+              onChange={(e) => update('pace', e.target.value)} />
+            {p}
+          </label>
+        ))}
+      </fieldset>
+
+      <label htmlFor="helpful">What Helped You Learn the Most?</label>
+      <select id="helpful" value={formData.helpful} onChange={(e) => update('helpful', e.target.value)}>
+        <option value="">Choose one…</option>
+        {HELPFUL.map((h) => <option key={h}>{h}</option>)}
+      </select>
+
       {TOPICS.map((topic) => (
         <label key={topic}>
           <input type="checkbox" checked={formData.topicsWell.includes(topic)}
+            disabled={formData.topicsMore.includes(topic)}  // already in the other list
             onChange={() => toggle('topicsWell', topic)} />
           {topic}
         </label>
       ))}
 
-      <label htmlFor="improve">What Should Be Improved?</label>
+      <label htmlFor="improve">What Should Change or Be Improved?</label>
       <textarea id="improve" maxLength={TEXT_MAX} value={formData.improve}
         onChange={(e) => update('improve', e.target.value)} />
       <p>{formData.improve.length} / {TEXT_MAX}</p>  {/* live char count */}
 
-      <button type="submit" disabled={requiredEmpty}>Submit Evaluation</button>
+      <button type="button" onClick={() => setStep((s) => s - 1)} disabled={step === 0}>Back</button>
+      {isLastStep
+        ? <button type="submit" disabled={requiredEmpty}>Submit Evaluation</button>
+        : <button type="submit" aria-disabled={!stepValid}>Next</button>}
     </form>
   );
 }
@@ -1676,16 +1857,42 @@ export function summarize(responses) {
   };
 }
 
-// One row per response, ready to open in Excel or Google Sheets
+// "2026-11-28 21:05" in local time, which Excel and Sheets read as a real date
+const pad = (n) => String(n).padStart(2, '0');
+const localDateTime = (iso) => {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
+// One line per answer; a leading ' stops text like "=SUM(...)" running as a formula
+const cleanText = (s) => {
+  const t = String(s ?? '').replace(/\s*[\r\n]+\s*/g, ' / ').trim();
+  return /^[=+\-@\t]/.test(t) ? `'${t}` : t;
+};
+
+// Readable column titles, each with a function that pulls its value from a response
+const COLUMNS = [
+  { title: 'Submitted', get: (r) => localDateTime(r.submittedAt) },
+  { title: 'Student Name', get: (r) => (r.anonymous ? 'Anonymous' : cleanText(r.name)) },
+  { title: 'Student ID', get: (r) => (r.anonymous ? '' : r.studentId) },
+  { title: 'Overall (1-5)', get: (r) => Number(r.rating) },
+  ...CATEGORIES.map((c) => ({ title: `${c.label} (1-5)`, get: (r) => r.scores[c.key] })),
+  { title: 'Difficulty (1-5)', get: (r) => r.difficulty },
+  { title: 'Pace', get: (r) => r.pace },
+  { title: 'Study Time per Week', get: (r) => r.hours },
+  { title: 'Most Helpful Part of Class', get: (r) => r.helpful },
+  { title: 'Would Recommend', get: (r) => r.recommend },
+  { title: 'Taught Well', get: (r) => r.topicsWell.join(', ') },
+  { title: 'Needs More Time', get: (r) => r.topicsMore.join(', ') },
+  { title: 'What Should Be Improved', get: (r) => cleanText(r.improve) },
+];
+
+// One row per response (oldest first), ready to open in Excel or Google Sheets
 export function toCSV(responses) {
-  const head = ['submittedAt', 'name', 'studentId', 'rating',
-    ...CATEGORIES.map((c) => c.key), 'difficulty', 'hours', 'recommend', 'improve'];
-  const cell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const rows = responses.map((r) => [
-    r.submittedAt, r.name, r.studentId, r.rating,
-    ...CATEGORIES.map((c) => r.scores[c.key]), r.difficulty, r.hours, r.recommend, r.improve,
-  ].map(cell).join(','));
-  return [head.join(','), ...rows].join('\n');
+  const cell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;  // commas inside answers stay in one cell
+  const sorted = [...responses].sort((a, b) => a.submittedAt.localeCompare(b.submittedAt));
+  const rows = sorted.map((r) => COLUMNS.map((col) => cell(col.get(r))).join(','));
+  return [COLUMNS.map((col) => cell(col.title)).join(','), ...rows].join('\r\n');
 }
 </script>
 
@@ -1703,16 +1910,31 @@ export function toCSV(responses) {
             { stars: 4, label: 'Good' },
             { stars: 5, label: 'Excellent' },
         ];
+        // Agreement statements, grouped the way a university course evaluation is
+        const CATEGORY_GROUPS = ['Course Design', 'Teaching', 'Assignments & Feedback', 'Learning Outcomes'];
         const CATEGORIES = [
-            { key: 'content', label: 'Course Content', question: 'Topics were relevant and well organised.' },
-            { key: 'instructor', label: 'Instructor', question: 'Explanations were clear and easy to follow.' },
-            { key: 'pace', label: 'Pace', question: 'The pace let me keep up.' },
-            { key: 'materials', label: 'Materials', question: 'Slides, examples and the course site helped me.' },
-            { key: 'assignments', label: 'Assignments', question: 'Homework helped me practise what we learned.' },
-            { key: 'support', label: 'Feedback & Support', question: 'I got useful help when I was stuck.' },
+            { key: 'goals', group: 'Course Design', label: 'Clear Goals', question: 'The goal of each week’s class was clearly explained.' },
+            { key: 'structure', group: 'Course Design', label: 'Logical Order', question: 'Topics built on each other in a logical order (HTML → CSS → JavaScript → React).' },
+            { key: 'balance', group: 'Course Design', label: 'Theory vs. Practice', question: 'There was a good balance between explanation and hands-on coding.' },
+            { key: 'clarity', group: 'Teaching', label: 'Clear Explanations', question: 'The instructor explained concepts clearly.' },
+            { key: 'demos', group: 'Teaching', label: 'Live Coding', question: 'Live coding demos helped me understand how the code works.' },
+            { key: 'questions', group: 'Teaching', label: 'Questions Welcome', question: 'I felt comfortable asking questions in class.' },
+            { key: 'support', group: 'Teaching', label: 'Help When Stuck', question: 'I could get help when I was stuck, in or outside class.' },
+            { key: 'relevance', group: 'Assignments & Feedback', label: 'Practice Matched Lessons', question: 'Exercises, code challenges and homework matched what was taught.' },
+            { key: 'instructions', group: 'Assignments & Feedback', label: 'Clear Instructions', question: 'Assignment instructions and requirements were clear.' },
+            { key: 'feedback', group: 'Assignments & Feedback', label: 'Useful Feedback', question: 'Feedback on my work was timely and helped me improve.' },
+            { key: 'fairness', group: 'Assignments & Feedback', label: 'Fair Grading', question: 'Grading was fair and the criteria were clear.' },
+            { key: 'deploy', group: 'Learning Outcomes', label: 'Build & Deploy', question: 'I can now build a website and publish it with GitHub Pages.' },
+            { key: 'react', group: 'Learning Outcomes', label: 'React Skills', question: 'I can build an interactive React app with components, state and forms.' },
+            { key: 'confidence', group: 'Learning Outcomes', label: 'Confidence', question: 'I feel confident learning new web technologies on my own.' },
         ];
         const LIKERT = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'];
         const DIFFICULTY = ['Too Easy', 'Easy', 'Just Right', 'Hard', 'Too Hard'];
+        const PACE = [
+            { value: 'Too Slow', label: 'Too Slow' },
+            { value: 'Just Right', label: 'Just Right' },
+            { value: 'Too Fast', label: 'Too Fast' },
+        ];
         const HOURS = [
             { value: 'Under 2 hours', label: 'Under 2 hours' },
             { value: '2–4 hours', label: '2–4 hours' },
@@ -1720,35 +1942,70 @@ export function toCSV(responses) {
             { value: '6–8 hours', label: '6–8 hours' },
             { value: 'More than 8 hours', label: 'More than 8 hours' },
         ];
+        const HELPFUL = [
+            { value: 'Lectures & slides', label: 'Lectures & slides' },
+            { value: 'Live coding demos', label: 'Live coding demos' },
+            { value: 'Weekly quizzes', label: 'Weekly quizzes' },
+            { value: 'Homework assignments', label: 'Homework assignments' },
+            { value: 'Team projects', label: 'Team projects' },
+            { value: 'Building my own portfolio', label: 'Building my own portfolio' },
+            { value: 'The professor’s GitHub repository', label: 'The professor’s GitHub repository' },
+        ];
         const RECOMMEND = [
             { value: 'Yes', label: 'Yes' },
             { value: 'Maybe', label: 'Maybe' },
             { value: 'No', label: 'No' },
         ];
-        const TOPICS = ['HTML', 'CSS', 'JavaScript', 'DOM & Events', 'Git & GitHub', 'React', 'Forms', 'Fetch & APIs'];
-        const TEXT_FIELDS = [
-            { field: 'best', label: 'What Worked Best?', placeholder: 'A lecture, an exercise or a habit of the class that really helped…' },
-            { field: 'improve', label: 'What Should Be Improved?', placeholder: 'Be specific: what would you change, and how?' },
-            { field: 'comments', label: 'Anything Else?', placeholder: 'Other comments for the instructor' },
+        // What the course actually covered, week by week
+        const TOPICS = [
+            { name: 'HTML', week: 'Week 2' },
+            { name: 'CSS', week: 'Week 3' },
+            { name: 'DOM', week: 'Week 4' },
+            { name: 'JavaScript', week: 'Week 5' },
+            { name: 'Fetch & APIs', week: 'Weeks 6–7' },
+            { name: 'Forms & Validation', week: 'Week 8' },
+            { name: 'Lighthouse Audits', week: 'Week 9' },
+            { name: 'Git & GitHub', week: 'Week 10' },
+            { name: 'GitHub Pages', week: 'Week 10' },
+            { name: 'React Props', week: 'Week 11' },
+            { name: 'React State', week: 'Week 12' },
+            { name: 'React Forms', week: 'Week 13' },
         ];
-        const ID_LENGTH = 8;
+        const TOPIC_NAMES = TOPICS.map((t) => t.name);
+        const TEXT_FIELDS = [
+            { field: 'best', label: 'What Should the Instructor Keep Doing?', placeholder: 'A teaching habit, an activity or a type of assignment that really helped you…' },
+            { field: 'improve', label: 'What Should Change or Be Improved?', placeholder: 'Be specific: what would you change, and how?' },
+            { field: 'wish', label: 'Is There a Topic You Wish We Had Covered?', placeholder: 'e.g. TypeScript, Node.js, databases, testing…' },
+            { field: 'comments', label: 'Any Other Comments?', placeholder: 'Anything else you would like the instructor to know' },
+        ];
+        const ID_LENGTH = 9;
         const TEXT_MAX = 300;
         const TEXT_WARN = 270;
-        const STORE_KEY = 'week13-course-evaluations';
+        // v2: the questions changed, so older saved responses are kept separately
+        const STORE_KEY = 'week13-course-evaluations-v2';
 
         // Order used for focusing the first problem and for the progress count
-        const REQUIRED = ['name', 'studentId', 'rating', ...CATEGORIES.map((c) => c.key), 'hours', 'recommend'];
-        const FIELD_ORDER = [...REQUIRED, 'best', 'improve', 'comments'];
+        const REQUIRED = ['name', 'studentId', 'rating', ...CATEGORIES.map((c) => c.key), 'pace', 'hours', 'helpful', 'recommend'];
+        const FIELD_ORDER = [...REQUIRED, ...TEXT_FIELDS.map((t) => t.field)];
         const FOCUS_ID = {
-            name: 'fb-name', studentId: 'fb-studentId', rating: 'fb-rating-1', hours: 'fb-hours', recommend: 'fb-recommend-0',
-            best: 'fb-best', improve: 'fb-improve', comments: 'fb-comments',
+            name: 'fb-name', studentId: 'fb-studentId', rating: 'fb-rating-1',
+            pace: 'fb-pace-0', hours: 'fb-hours', helpful: 'fb-helpful', recommend: 'fb-recommend-0',
+            ...Object.fromEntries(TEXT_FIELDS.map((t) => [t.field, `fb-${t.field}`])),
             ...Object.fromEntries(CATEGORIES.map((c) => [c.key, `fb-${c.key}-1`])),
         };
 
+        // The form is split into 4 steps; each step checks only its own fields before Next is enabled
+        const STEPS = [
+            { title: 'About You', sub: 'You & overall rating', fields: ['name', 'studentId', 'rating'] },
+            { title: 'Rate the Course', sub: `${CATEGORIES.length} statements`, fields: CATEGORIES.map((c) => c.key) },
+            { title: 'Workload & Topics', sub: 'Pace, time & topics', fields: ['pace', 'hours', 'helpful', 'recommend'] },
+            { title: 'Comments', sub: 'In your own words', fields: TEXT_FIELDS.map((t) => t.field) },
+        ];
+
         const INITIAL = {
             anonymous: false, name: '', studentId: '',
-            rating: '', scores: {}, difficulty: 3, hours: '', recommend: '',
-            topicsWell: [], topicsMore: [], best: '', improve: '', comments: '',
+            rating: '', scores: {}, difficulty: 3, pace: '', hours: '', helpful: '', recommend: '',
+            topicsWell: [], topicsMore: [], best: '', improve: '', wish: '', comments: '',
         };
 
         function validate(data) {
@@ -1756,13 +2013,15 @@ export function toCSV(responses) {
             if (!data.anonymous) {
                 if (!data.name.trim()) errors.name = 'Student name is required (or turn on “Submit Anonymously”).';
                 if (!data.studentId) errors.studentId = 'Student ID is required.';
-                else if (!/^\d{8}$/.test(data.studentId)) errors.studentId = `Student ID must be exactly ${ID_LENGTH} digits (you have ${data.studentId.length}).`;
+                else if (!/^\d{9}$/.test(data.studentId)) errors.studentId = `Student ID must be exactly ${ID_LENGTH} digits (you have ${data.studentId.length}).`;
             }
             if (!data.rating) errors.rating = 'Choose an overall rating.';
             CATEGORIES.forEach((c) => {
                 if (!data.scores[c.key]) errors[c.key] = `Rate “${c.label}”.`;
             });
+            if (!data.pace) errors.pace = 'Tell us how the pace felt.';
             if (!data.hours) errors.hours = 'Choose your weekly study time.';
+            if (!data.helpful) errors.helpful = 'Choose what helped you learn most.';
             if (!data.recommend) errors.recommend = 'Tell us whether you would recommend the course.';
             TEXT_FIELDS.forEach(({ field }) => {
                 if (data[field].length > TEXT_MAX) errors[field] = `Keep it to ${TEXT_MAX} characters or fewer.`;
@@ -1795,32 +2054,75 @@ export function toCSV(responses) {
         };
 
         function summarize(responses) {
-            const topicCount = (field) => TOPICS
+            const topicCount = (field) => TOPIC_NAMES
                 .map((t) => ({ topic: t, count: responses.filter((r) => (r[field] || []).includes(t)).length }))
                 .filter((t) => t.count > 0)
                 .sort((a, b) => b.count - a.count)
                 .slice(0, 3);
+            const tally = (field, options) => options
+                .map((o) => ({ answer: o.value, count: responses.filter((r) => r[field] === o.value).length }));
+            const categories = CATEGORIES.map((c) => ({ ...c, average: average(responses.map((r) => r.scores && r.scores[c.key])) }));
+            const top = (list) => [...list].sort((a, b) => b.count - a.count)[0];
             return {
                 count: responses.length,
                 overall: average(responses.map((r) => Number(r.rating))),
                 difficulty: average(responses.map((r) => r.difficulty)),
-                categories: CATEGORIES.map((c) => ({ ...c, average: average(responses.map((r) => r.scores && r.scores[c.key])) })),
-                recommend: RECOMMEND.map((o) => ({ answer: o.value, count: responses.filter((r) => r.recommend === o.value).length })),
+                categories,
+                groups: CATEGORY_GROUPS.map((g) => ({ group: g, average: average(categories.filter((c) => c.group === g).map((c) => c.average)) })),
+                recommend: tally('recommend', RECOMMEND),
+                pace: tally('pace', PACE),
+                topHelpful: top(tally('helpful', HELPFUL)),
                 topWell: topicCount('topicsWell'),
                 topMore: topicCount('topicsMore'),
             };
         }
 
+        // ---------- CSV export ----------
+        const pad = (n) => String(n).padStart(2, '0');
+        // "2026-11-28 21:05" in the viewer's local time: Excel and Sheets read this as a real date
+        const localDateTime = (iso) => {
+            const d = new Date(iso);
+            return Number.isNaN(d.getTime()) ? '' : `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        };
+        const ratingLabel = (n) => { const r = RATINGS.find((x) => x.stars === Number(n)); return r ? r.label : ''; };
+        // One line per answer, and a leading ' on anything that would run as a spreadsheet formula
+        const cleanText = (s) => {
+            const t = String(s == null ? '' : s).replace(/\s*[\r\n]+\s*/g, ' / ').trim();
+            return /^[=+\-@\t]/.test(t) ? `'${t}` : t;
+        };
+
+        const CSV_COLUMNS = [
+            { title: 'Submitted', get: (r) => localDateTime(r.submittedAt) },
+            { title: 'Student Name', get: (r) => (r.anonymous ? 'Anonymous' : cleanText(r.name)) },
+            { title: 'Student ID', get: (r) => (r.anonymous ? '' : r.studentId) },
+            { title: 'Overall (1-5)', get: (r) => Number(r.rating) },
+            { title: 'Overall Rating', get: (r) => ratingLabel(r.rating) },
+            ...CATEGORIES.map((c) => ({ title: `${c.label} (1-5)`, get: (r) => (r.scores ? r.scores[c.key] : '') })),
+            {
+                title: 'Category Average',
+                get: (r) => {
+                    const vals = CATEGORIES.map((c) => r.scores && r.scores[c.key]).filter((v) => typeof v === 'number');
+                    return vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : '';
+                },
+            },
+            { title: 'Difficulty (1-5)', get: (r) => r.difficulty },
+            { title: 'Difficulty', get: (r) => DIFFICULTY[r.difficulty - 1] || '' },
+            { title: 'Pace', get: (r) => r.pace },
+            { title: 'Study Time per Week', get: (r) => r.hours },
+            { title: 'Most Helpful Part of Class', get: (r) => r.helpful },
+            { title: 'Would Recommend', get: (r) => r.recommend },
+            { title: 'Taught Well', get: (r) => (r.topicsWell || []).join(', ') },
+            { title: 'Needs More Time', get: (r) => (r.topicsMore || []).join(', ') },
+            ...TEXT_FIELDS.map((t) => ({ title: t.label.replace(/\?$/, ''), get: (r) => cleanText(r[t.field]) })),
+        ];
+
         function toCSV(responses) {
-            const head = ['submittedAt', 'anonymous', 'name', 'studentId', 'overallRating',
-                ...CATEGORIES.map((c) => c.key), 'difficulty', 'hoursPerWeek', 'recommend', 'topicsWell', 'topicsMore', 'best', 'improve', 'comments'];
+            // Quote every cell so commas inside answers never split a column
             const cell = (v) => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
-            const rows = responses.map((r) => [
-                r.submittedAt, r.anonymous ? 'yes' : 'no', r.name, r.studentId, r.rating,
-                ...CATEGORIES.map((c) => r.scores && r.scores[c.key]), r.difficulty, r.hours, r.recommend,
-                (r.topicsWell || []).join('; '), (r.topicsMore || []).join('; '), r.best, r.improve, r.comments,
-            ].map(cell).join(','));
-            return [head.map(cell).join(','), ...rows].join('\r\n');
+            // Oldest first, so the sheet reads in the order responses came in
+            const sorted = [...responses].sort((a, b) => String(a.submittedAt).localeCompare(String(b.submittedAt)));
+            const rows = sorted.map((r) => CSV_COLUMNS.map((col) => cell(col.get(r))).join(','));
+            return [CSV_COLUMNS.map((col) => cell(col.title)).join(','), ...rows].join('\r\n');
         }
 
         function downloadCSV(responses) {
@@ -2010,18 +2312,38 @@ export function toCSV(responses) {
             );
         }
 
-        function TopicChips({ legend, field, formData, toggle }) {
+        // A topic can only be in one list: if it is picked in the other list, it is locked here
+        function TopicChips({ legend, field, other, otherLabel, tone = '', formData, toggle }) {
+            const hintId = `fb-${field}-taken`;
+            const anyTaken = TOPIC_NAMES.some((t) => formData[other].includes(t));
             return (
-                <fieldset className="pe-field">
+                <fieldset className="pe-field" aria-describedby={hintId}>
                     <legend className="pe-label" style={{ marginBottom: 7 }}>{legend}<span className="pe-optional">optional</span></legend>
-                    <div className="fb-topics">
-                        {TOPICS.map((topic) => (
-                            <label className="fb-topic" key={topic}>
-                                <input type="checkbox" checked={formData[field].includes(topic)} onChange={() => toggle(field, topic)} />
-                                <span><CheckIcon size={14} />{topic}</span>
-                            </label>
-                        ))}
+                    <div className={`fb-topics ${tone}`}>
+                        {TOPICS.map(({ name: topic, week }) => {
+                            const taken = formData[other].includes(topic);
+                            return (
+                                <label className={`fb-topic ${taken ? 'is-taken' : ''}`} key={topic} title={taken ? `Already marked as “${otherLabel}”` : undefined}>
+                                    <input
+                                        type="checkbox"
+                                        checked={formData[field].includes(topic)}
+                                        disabled={taken}
+                                        onChange={() => toggle(field, topic)}
+                                    />
+                                    <span>
+                                        <span className="fb-topic-name"><CheckIcon size={14} />{topic}</span>
+                                        <small className="fb-topic-week">{week}</small>
+                                        {taken && <span className="sr-only"> (already marked as {otherLabel})</span>}
+                                    </span>
+                                </label>
+                            );
+                        })}
                     </div>
+                    <p className="pe-hint" id={hintId}>
+                        {anyTaken
+                            ? `Greyed-out topics are already in “${otherLabel}”. A topic can only be in one list, so untick it there to choose it here.`
+                            : 'A topic can only be in one list.'}
+                    </p>
                 </fieldset>
             );
         }
@@ -2105,21 +2427,30 @@ export function toCSV(responses) {
                     </div>
 
                     <table className="fb-cat-table">
-                        <caption className="sr-only">Average agreement per category, 1 to 5</caption>
-                        <thead><tr><th scope="col">Category</th><th scope="col">Average</th><th scope="col"><span className="sr-only">Bar</span></th></tr></thead>
-                        <tbody>
-                            {s.categories.map((c) => (
-                                <tr key={c.key}>
-                                    <th scope="row">{c.label}</th>
-                                    <td className="fb-num">{fmt(c.average)}</td>
-                                    <td><Bar value={c.average} tone={tone(c.average)} /></td>
+                        <caption className="sr-only">Average agreement per statement, 1 to 5, grouped by area</caption>
+                        <thead><tr><th scope="col">Statement</th><th scope="col">Average</th><th scope="col"><span className="sr-only">Bar</span></th></tr></thead>
+                        {s.groups.map((g) => (
+                            <tbody key={g.group}>
+                                <tr className="fb-cat-group">
+                                    <th scope="rowgroup">{g.group}</th>
+                                    <td className="fb-num">{fmt(g.average)}</td>
+                                    <td></td>
                                 </tr>
-                            ))}
-                        </tbody>
+                                {s.categories.filter((c) => c.group === g.group).map((c) => (
+                                    <tr key={c.key}>
+                                        <th scope="row">{c.label}</th>
+                                        <td className="fb-num">{fmt(c.average)}</td>
+                                        <td><Bar value={c.average} tone={tone(c.average)} /></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        ))}
                     </table>
 
                     <ul className="fb-insights">
-                        {s.count > 1 && <li>Lowest-rated area: <strong>{lowest.label}</strong> ({fmt(lowest.average)})</li>}
+                        {s.count > 1 && <li>Lowest-rated statement: <strong>{lowest.label}</strong> ({fmt(lowest.average)})</li>}
+                        <li>Pace: {s.pace.map((p) => `${p.answer} ${p.count}`).join(' · ')}</li>
+                        {s.topHelpful && s.topHelpful.count > 0 && <li>Most helpful part of class: <strong>{s.topHelpful.answer}</strong> ({s.topHelpful.count})</li>}
                         {s.topWell.length > 0 && <li>Taught well: {s.topWell.map((t) => `${t.topic} (${t.count})`).join(', ')}</li>}
                         {s.topMore.length > 0 && <li>Needs more time: {s.topMore.map((t) => `${t.topic} (${t.count})`).join(', ')}</li>}
                     </ul>
@@ -2134,11 +2465,12 @@ export function toCSV(responses) {
                     ? [{ label: 'Anonymous: name & ID skipped', ok: true }]
                     : [
                         { label: 'Name filled in', ok: !errors.name },
-                        { label: 'Student ID is 8 digits', ok: !errors.studentId, bad: formData.studentId !== '' && !!errors.studentId },
+                        { label: 'Student ID is 9 digits', ok: !errors.studentId, bad: formData.studentId !== '' && !!errors.studentId },
                     ]),
                 { label: 'Overall rating', ok: !errors.rating },
                 { label: `Category ratings (${CATEGORIES.filter((c) => formData.scores[c.key]).length}/${CATEGORIES.length})`, ok: CATEGORIES.every((c) => !errors[c.key]) },
-                { label: 'Study time & recommendation', ok: !errors.hours && !errors.recommend },
+                { label: 'Pace & study time', ok: !errors.pace && !errors.hours },
+                { label: 'Most helpful & recommendation', ok: !errors.helpful && !errors.recommend },
                 { label: `Text answers ≤ ${TEXT_MAX} chars`, ok: TEXT_FIELDS.every(({ field }) => !errors[field]) },
             ];
             const done = answered === total;
@@ -2171,7 +2503,11 @@ export function toCSV(responses) {
             const [submitted, setSubmitted] = useState(null);
             const [responses, setResponses] = useState(loadResponses);
             const [stored, setStored] = useState(true);
+            const [step, setStep] = useState(0);
             const thanksRef = useRef(null);
+            const formRef = useRef(null);
+            const stepHeadRef = useRef(null);
+            const firstRender = useRef(true);
 
             const errors = validate(formData);
             const show = (field) => ((touched[field] || submitAttempted) ? errors[field] : undefined);
@@ -2190,25 +2526,61 @@ export function toCSV(responses) {
                 setFormData((d) => ({ ...d, scores: { ...d.scores, [key]: value } }));
                 touch(key);
             };
-            const toggle = (field, topic) => setFormData((d) => ({
-                ...d,
-                [field]: d[field].includes(topic) ? d[field].filter((t) => t !== topic) : [...d[field], topic],
-            }));
+            const OTHER_LIST = { topicsWell: 'topicsMore', topicsMore: 'topicsWell' };
+            const toggle = (field, topic) => setFormData((d) => {
+                if (d[field].includes(topic)) return { ...d, [field]: d[field].filter((t) => t !== topic) };
+                if (d[OTHER_LIST[field]].includes(topic)) return d; // already in the other list: never allow both
+                return { ...d, [field]: [...d[field], topic] };
+            });
 
             useEffect(() => {
                 if (submitted && thanksRef.current) thanksRef.current.focus();
             }, [submitted]);
 
+            // ---- Steps ----
+            const isStepValid = (i) => STEPS[i].fields.every((f) => !errors[f]);
+            const stepValid = isStepValid(step);
+            const isLastStep = step === STEPS.length - 1;
+            const stepLeft = STEPS[step].fields.filter((f) => errors[f]).length;
+            // A step can be opened from the stepper once every step before it is complete
+            const canReach = (i) => i <= step || STEPS.slice(0, i).every((_, j) => isStepValid(j));
+
+            function goTo(i) {
+                if (i >= 0 && i < STEPS.length && canReach(i)) setStep(i);
+            }
+
+            // On a new step: bring the top of the form into view and move focus there for keyboard / screen reader users
+            useEffect(() => {
+                if (firstRender.current) { firstRender.current = false; return; }
+                if (!formRef.current) return;
+                const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                formRef.current.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+                if (stepHeadRef.current) stepHeadRef.current.focus({ preventScroll: true });
+            }, [step]);
+
             function handleSubmit(e) {
                 e.preventDefault();
+                // Next (or Enter) on steps 1–3
+                if (!isLastStep) {
+                    if (stepValid) { goTo(step + 1); return; }
+                    // Reveal what is missing on this step and focus the first problem
+                    setTouched((t) => ({ ...t, ...Object.fromEntries(STEPS[step].fields.map((f) => [f, true])) }));
+                    const first = STEPS[step].fields.find((f) => errors[f]);
+                    const el = first && document.getElementById(FOCUS_ID[first]);
+                    if (el) el.focus();
+                    return;
+                }
                 setSubmitAttempted(true);
+                // Safety net: if anything earlier is still missing, go back to that step
+                const badStep = STEPS.findIndex((_, i) => !isStepValid(i));
+                if (badStep !== -1 && badStep !== step) { setStep(badStep); return; }
                 const firstInvalid = FIELD_ORDER.find((field) => errors[field]);
                 if (firstInvalid) {
                     const el = document.getElementById(FOCUS_ID[firstInvalid]);
                     if (el) el.focus();
                     return;
                 }
-                const order = (list) => TOPICS.filter((t) => list.includes(t));
+                const order = (list) => TOPIC_NAMES.filter((t) => list.includes(t));
                 const response = {
                     course: COURSE,
                     submittedAt: new Date().toISOString(),
@@ -2219,13 +2591,13 @@ export function toCSV(responses) {
                     rating: formData.rating,
                     scores: { ...formData.scores },
                     difficulty: formData.difficulty,
+                    pace: formData.pace,
                     hours: formData.hours,
+                    helpful: formData.helpful,
                     recommend: formData.recommend,
                     topicsWell: order(formData.topicsWell),
                     topicsMore: order(formData.topicsMore),
-                    best: formData.best.trim(),
-                    improve: formData.improve.trim(),
-                    comments: formData.comments.trim(),
+                    ...Object.fromEntries(TEXT_FIELDS.map((t) => [t.field, formData[t.field].trim()])),
                 };
                 const next = [...responses, response];
                 setStored(saveResponses(next));
@@ -2238,6 +2610,7 @@ export function toCSV(responses) {
                 setTouched({});
                 setSubmitAttempted(false);
                 setSubmitted(null);
+                setStep(0);
             }
 
             function clearResults() {
@@ -2286,9 +2659,9 @@ export function toCSV(responses) {
                                             <em>{submitted.difficulty} of 5</em>
                                         </div>
                                         <div className="fb-stat">
-                                            <span>Study Time</span>
-                                            <strong>{submitted.hours.replace(' hours', 'h').replace('Under ', '< ').replace('More than ', '> ')}</strong>
-                                            <em>per week</em>
+                                            <span>Pace</span>
+                                            <strong>{submitted.pace}</strong>
+                                            <em>{submitted.hours.replace(' hours', 'h').replace('Under ', '< ').replace('More than ', '> ')} study / week</em>
                                         </div>
                                         <div className="fb-stat">
                                             <span>Recommend</span>
@@ -2298,21 +2671,24 @@ export function toCSV(responses) {
                                     </div>
 
                                     <div className="fb-receipt-block">
-                                        <h4>Category Ratings</h4>
+                                        <h4>Your Ratings by Area</h4>
                                         <ul className="fb-receipt-cats">
-                                            {CATEGORIES.map((c) => {
-                                                const v = submitted.scores[c.key];
+                                            {CATEGORY_GROUPS.map((g) => {
+                                                const vals = CATEGORIES.filter((c) => c.group === g).map((c) => submitted.scores[c.key]);
+                                                const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+                                                const v = Math.round(avg);
                                                 return (
-                                                    <li key={c.key}>
-                                                        <span className="fb-receipt-cat">{c.label}</span>
+                                                    <li key={g}>
+                                                        <span className="fb-receipt-cat">{g}</span>
                                                         <span className="fb-dots" aria-hidden="true">
                                                             {[1, 2, 3, 4, 5].map((n) => <i key={n} className={n <= v ? `on v${v}` : ''}></i>)}
                                                         </span>
-                                                        <span className="fb-receipt-score">{v}<small>/5</small><span className="sr-only">, {LIKERT[v - 1]}</span></span>
+                                                        <span className="fb-receipt-score">{avg.toFixed(1)}<small>/5</small><span className="sr-only">, average of {vals.length} statements</span></span>
                                                     </li>
                                                 );
                                             })}
                                         </ul>
+                                        <p className="fb-receipt-note">Most helpful part of class: <strong>{submitted.helpful}</strong></p>
                                     </div>
 
                                     {(submitted.topicsWell.length > 0 || submitted.topicsMore.length > 0) && (
@@ -2358,15 +2734,44 @@ export function toCSV(responses) {
             return (
                 <div className="fb-wrap">
                     <div className="fb-layout">
-                        <form className="pe-form fb-form" noValidate onSubmit={handleSubmit} aria-label="Course evaluation">
-                            <div className="fb-progress" aria-live="polite">
+                        <form className="pe-form fb-form" ref={formRef} noValidate onSubmit={handleSubmit} aria-label="Course evaluation">
+                            <div className="fb-progress">
                                 <div className="fb-progress-top">
-                                    <span><strong>{answered}</strong> of {required.length} required answered</span>
+                                    <span><strong>Step {step + 1}</strong> of {STEPS.length} · {answered} of {required.length} required answered</span>
                                     <span className="fb-progress-pct">{percent}%</span>
                                 </div>
                                 <span className="fb-bar is-good" aria-hidden="true"><span style={{ width: `${percent}%` }}></span></span>
+                                <ol className="fb-steps" aria-label="Evaluation steps">
+                                    {STEPS.map((s, i) => {
+                                        const done = i !== step && isStepValid(i) && canReach(i);
+                                        const current = i === step;
+                                        return (
+                                            <li key={s.title}>
+                                                <button
+                                                    type="button"
+                                                    className={`fb-step-btn ${current ? 'is-current' : ''} ${done ? 'is-done' : ''}`}
+                                                    onClick={() => goTo(i)}
+                                                    disabled={!canReach(i)}
+                                                    aria-current={current ? 'step' : undefined}
+                                                    aria-label={`Step ${i + 1}: ${s.title}${done ? ', complete' : ''}`}
+                                                >
+                                                    <span className="fb-step-dot">{done ? <CheckIcon size={12} /> : i + 1}</span>
+                                                    <span className="fb-step-text">
+                                                        <span className="fb-step-label">{s.title}</span>
+                                                        <span className="fb-step-sub">{s.sub}</span>
+                                                    </span>
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
+                                </ol>
                             </div>
 
+                            <h3 className="sr-only" ref={stepHeadRef} tabIndex={-1}>
+                                Step {step + 1} of {STEPS.length}: {STEPS[step].title}
+                            </h3>
+
+                            {step === 0 && (<>
                             <Section num={1} title="About You" sub="Your name is only used to thank you. Turn on anonymous to leave it out completely.">
                                 <label className="fb-switch">
                                     <input type="checkbox" role="switch" checked={formData.anonymous} onChange={(e) => update('anonymous', e.target.checked)} />
@@ -2412,13 +2817,13 @@ export function toCSV(responses) {
                                                 value={formData.studentId}
                                                 onChange={(e) => update('studentId', e.target.value.replace(/\D/g, '').slice(0, ID_LENGTH))}
                                                 onBlur={() => touch('studentId')}
-                                                placeholder="20241234"
+                                                placeholder="202412345"
                                                 autoComplete="off"
                                                 aria-required="true"
                                                 aria-invalid={!!show('studentId')}
                                                 aria-describedby={describedBy('fb-studentId', show('studentId'), true)}
                                             />
-                                            <FieldMessage id="fb-studentId" error={show('studentId')} hint="Exactly 8 digits (numbers only)" />
+                                            <FieldMessage id="fb-studentId" error={show('studentId')} hint="Exactly 9 digits (numbers only)" />
                                         </div>
                                     </div>
                                 )}
@@ -2450,18 +2855,29 @@ export function toCSV(responses) {
                                     <FieldMessage id="fb-rating" error={ratingError} hint={chosenRating ? `You chose ${chosenRating.stars} of 5: ${chosenRating.label}` : undefined} />
                                 </fieldset>
                             </Section>
+                            </>)}
 
-                            <Section num={3} title="Rate Each Part of the Course" sub="How much do you agree with each statement?">
+                            {step === 1 && (
+                            <Section num={3} title="Rate the Course" sub="How much do you agree with each statement? 1 = Strongly Disagree, 5 = Strongly Agree.">
                                 <div className="fb-likert">
-                                    <div className="fb-likert-scale" aria-hidden="true">
-                                        <span></span>
-                                        <span className="fb-likert-ends"><span>Strongly Disagree</span><span>Strongly Agree</span></span>
-                                    </div>
-                                    {CATEGORIES.map((c) => {
+                                    {CATEGORIES.map((c, index) => {
                                         const error = show(c.key);
                                         const value = formData.scores[c.key];
+                                        const groupStart = index === 0 || CATEGORIES[index - 1].group !== c.group;
+                                        const groupItems = CATEGORIES.filter((x) => x.group === c.group);
+                                        const groupDone = groupItems.filter((x) => formData.scores[x.key]).length;
                                         return (
-                                            <fieldset className={`fb-likert-row ${error ? 'is-invalid' : ''} ${value ? 'is-done' : ''}`} key={c.key} aria-describedby={describedBy(`fb-${c.key}`, error)}>
+                                            <React.Fragment key={c.key}>
+                                            {groupStart && (
+                                                <div className="fb-likert-scale">
+                                                    <h4 className="fb-likert-group">
+                                                        {c.group}
+                                                        <span className={groupDone === groupItems.length ? 'is-done' : ''}>{groupDone}/{groupItems.length}</span>
+                                                    </h4>
+                                                    <span className="fb-likert-ends" aria-hidden="true"><span>Strongly Disagree</span><span>Strongly Agree</span></span>
+                                                </div>
+                                            )}
+                                            <fieldset className={`fb-likert-row ${error ? 'is-invalid' : ''} ${value ? 'is-done' : ''}`} aria-describedby={describedBy(`fb-${c.key}`, error)}>
                                                 <legend className="fb-likert-q">
                                                     <strong>{c.label}<span className="pe-req" aria-hidden="true">*</span></strong>
                                                     <span>{c.question}</span>
@@ -2488,12 +2904,15 @@ export function toCSV(responses) {
                                                     <FieldMessage id={`fb-${c.key}`} error={error} />
                                                 </div>
                                             </fieldset>
+                                            </React.Fragment>
                                         );
                                     })}
                                 </div>
                             </Section>
+                            )}
 
-                            <Section num={4} title="Workload" sub="Helps the instructor tune the pace for the next class.">
+                            {step === 2 && (<>
+                            <Section num={4} title="Workload & Pace" sub="Helps the instructor plan the pace and workload for next semester.">
                                 <div className="pe-field fb-difficulty">
                                     <div className="pe-label-row">
                                         <label htmlFor="fb-difficulty" className="pe-label">Difficulty</label>
@@ -2519,6 +2938,15 @@ export function toCSV(responses) {
                                 </div>
 
                                 <div className="pe-row">
+                                    <Pills
+                                        name="pace"
+                                        label="How Was the Pace of the Course?"
+                                        options={PACE}
+                                        value={formData.pace}
+                                        onChange={pick('pace')}
+                                        error={show('pace')}
+                                        idPrefix="fb-pace"
+                                    />
                                     <div className="pe-field">
                                         <span className="pe-label" id="fb-hours-label">Study Time Outside Class<span className="pe-req" aria-hidden="true">*</span></span>
                                         <Select
@@ -2533,9 +2961,26 @@ export function toCSV(responses) {
                                         />
                                         <FieldMessage id="fb-hours" error={show('hours')} />
                                     </div>
+                                </div>
+
+                                <div className="pe-row">
+                                    <div className="pe-field">
+                                        <span className="pe-label" id="fb-helpful-label">What Helped You Learn the Most?<span className="pe-req" aria-hidden="true">*</span></span>
+                                        <Select
+                                            id="fb-helpful"
+                                            labelId="fb-helpful-label"
+                                            value={formData.helpful}
+                                            options={HELPFUL}
+                                            placeholder="Choose one…"
+                                            onChange={pick('helpful')}
+                                            onBlur={() => touch('helpful')}
+                                            error={show('helpful')}
+                                        />
+                                        <FieldMessage id="fb-helpful" error={show('helpful')} />
+                                    </div>
                                     <Pills
                                         name="recommend"
-                                        label="Recommend to a Friend?"
+                                        label="Would You Recommend This Course?"
                                         options={RECOMMEND}
                                         value={formData.recommend}
                                         onChange={pick('recommend')}
@@ -2545,11 +2990,13 @@ export function toCSV(responses) {
                                 </div>
                             </Section>
 
-                            <Section num={5} title="Topics" sub="Pick any that apply.">
-                                <TopicChips legend="Taught Well" field="topicsWell" formData={formData} toggle={toggle} />
-                                <TopicChips legend="Needs More Time" field="topicsMore" formData={formData} toggle={toggle} />
+                            <Section num={5} title="Topics" sub="Which topics from this semester were taught well, and which need more time? Pick any that apply.">
+                                <TopicChips legend="Taught Well" field="topicsWell" other="topicsMore" otherLabel="Needs More Time" formData={formData} toggle={toggle} />
+                                <TopicChips legend="Needs More Time" field="topicsMore" other="topicsWell" otherLabel="Taught Well" tone="is-more" formData={formData} toggle={toggle} />
                             </Section>
+                            </>)}
 
+                            {step === 3 && (
                             <Section num={6} title="In Your Own Words" sub="Specific comments are the most useful part of an evaluation.">
                                 {TEXT_FIELDS.map((t) => (
                                     <TextArea
@@ -2563,17 +3010,35 @@ export function toCSV(responses) {
                                     />
                                 ))}
                             </Section>
+                            )}
 
                             <div className="pe-actions fb-actions">
-                                <button type="submit" className="btn btn-green" disabled={requiredEmpty} aria-describedby={requiredEmpty ? 'fb-submit-note' : undefined}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                                    Submit Evaluation
+                                <button type="button" className="btn btn-ghost" onClick={() => goTo(step - 1)} disabled={step === 0}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                    Back
                                 </button>
-                                {requiredEmpty && (
-                                    <span className="fb-submit-note" id="fb-submit-note">
-                                        {required.length - answered} required {required.length - answered === 1 ? 'answer' : 'answers'} left before you can submit.
-                                    </span>
-                                )}
+                                <div className="fb-actions-right">
+                                    {(isLastStep ? requiredEmpty : !stepValid) && (
+                                        <span className="fb-submit-note" id="fb-submit-note">
+                                            {isLastStep
+                                                ? `${required.length - answered} required ${required.length - answered === 1 ? 'answer' : 'answers'} left before you can submit.`
+                                                : `${stepLeft} required ${stepLeft === 1 ? 'answer' : 'answers'} left on this step`}
+                                        </span>
+                                    )}
+                                    {isLastStep ? (
+                                        // Bonus: Submit stays disabled while any required answer is missing
+                                        <button type="submit" className="btn btn-green" disabled={requiredEmpty} aria-describedby={requiredEmpty ? 'fb-submit-note' : undefined}>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                            Submit Evaluation
+                                        </button>
+                                    ) : (
+                                        // Looks disabled until the step is complete, but stays clickable so a click (or Enter) shows what is missing
+                                        <button type="submit" className={`btn btn-green ${stepValid ? '' : 'is-blocked'}`} aria-disabled={!stepValid} aria-describedby={!stepValid ? 'fb-submit-note' : undefined}>
+                                            Next
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         </form>
 
