@@ -1151,7 +1151,7 @@
         <header class="hero-card">
             <h1 class="hero-title">Multi-Step Registration</h1>
             <p class="hero-desc">
-                A 4-step registration wizard: Personal Info, Account Setup, Preferences, then Review &amp; Confirm. All answers live in one <code>formData</code> object in the parent, so going back with Previous never loses what you typed. Each step is validated on every keystroke and Next stays disabled until the step is valid. Extras: a digits-only 10-digit student ID, a live password-strength meter with a rules checklist, and a review step with Edit links and a required terms checkbox. The final submit runs <code>console.log(fullFormObject)</code>, mirrored in the console panel beside the form.
+                A 4-step registration wizard: Personal Info, Account Setup, Preferences, then Review &amp; Confirm. All answers live in one <code>formData</code> object in the parent, so going back with Previous never loses what you typed. Each step is validated on every keystroke and Next stays disabled until the step is valid. Extras: a digits-only 9-digit student ID, a live password-strength meter with a rules checklist, and a review step with Edit links and a required terms checkbox. The final submit runs <code>console.log(fullFormObject)</code>, mirrored in the console panel beside the form.
             </p>
         </header>
 
@@ -1318,7 +1318,7 @@ export function PersonalStep({ formData, update, touch, showError }) {
         onChange={(e) => update('name', e.target.value)} onBlur={() => touch('name')} />
 
       <label htmlFor="studentId">Student ID</label>
-      <input id="studentId" inputMode="numeric" maxLength={10} value={formData.studentId}
+      <input id="studentId" inputMode="numeric" maxLength={9} value={formData.studentId}
         onChange={(e) => update('studentId', e.target.value.replace(/\D/g, ''))}  // digits only
         onBlur={() => touch('studentId')} />
 
@@ -1439,7 +1439,7 @@ export function validate(data) {
   else if (name.length < 2) errors.name = 'Name must be at least 2 characters.';
 
   if (!data.studentId) errors.studentId = 'Student ID is required.';
-  else if (data.studentId.length !== 10) errors.studentId = 'Student ID must be exactly 10 digits.';
+  else if (data.studentId.length !== 9) errors.studentId = 'Student ID must be exactly 9 digits.';
 
   if (!data.email.trim()) errors.email = 'Email is required.';
   else if (!EMAIL_PATTERN.test(data.email.trim())) errors.email = 'Enter a valid email, e.g. jane.doe@school.ac.kr';
@@ -1471,7 +1471,7 @@ export function validate(data) {
         // ---------- Rules ----------
         const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
         const USERNAME_PATTERN = /^[a-z0-9_]{3,16}$/;
-        const ID_LENGTH = 10;
+        const ID_LENGTH = 9;
 
         const ROLES = [
             { value: 'Student', note: 'Taking courses' },
@@ -1632,13 +1632,13 @@ export function validate(data) {
                         field="studentId"
                         label="Student ID"
                         className="pe-input pe-input--mono"
-                        placeholder="2024123456"
+                        placeholder="202412345"
                         inputMode="numeric"
                         pattern="[0-9]*"
                         maxLength={ID_LENGTH}
                         autoComplete="off"
                         clean={(v) => v.replace(/\D/g, '').slice(0, ID_LENGTH)}
-                        hint="Exactly 10 digits. Letters are ignored."
+                        hint="Exactly 9 digits. Letters are ignored."
                         aside={<span className={`pe-counter ${idState}`}>{digits} / {ID_LENGTH}</span>}
                     />
                     <TextField ctx={ctx} id="wz-email" field="email" label="Email" type="email" placeholder="jane.doe@school.ac.kr" autoComplete="email" inputMode="email" />

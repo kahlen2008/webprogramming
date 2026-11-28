@@ -948,7 +948,7 @@
         <header class="hero-card">
             <h1 class="hero-title">Student Profile Editor</h1>
             <p class="hero-desc">
-                A complete form for a student management system, built with controlled React inputs. Every field is required: the student ID must be exactly 10 digits and the bio has a live character counter capped at 200. Validation runs on every keystroke but only shows once you leave a field or press Save. A valid submit renders the <code>ProfilePreview</code> card, and skills can be added as tags with Enter and removed with ×.
+                A complete form for a student management system, built with controlled React inputs. Every field is required: the student ID must be exactly 9 digits and the bio has a live character counter capped at 200. Validation runs on every keystroke but only shows once you leave a field or press Save. A valid submit renders the <code>ProfilePreview</code> card, and skills can be added as tags with Enter and removed with ×.
             </p>
         </header>
 
@@ -1103,7 +1103,7 @@ function StudentProfileEditor() {
         {showError('name') && <p className="pe-error">{errors.name}</p>}
 
         <label htmlFor="pe-studentId">Student ID</label>
-        <input id="pe-studentId" inputMode="numeric" maxLength={10} value={values.studentId}
+        <input id="pe-studentId" inputMode="numeric" maxLength={9} value={values.studentId}
           onChange={(e) => update('studentId', e.target.value.replace(/\D/g, ''))}
           onBlur={() => touch('studentId')} />
         {showError('studentId') && <p className="pe-error">{errors.studentId}</p>}
@@ -1248,7 +1248,7 @@ export default ProfilePreview;
 
     <script type="text/plain" id="src-validate">
 export const BIO_MAX = 200;
-export const ID_LENGTH = 10;
+export const ID_LENGTH = 9;
 
 export const MAJORS = [
   'Computer Engineering',
@@ -1294,7 +1294,7 @@ export function validate(values) {
         // ---------- Data + validation ----------
         const BIO_MAX = 200;
         const BIO_WARN = 180;
-        const ID_LENGTH = 10;
+        const ID_LENGTH = 9;
         const MAX_SKILLS = 10;
         const MAX_SKILL_LENGTH = 24;
         const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
@@ -1618,7 +1618,7 @@ export function validate(values) {
                                 id="pe-studentId"
                                 label="Student ID"
                                 error={show('studentId')}
-                                hint="Exactly 10 digits, e.g. 2024123456"
+                                hint="Exactly 9 digits, e.g. 202412345"
                                 aside={<span className={`pe-counter ${idState}`}>{idDigits} / {ID_LENGTH}</span>}
                             >
                                 <input
@@ -1630,7 +1630,7 @@ export function validate(values) {
                                     inputMode="numeric"
                                     pattern="[0-9]*"
                                     maxLength={ID_LENGTH}
-                                    placeholder="2024123456"
+                                    placeholder="202412345"
                                     autoComplete="off"
                                     aria-required="true"
                                     aria-invalid={!!show('studentId')}
