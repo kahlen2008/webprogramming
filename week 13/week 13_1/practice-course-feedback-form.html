@@ -1200,6 +1200,10 @@
         .fb-pills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
         .fb-pill span { height: 44px; }
         .fb-pill input:checked + span { color: var(--emerald); background: var(--emerald-soft); border-color: var(--emerald); }
+        .fb-pill.is-mid input:checked + span { color: var(--amber); background: var(--amber-soft); border-color: var(--amber); }
+        .fb-pill.is-bad input:checked + span { color: var(--rose); background: var(--rose-soft); border-color: var(--rose); }
+        .fb-pill.is-mid:hover span { border-color: var(--amber-line); }
+        .fb-pill.is-bad:hover span { border-color: var(--rose-line); }
         .fb-pills.is-invalid .fb-pill span { border-color: var(--rose-line); }
 
         /* Custom dropdown */
@@ -1951,10 +1955,11 @@ export function toCSV(responses) {
             { value: 'Building my own portfolio', label: 'Building my own portfolio' },
             { value: 'The professor’s GitHub repository', label: 'The professor’s GitHub repository' },
         ];
+        // tone = colour when picked: Yes green, Maybe amber, No red
         const RECOMMEND = [
-            { value: 'Yes', label: 'Yes' },
-            { value: 'Maybe', label: 'Maybe' },
-            { value: 'No', label: 'No' },
+            { value: 'Yes', label: 'Yes', tone: 'good' },
+            { value: 'Maybe', label: 'Maybe', tone: 'mid' },
+            { value: 'No', label: 'No', tone: 'bad' },
         ];
         // What the course actually covered, week by week
         const TOPICS = [
@@ -2293,7 +2298,7 @@ export function toCSV(responses) {
                     <legend className="pe-label" style={{ marginBottom: 7 }}>{label}<span className="pe-req" aria-hidden="true">*</span></legend>
                     <div className={`fb-pills ${error ? 'is-invalid' : ''}`}>
                         {options.map((o, i) => (
-                            <label className="fb-pill" key={o.value}>
+                            <label className={`fb-pill ${o.tone ? `is-${o.tone}` : ''}`} key={o.value}>
                                 <input
                                     type="radio"
                                     id={`${idPrefix}-${i}`}
