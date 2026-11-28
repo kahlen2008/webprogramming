@@ -728,7 +728,7 @@
         .wz-steps {
             list-style: none;
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 8px;
         }
 
@@ -833,8 +833,32 @@
             cursor: pointer;
         }
 
+        .wz-check.is-invalid { border-color: var(--rose); }
         .wz-check strong { display: block; font-size: var(--fs-sm); }
         .wz-check span { font-size: var(--fs-xs); color: var(--text-sub); }
+
+        /* Password strength */
+        .wz-strength { display: flex; flex-direction: column; gap: 8px; margin-top: 2px; }
+        .wz-strength-bar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+        .wz-strength-bar i { height: 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); transition: background 0.2s; }
+        .wz-strength-bar.is-1 i:nth-child(-n+1) { background: var(--rose); }
+        .wz-strength-bar.is-2 i:nth-child(-n+2) { background: var(--amber); }
+        .wz-strength-bar.is-3 i:nth-child(-n+3) { background: var(--blue); }
+        .wz-strength-bar.is-4 i { background: var(--emerald); }
+        .wz-strength-top { display: flex; justify-content: space-between; font-size: var(--fs-xs); color: var(--text-dim); }
+        .wz-strength-top strong { color: var(--text-sub); }
+        .wz-strength-top strong.is-1 { color: var(--rose); }
+        .wz-strength-top strong.is-2 { color: var(--amber); }
+        .wz-strength-top strong.is-3 { color: var(--blue); }
+        .wz-strength-top strong.is-4 { color: var(--emerald); }
+
+        .wz-rules { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; font-size: var(--fs-xs); color: var(--text-dim); }
+        .wz-rules li { display: flex; align-items: center; gap: 7px; transition: color 0.15s; }
+        .wz-rules li.is-met { color: var(--emerald); }
+        .wz-rule-dot { flex: none; width: 15px; height: 15px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--border-strong); }
+        .wz-rules li.is-met .wz-rule-dot { background: var(--emerald-soft); border-color: var(--emerald-line); }
+
+        .is-mono { font-family: var(--font-mono); }
 
         /* Review summary */
         .wz-review {
@@ -1086,6 +1110,7 @@
             .wz-step-text { display: none; }
             .wz-step-btn { justify-content: center; }
             .wz-roles { grid-template-columns: 1fr; }
+            .wz-rules { grid-template-columns: 1fr; }
             .wz-review dl { grid-template-columns: 1fr; gap: 2px; }
             .wz-review dd + dt { margin-top: 8px; }
         }
@@ -1126,7 +1151,7 @@
         <header class="hero-card">
             <h1 class="hero-title">Multi-Step Registration</h1>
             <p class="hero-desc">
-                A 3-step registration wizard. All answers live in one <code>formData</code> object in the parent, so going back with Previous never loses what you typed. Each step is validated on every keystroke and Next stays disabled until the step is valid. The final submit runs <code>console.log(fullFormObject)</code>, mirrored in the console panel beside the form.
+                A 4-step registration wizard: Personal Info, Account Setup, Preferences, then Review &amp; Confirm. All answers live in one <code>formData</code> object in the parent, so going back with Previous never loses what you typed. Each step is validated on every keystroke and Next stays disabled until the step is valid. Extras: a digits-only 10-digit student ID, a live password-strength meter with a rules checklist, and a review step with Edit links and a required terms checkbox. The final submit runs <code>console.log(fullFormObject)</code>, mirrored in the console panel beside the form.
             </p>
         </header>
 
@@ -1195,7 +1220,7 @@
                 <div class="code-block-wrap">
                     <div class="code-titlebar">
                         <span>src/components/Steps.jsx</span>
-                        <span>The three step components (controlled inputs only)</span>
+                        <span>The four step components (controlled inputs only)</span>
                     </div>
                     <pre><code data-src="src-steps"></code></pre>
                 </div>
@@ -1217,12 +1242,12 @@
     <script type="text/plain" id="src-wizard">
 import { useState } from 'react';
 import { validate, STEPS } from '../validate';
-import { PersonalStep, AccountStep, PreferencesStep } from './Steps';
+import { PersonalStep, AccountStep, PreferencesStep, ReviewStep } from './Steps';
 
 const INITIAL = {
-  name: '', email: '',
+  name: '', studentId: '', email: '',
   username: '', password: '', confirmPassword: '',
-  role: '', newsletter: false,
+  role: '', newsletter: false, agree: false,
 };
 
 function RegistrationWizard() {
@@ -1252,11 +1277,13 @@ function RegistrationWizard() {
     if (!stepIsValid) return;
     if (!isLastStep) return goNext();
 
-    const fullFormObject = { ...formData, name: formData.name.trim(), email: formData.email.trim() };
+    // confirmPassword was only needed for checking, so it is left out
+    const { confirmPassword, ...rest } = formData;
+    const fullFormObject = { ...rest, name: formData.name.trim(), email: formData.email.trim() };
     console.log(fullFormObject);
   }
 
-  const stepProps = { formData, update, touch, showError };
+  const stepProps = { formData, errors, update, touch, showError };
 
   return (
     <form onSubmit={handleSubmit} noValidate>
@@ -1265,7 +1292,8 @@ function RegistrationWizard() {
 
       {step === 0 && <PersonalStep {...stepProps} />}
       {step === 1 && <AccountStep {...stepProps} />}
-      {step === 2 && <PreferencesStep {...stepProps} onEdit={setStep} />}
+      {step === 2 && <PreferencesStep {...stepProps} />}
+      {step === 3 && <ReviewStep {...stepProps} onEdit={setStep} />}
 
       <button type="button" onClick={goPrevious} disabled={step === 0}>Previous</button>
       <button type="submit" disabled={!stepIsValid}>
@@ -1279,6 +1307,8 @@ export default RegistrationWizard;
 </script>
 
     <script type="text/plain" id="src-steps">
+import { PASSWORD_RULES, passwordScore } from '../validate';
+
 export function PersonalStep({ formData, update, touch, showError }) {
   return (
     <fieldset>
@@ -1286,41 +1316,48 @@ export function PersonalStep({ formData, update, touch, showError }) {
       <label htmlFor="name">Name</label>
       <input id="name" value={formData.name}
         onChange={(e) => update('name', e.target.value)} onBlur={() => touch('name')} />
-      {showError('name') && <p className="pe-error">{showError('name')}</p>}
+
+      <label htmlFor="studentId">Student ID</label>
+      <input id="studentId" inputMode="numeric" maxLength={10} value={formData.studentId}
+        onChange={(e) => update('studentId', e.target.value.replace(/\D/g, ''))}  // digits only
+        onBlur={() => touch('studentId')} />
 
       <label htmlFor="email">Email</label>
       <input id="email" type="email" value={formData.email}
         onChange={(e) => update('email', e.target.value)} onBlur={() => touch('email')} />
-      {showError('email') && <p className="pe-error">{showError('email')}</p>}
     </fieldset>
   );
 }
 
-export function AccountStep({ formData, update, touch, showError }) {
+export function AccountStep({ formData, update, touch }) {
+  const score = passwordScore(formData.password);
   return (
     <fieldset>
       <legend>Account Setup</legend>
       <label htmlFor="username">Username</label>
       <input id="username" value={formData.username}
-        onChange={(e) => update('username', e.target.value)} onBlur={() => touch('username')} />
-      {showError('username') && <p className="pe-error">{showError('username')}</p>}
+        onChange={(e) => update('username', e.target.value.toLowerCase())} onBlur={() => touch('username')} />
 
       <label htmlFor="password">Password</label>
       <input id="password" type="password" value={formData.password}
         onChange={(e) => update('password', e.target.value)} onBlur={() => touch('password')} />
-      {showError('password') && <p className="pe-error">{showError('password')}</p>}
+      <meter min={0} max={4} value={score} />
+      <ul>
+        {PASSWORD_RULES.map((rule) => (
+          <li key={rule.id}>{rule.test(formData.password) ? '✓' : '○'} {rule.label}</li>
+        ))}
+      </ul>
 
       <label htmlFor="confirmPassword">Confirm password</label>
       <input id="confirmPassword" type="password" value={formData.confirmPassword}
         onChange={(e) => update('confirmPassword', e.target.value)} onBlur={() => touch('confirmPassword')} />
-      {showError('confirmPassword') && <p className="pe-error">{showError('confirmPassword')}</p>}
     </fieldset>
   );
 }
 
 const ROLES = ['Student', 'TA', 'Instructor'];
 
-export function PreferencesStep({ formData, update, onEdit }) {
+export function PreferencesStep({ formData, update }) {
   return (
     <fieldset>
       <legend>Preferences</legend>
@@ -1338,17 +1375,31 @@ export function PreferencesStep({ formData, update, onEdit }) {
           onChange={(e) => update('newsletter', e.target.checked)} />
         Subscribe to newsletter
       </label>
+    </fieldset>
+  );
+}
 
-      {/* Review summary: read-only display of all fields */}
+export function ReviewStep({ formData, update, onEdit }) {
+  return (
+    <fieldset>
+      <legend>Review & Confirm</legend>
+      {/* Read-only summary of every step, each with a way back to edit it */}
       <dl>
         <dt>Name</dt><dd>{formData.name}</dd>
+        <dt>Student ID</dt><dd>{formData.studentId}</dd>
         <dt>Email</dt><dd>{formData.email}</dd>
         <dt>Username</dt><dd>{formData.username}</dd>
         <dt>Password</dt><dd>{'•'.repeat(formData.password.length)}</dd>
-        <dt>Role</dt><dd>{formData.role || 'Not chosen yet'}</dd>
+        <dt>Role</dt><dd>{formData.role}</dd>
         <dt>Newsletter</dt><dd>{formData.newsletter ? 'Yes' : 'No'}</dd>
       </dl>
       <button type="button" onClick={() => onEdit(0)}>Edit personal info</button>
+
+      <label>
+        <input type="checkbox" checked={formData.agree}
+          onChange={(e) => update('agree', e.target.checked)} />
+        I agree to the terms and privacy policy (required)
+      </label>
     </fieldset>
   );
 }
@@ -1356,12 +1407,27 @@ export function PreferencesStep({ formData, update, onEdit }) {
 
     <script type="text/plain" id="src-validate">
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+export const USERNAME_PATTERN = /^[a-z0-9_]{3,16}$/;
+
+export const PASSWORD_RULES = [
+  { id: 'len', label: '8+ characters', test: (p) => p.length >= 8 },
+  { id: 'case', label: 'Upper & lower case', test: (p) => /[a-z]/.test(p) && /[A-Z]/.test(p) },
+  { id: 'num', label: 'A number', test: (p) => /\d/.test(p) },
+  { id: 'sym', label: 'A symbol', test: (p) => /[^A-Za-z0-9]/.test(p) },
+];
+
+// 0-4: how many rules pass, but a short password never scores above 1
+export function passwordScore(p) {
+  const passed = PASSWORD_RULES.filter((rule) => rule.test(p)).length;
+  return p.length < 8 ? Math.min(passed, 1) : passed;
+}
 
 // Which fields each step has to get right before "Next" is enabled
 export const STEPS = [
-  { title: 'Personal Info', fields: ['name', 'email'] },
+  { title: 'Personal Info', fields: ['name', 'studentId', 'email'] },
   { title: 'Account Setup', fields: ['username', 'password', 'confirmPassword'] },
   { title: 'Preferences', fields: ['role'] },
+  { title: 'Review & Confirm', fields: ['agree'] },
 ];
 
 export function validate(data) {
@@ -1372,22 +1438,27 @@ export function validate(data) {
   if (!name) errors.name = 'Name is required.';
   else if (name.length < 2) errors.name = 'Name must be at least 2 characters.';
 
+  if (!data.studentId) errors.studentId = 'Student ID is required.';
+  else if (data.studentId.length !== 10) errors.studentId = 'Student ID must be exactly 10 digits.';
+
   if (!data.email.trim()) errors.email = 'Email is required.';
-  else if (!EMAIL_PATTERN.test(data.email.trim())) errors.email = 'Enter a valid email, e.g. minho@school.ac.kr';
+  else if (!EMAIL_PATTERN.test(data.email.trim())) errors.email = 'Enter a valid email, e.g. jane.doe@school.ac.kr';
 
   // Step 2
   if (!data.username) errors.username = 'Username is required.';
-  else if (/\s/.test(data.username)) errors.username = 'Username cannot contain spaces.';
-  else if (data.username.length < 3) errors.username = 'Username must be at least 3 characters.';
+  else if (!USERNAME_PATTERN.test(data.username)) errors.username = '3–16 characters: lowercase letters, numbers or _.';
 
   if (!data.password) errors.password = 'Password is required.';
-  else if (data.password.length < 8) errors.password = 'Password must be at least 8 characters.';
+  else if (passwordScore(data.password) < 3) errors.password = 'Too weak: meet at least 3 of the 4 rules, including 8+ characters.';
 
   if (!data.confirmPassword) errors.confirmPassword = 'Confirm your password.';
   else if (data.confirmPassword !== data.password) errors.confirmPassword = 'Passwords do not match.';
 
   // Step 3 (the newsletter checkbox is optional)
   if (!data.role) errors.role = 'Choose a role.';
+
+  // Step 4
+  if (!data.agree) errors.agree = 'You must accept the terms to register.';
 
   return errors;
 }
@@ -1399,22 +1470,47 @@ export function validate(data) {
 
         // ---------- Rules ----------
         const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        const USERNAME_PATTERN = /^[a-z0-9_]{3,16}$/;
+        const ID_LENGTH = 10;
+
         const ROLES = [
             { value: 'Student', note: 'Taking courses' },
             { value: 'TA', note: 'Assisting a course' },
             { value: 'Instructor', note: 'Teaching a course' },
         ];
 
+        const PASSWORD_RULES = [
+            { id: 'len', label: '8+ characters', test: (p) => p.length >= 8 },
+            { id: 'case', label: 'Upper & lower case', test: (p) => /[a-z]/.test(p) && /[A-Z]/.test(p) },
+            { id: 'num', label: 'A number', test: (p) => /\d/.test(p) },
+            { id: 'sym', label: 'A symbol', test: (p) => /[^A-Za-z0-9]/.test(p) },
+        ];
+        const STRENGTH = ['Too weak', 'Too weak', 'Weak', 'Good', 'Strong'];
+
+        function passwordScore(p) {
+            const passed = PASSWORD_RULES.filter((rule) => rule.test(p)).length;
+            return p.length < 8 ? Math.min(passed, 1) : passed;
+        }
+
         const STEPS = [
-            { title: 'Personal Info', sub: 'Name & email', desc: 'Tell us who you are.', fields: ['name', 'email'] },
+            { title: 'Personal Info', sub: 'Name, ID & email', desc: 'Tell us who you are.', fields: ['name', 'studentId', 'email'] },
             { title: 'Account Setup', sub: 'Username & password', desc: 'Choose how you will sign in.', fields: ['username', 'password', 'confirmPassword'] },
-            { title: 'Preferences', sub: 'Role & review', desc: 'Pick your role, then check everything before submitting.', fields: ['role'] },
+            { title: 'Preferences', sub: 'Role & newsletter', desc: 'Pick your role and how we keep in touch.', fields: ['role'] },
+            { title: 'Review & Confirm', sub: 'Check & submit', desc: 'Check everything, then accept the terms to finish.', fields: ['agree'] },
         ];
 
         // Element to focus when Enter is pressed and that field is the first one still invalid
-        const FOCUS_ID = { name: 'wz-name', email: 'wz-email', username: 'wz-username', password: 'wz-password', confirmPassword: 'wz-confirm', role: 'wz-role-Student' };
+        const FOCUS_ID = {
+            name: 'wz-name', studentId: 'wz-studentId', email: 'wz-email',
+            username: 'wz-username', password: 'wz-password', confirmPassword: 'wz-confirm',
+            role: 'wz-role-Student', agree: 'wz-agree',
+        };
 
-        const INITIAL = { name: '', email: '', username: '', password: '', confirmPassword: '', role: '', newsletter: false };
+        const INITIAL = {
+            name: '', studentId: '', email: '',
+            username: '', password: '', confirmPassword: '',
+            role: '', newsletter: false, agree: false,
+        };
 
         function validate(data) {
             const errors = {};
@@ -1423,21 +1519,26 @@ export function validate(data) {
             if (!name) errors.name = 'Name is required.';
             else if (name.length < 2) errors.name = 'Name must be at least 2 characters.';
 
+            if (!data.studentId) errors.studentId = 'Student ID is required.';
+            else if (data.studentId.length !== ID_LENGTH) errors.studentId = `Student ID must be exactly ${ID_LENGTH} digits (you have ${data.studentId.length}).`;
+
             const email = data.email.trim();
             if (!email) errors.email = 'Email is required.';
-            else if (!EMAIL_PATTERN.test(email)) errors.email = 'Enter a valid email, e.g. minho@school.ac.kr';
+            else if (!EMAIL_PATTERN.test(email)) errors.email = 'Enter a valid email, e.g. jane.doe@school.ac.kr';
 
             if (!data.username) errors.username = 'Username is required.';
-            else if (/\s/.test(data.username)) errors.username = 'Username cannot contain spaces.';
             else if (data.username.length < 3) errors.username = 'Username must be at least 3 characters.';
+            else if (!USERNAME_PATTERN.test(data.username)) errors.username = 'Use only lowercase letters, numbers or _ (max 16).';
 
             if (!data.password) errors.password = 'Password is required.';
-            else if (data.password.length < 8) errors.password = `Password must be at least 8 characters (${data.password.length} so far).`;
+            else if (passwordScore(data.password) < 3) errors.password = 'Too weak: meet at least 3 of the 4 rules below, including 8+ characters.';
 
             if (!data.confirmPassword) errors.confirmPassword = 'Confirm your password.';
             else if (data.confirmPassword !== data.password) errors.confirmPassword = 'Passwords do not match.';
 
             if (!data.role) errors.role = 'Choose a role.';
+
+            if (!data.agree) errors.agree = 'You must accept the terms to register.';
 
             return errors;
         }
@@ -1470,8 +1571,8 @@ export function validate(data) {
             return null;
         }
 
-        // A labelled text input wired to the wizard's state
-        function TextField({ id, field, label, type = 'text', hint, ok, ctx, ...rest }) {
+        // A labelled text input wired to the wizard's state. `clean` filters what can be typed.
+        function TextField({ id, field, label, type = 'text', hint, ok, aside, clean, ctx, after, ...rest }) {
             const { formData, update, touch, showError } = ctx;
             const error = showError(field);
             const [visible, setVisible] = useState(false);
@@ -1483,7 +1584,7 @@ export function validate(data) {
                     className="pe-input"
                     type={isPassword && visible ? 'text' : type}
                     value={formData[field]}
-                    onChange={(e) => update(field, e.target.value)}
+                    onChange={(e) => update(field, clean ? clean(e.target.value) : e.target.value)}
                     onBlur={() => touch(field)}
                     aria-required="true"
                     aria-invalid={!!error}
@@ -1494,7 +1595,10 @@ export function validate(data) {
 
             return (
                 <div className="pe-field">
-                    <label htmlFor={id} className="pe-label">{label}<span className="pe-req" aria-hidden="true">*</span></label>
+                    <div className="pe-label-row">
+                        <label htmlFor={id} className="pe-label">{label}<span className="pe-req" aria-hidden="true">*</span></label>
+                        {aside}
+                    </div>
                     {isPassword ? (
                         <div className="wz-pass-wrap">
                             {input}
@@ -1509,6 +1613,7 @@ export function validate(data) {
                             </button>
                         </div>
                     ) : input}
+                    {after}
                     <FieldMessage id={id} error={error} hint={hint} ok={!error && ok} />
                 </div>
             );
@@ -1516,10 +1621,52 @@ export function validate(data) {
 
         // ---------- Steps ----------
         function PersonalStep({ ctx }) {
+            const digits = ctx.formData.studentId.length;
+            const idState = digits === 0 ? '' : digits === ID_LENGTH ? 'is-ok' : '';
             return (
                 <div className="wz-fields">
-                    <TextField ctx={ctx} id="wz-name" field="name" label="Name" placeholder="e.g. Kim Minho" autoComplete="name" hint="At least 2 characters" />
-                    <TextField ctx={ctx} id="wz-email" field="email" label="Email" type="email" placeholder="minho@school.ac.kr" autoComplete="email" inputMode="email" />
+                    <TextField ctx={ctx} id="wz-name" field="name" label="Name" placeholder="e.g. Jane Doe" autoComplete="name" hint="At least 2 characters" />
+                    <TextField
+                        ctx={ctx}
+                        id="wz-studentId"
+                        field="studentId"
+                        label="Student ID"
+                        className="pe-input pe-input--mono"
+                        placeholder="2024123456"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        maxLength={ID_LENGTH}
+                        autoComplete="off"
+                        clean={(v) => v.replace(/\D/g, '').slice(0, ID_LENGTH)}
+                        hint="Exactly 10 digits. Letters are ignored."
+                        aside={<span className={`pe-counter ${idState}`}>{digits} / {ID_LENGTH}</span>}
+                    />
+                    <TextField ctx={ctx} id="wz-email" field="email" label="Email" type="email" placeholder="jane.doe@school.ac.kr" autoComplete="email" inputMode="email" />
+                </div>
+            );
+        }
+
+        function StrengthMeter({ password }) {
+            const score = passwordScore(password);
+            const level = password ? score : 0;
+            return (
+                <div className="wz-strength" id="wz-password-strength">
+                    <div className={`wz-strength-bar is-${level}`} aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+                    <div className="wz-strength-top">
+                        <span>Strength</span>
+                        <strong className={`is-${level}`} aria-live="polite">{password ? STRENGTH[score] : '—'}</strong>
+                    </div>
+                    <ul className="wz-rules" aria-label="Password rules">
+                        {PASSWORD_RULES.map((rule) => {
+                            const met = rule.test(password);
+                            return (
+                                <li key={rule.id} className={met ? 'is-met' : ''}>
+                                    <span className="wz-rule-dot" aria-hidden="true">{met && <CheckIcon size={10} width={3.5} />}</span>
+                                    {rule.label}<span className="sr-only">{met ? ' (met)' : ' (not met)'}</span>
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </div>
             );
         }
@@ -1529,31 +1676,41 @@ export function validate(data) {
             const matches = formData.confirmPassword !== '' && !errors.confirmPassword && !errors.password;
             return (
                 <div className="wz-fields">
-                    <TextField ctx={ctx} id="wz-username" field="username" label="Username" placeholder="minho_kim" autoComplete="username" autoCapitalize="off" spellCheck={false} hint="At least 3 characters, no spaces" />
-                    <TextField ctx={ctx} id="wz-password" field="password" label="Password" type="password" autoComplete="new-password" hint="At least 8 characters" />
+                    <TextField
+                        ctx={ctx}
+                        id="wz-username"
+                        field="username"
+                        label="Username"
+                        placeholder="jane_doe"
+                        autoComplete="username"
+                        autoCapitalize="off"
+                        spellCheck={false}
+                        maxLength={16}
+                        clean={(v) => v.toLowerCase().replace(/\s/g, '')}
+                        hint="3–16 characters: lowercase letters, numbers or _"
+                        aside={formData.username && <span className="pe-counter">@{formData.username}</span>}
+                    />
+                    <TextField
+                        ctx={ctx}
+                        id="wz-password"
+                        field="password"
+                        label="Password"
+                        type="password"
+                        autoComplete="new-password"
+                        after={<StrengthMeter password={formData.password} />}
+                    />
                     <TextField ctx={ctx} id="wz-confirm" field="confirmPassword" label="Confirm password" type="password" autoComplete="new-password" ok={matches ? 'Passwords match' : undefined} />
                 </div>
             );
         }
 
-        function ReviewGroup({ title, onEdit, children }) {
-            return (
-                <div className="wz-review-group">
-                    <div className="wz-review-head">
-                        <span>{title}</span>
-                        {onEdit && <button type="button" className="wz-edit" onClick={onEdit} aria-label={`Edit ${title}`}>Edit</button>}
-                    </div>
-                    <dl>{children}</dl>
-                </div>
-            );
-        }
-
-        function PreferencesStep({ ctx, onEdit }) {
+        function PreferencesStep({ ctx }) {
             const { formData, update, touch, showError } = ctx;
             const roleError = showError('role');
+            const role = ROLES.find((r) => r.value === formData.role);
             return (
                 <div className="wz-fields">
-                    <fieldset className="pe-field" aria-describedby={describedBy('wz-role', roleError)}>
+                    <fieldset className="pe-field" aria-describedby={describedBy('wz-role', roleError, role)}>
                         <legend className="pe-label" style={{ marginBottom: 7 }}>Role<span className="pe-req" aria-hidden="true">*</span></legend>
                         <div className={`pe-years wz-roles ${roleError ? 'is-invalid' : ''}`}>
                             {ROLES.map((r) => (
@@ -1571,7 +1728,7 @@ export function validate(data) {
                                 </label>
                             ))}
                         </div>
-                        <FieldMessage id="wz-role" error={roleError} hint={formData.role ? ROLES.find((r) => r.value === formData.role).note : undefined} />
+                        <FieldMessage id="wz-role" error={roleError} hint={role && role.note} />
                     </fieldset>
 
                     <label className="wz-check">
@@ -1585,23 +1742,60 @@ export function validate(data) {
                             <span>Course announcements and event news, about once a month. Optional.</span>
                         </div>
                     </label>
+                </div>
+            );
+        }
+
+        function ReviewGroup({ title, onEdit, children }) {
+            return (
+                <div className="wz-review-group">
+                    <div className="wz-review-head">
+                        <span>{title}</span>
+                        {onEdit && <button type="button" className="wz-edit" onClick={onEdit} aria-label={`Edit ${title}`}>Edit</button>}
+                    </div>
+                    <dl>{children}</dl>
+                </div>
+            );
+        }
+
+        function ReviewStep({ ctx, onEdit }) {
+            const { formData, update, touch, showError } = ctx;
+            const agreeError = showError('agree');
+            return (
+                <div className="wz-fields">
+                    <div className="wz-review">
+                        <ReviewGroup title="Personal Info" onEdit={() => onEdit(0)}>
+                            <dt>Name</dt><dd>{formData.name.trim()}</dd>
+                            <dt>Student ID</dt><dd className="is-mono">{formData.studentId}</dd>
+                            <dt>Email</dt><dd>{formData.email.trim()}</dd>
+                        </ReviewGroup>
+                        <ReviewGroup title="Account Setup" onEdit={() => onEdit(1)}>
+                            <dt>Username</dt><dd className="is-mono">{formData.username}</dd>
+                            <dt>Password</dt><dd className="is-mono">{'•'.repeat(formData.password.length)} <span style={{ color: 'var(--text-dim)' }}>({STRENGTH[passwordScore(formData.password)].toLowerCase()})</span></dd>
+                        </ReviewGroup>
+                        <ReviewGroup title="Preferences" onEdit={() => onEdit(2)}>
+                            <dt>Role</dt><dd>{formData.role}</dd>
+                            <dt>Newsletter</dt><dd>{formData.newsletter ? 'Subscribed' : 'Not subscribed'}</dd>
+                        </ReviewGroup>
+                    </div>
 
                     <div className="pe-field">
-                        <span className="pe-label">Review summary</span>
-                        <div className="wz-review">
-                            <ReviewGroup title="Personal Info" onEdit={() => onEdit(0)}>
-                                <dt>Name</dt><dd>{formData.name.trim()}</dd>
-                                <dt>Email</dt><dd>{formData.email.trim()}</dd>
-                            </ReviewGroup>
-                            <ReviewGroup title="Account Setup" onEdit={() => onEdit(1)}>
-                                <dt>Username</dt><dd className="is-mono">{formData.username}</dd>
-                                <dt>Password</dt><dd className="is-mono">{'•'.repeat(formData.password.length)} <span style={{ color: 'var(--text-dim)' }}>({formData.password.length} chars)</span></dd>
-                            </ReviewGroup>
-                            <ReviewGroup title="Preferences">
-                                <dt>Role</dt><dd>{formData.role || <span style={{ color: 'var(--text-dim)' }}>Not chosen yet</span>}</dd>
-                                <dt>Newsletter</dt><dd>{formData.newsletter ? 'Subscribed' : 'Not subscribed'}</dd>
-                            </ReviewGroup>
-                        </div>
+                        <label className={`wz-check ${agreeError ? 'is-invalid' : ''}`}>
+                            <input
+                                type="checkbox"
+                                id="wz-agree"
+                                checked={formData.agree}
+                                onChange={(e) => { update('agree', e.target.checked); touch('agree'); }}
+                                aria-required="true"
+                                aria-invalid={!!agreeError}
+                                aria-describedby={describedBy('wz-agree', agreeError)}
+                            />
+                            <div>
+                                <strong>I agree to the terms and privacy policy<span className="pe-req" aria-hidden="true">*</span></strong>
+                                <span>Your details are only used for course registration and are never shared.</span>
+                            </div>
+                        </label>
+                        <FieldMessage id="wz-agree" error={agreeError} />
                     </div>
                 </div>
             );
@@ -1679,11 +1873,9 @@ export function validate(data) {
                     return;
                 }
 
-                const fullFormObject = {
-                    ...formData,
-                    name: formData.name.trim(),
-                    email: formData.email.trim(),
-                };
+                // confirmPassword was only needed for checking, so it is left out
+                const { confirmPassword, ...rest } = formData;
+                const fullFormObject = { ...rest, name: formData.name.trim(), email: formData.email.trim() };
                 console.log(fullFormObject);
                 setLogs((l) => [{ id: Date.now(), time: new Date().toLocaleTimeString(), data: fullFormObject }, ...l]);
                 setResult(fullFormObject);
@@ -1755,7 +1947,8 @@ export function validate(data) {
 
                                 {step === 0 && <PersonalStep ctx={ctx} />}
                                 {step === 1 && <AccountStep ctx={ctx} />}
-                                {step === 2 && <PreferencesStep ctx={ctx} onEdit={goTo} />}
+                                {step === 2 && <PreferencesStep ctx={ctx} />}
+                                {step === 3 && <ReviewStep ctx={ctx} onEdit={goTo} />}
 
                                 <div className="wz-nav">
                                     <button type="button" className="btn btn-ghost" onClick={() => setStep((s) => s - 1)} disabled={step === 0}>

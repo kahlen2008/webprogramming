@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#090d16">
-    <title>Practice Challenge: Course Feedback Form — Week 13_1</title>
+    <title>Practice Challenge: Course Evaluation Form — Week 13_1</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -677,7 +677,7 @@
         /* Rating: three radio cards */
         .fb-ratings {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 10px;
         }
 
@@ -704,7 +704,7 @@
             transition: border-color 0.15s, background 0.15s, transform 0.15s;
         }
 
-        .fb-stars { color: var(--amber); font-size: 1rem; letter-spacing: 2px; white-space: nowrap; }
+        .fb-stars { color: var(--amber); font-size: 0.85rem; letter-spacing: 1px; white-space: nowrap; }
         .fb-stars .is-off { color: rgba(255, 255, 255, 0.12); }
         .fb-rating-label { font-size: var(--fs-sm); font-weight: 700; }
         .fb-rating-sub { font-size: var(--fs-xs); color: var(--text-dim); }
@@ -715,7 +715,8 @@
         .fb-ratings.is-invalid .fb-rating-card { border-color: var(--rose-line); }
 
         /* Topics: checkboxes drawn as toggle chips */
-        .fb-topics { display: flex; flex-wrap: wrap; gap: 8px; }
+        /* Even grid: 8 topics = 2 full rows of 4 (2 per row on phones) */
+        .fb-topics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 
         .fb-topic { position: relative; }
 
@@ -728,8 +729,11 @@
         }
 
         .fb-topic span {
-            display: inline-flex;
+            display: flex;
             align-items: center;
+            justify-content: center;
+            height: 100%;
+            white-space: nowrap;
             gap: 6px;
             padding: 8px 14px;
             border-radius: 999px;
@@ -787,22 +791,94 @@
         .fb-thanks-title:focus { outline: none; }
         .fb-thanks > p { color: var(--text-sub); font-size: var(--fs-sm); max-width: 460px; }
 
+        /* Receipt card */
         .fb-receipt {
             width: 100%;
-            max-width: 520px;
+            max-width: 640px;
             text-align: left;
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-strong);
             border-radius: var(--radius-sub);
-            display: grid;
-            grid-template-columns: 130px minmax(0, 1fr);
-            gap: 8px 16px;
-            padding: 16px 18px;
-            font-size: var(--fs-sm);
-            margin: 4px 0 6px;
+            background: var(--bg-inset);
+            overflow: hidden;
+            margin: 8px 0 6px;
         }
 
-        .fb-receipt dt { color: var(--text-dim); }
-        .fb-receipt dd { overflow-wrap: anywhere; white-space: pre-wrap; }
+        .fb-receipt-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border);
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-sub);
+        }
+        .fb-receipt-meta { font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--text-dim); }
+
+        .fb-receipt-stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            border-bottom: 1px solid var(--border);
+        }
+        .fb-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 16px 18px;
+            min-width: 0;
+        }
+        .fb-stat + .fb-stat { border-left: 1px solid var(--border); }
+        .fb-stat > span { font-size: var(--fs-xs); color: var(--text-dim); font-weight: 600; }
+        .fb-stat strong { font-family: var(--font-heading); font-size: 1.15rem; line-height: 1.3; white-space: nowrap; }
+        .fb-stat strong .fb-stars { font-size: 1rem; }
+        .fb-stat strong.is-yes { color: var(--emerald); }
+        .fb-stat strong.is-maybe { color: var(--amber); }
+        .fb-stat strong.is-no { color: var(--rose); }
+        .fb-stat em { font-style: normal; font-size: var(--fs-xs); color: var(--text-sub); }
+
+        .fb-receipt-block { display: flex; flex-direction: column; gap: 12px; padding: 18px; }
+        .fb-receipt-block + .fb-receipt-block { border-top: 1px solid var(--border); }
+        .fb-receipt-block h4 { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim); }
+
+        .fb-receipt-cats {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 28px;
+        }
+        .fb-receipt-cats li { display: flex; align-items: center; gap: 10px; font-size: var(--fs-sm); min-width: 0; }
+        .fb-receipt-cat { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fb-dots { display: flex; gap: 3px; flex: none; }
+        .fb-dots i { width: 14px; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.09); }
+        .fb-dots i.on.v1 { background: var(--rose); }
+        .fb-dots i.on.v2 { background: var(--amber); }
+        .fb-dots i.on.v3 { background: var(--blue); }
+        .fb-dots i.on.v4, .fb-dots i.on.v5 { background: var(--emerald); }
+        .fb-receipt-score { flex: none; width: 34px; text-align: right; font-family: var(--font-mono); font-weight: 600; }
+        .fb-receipt-score small { color: var(--text-dim); font-weight: 400; }
+
+        .fb-receipt-topics { flex-direction: row; flex-wrap: wrap; gap: 16px 32px; }
+        .fb-receipt-topics > div { display: flex; flex-direction: column; gap: 8px; }
+        .fb-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .fb-tag { padding: 4px 10px; border-radius: 999px; font-size: var(--fs-xs); font-weight: 600; border: 1px solid; }
+        .fb-tag.is-good { color: var(--emerald); background: var(--emerald-soft); border-color: var(--emerald-line); }
+        .fb-tag.is-more { color: var(--amber); background: var(--amber-soft); border-color: var(--amber-line); }
+
+        .fb-quotes { display: flex; flex-direction: column; gap: 10px; }
+        .fb-quote {
+            margin: 0;
+            padding: 10px 14px;
+            border-left: 3px solid var(--emerald-line);
+            background: rgba(255, 255, 255, 0.025);
+            border-radius: 0 8px 8px 0;
+        }
+        .fb-quote figcaption { font-size: var(--fs-xs); color: var(--text-dim); font-weight: 600; margin-bottom: 3px; }
+        .fb-quote blockquote { margin: 0; font-size: var(--fs-sm); color: var(--text-main); white-space: pre-wrap; overflow-wrap: anywhere; }
 
         /* Live state panel */
         .fb-state {
@@ -827,7 +903,153 @@
             color: var(--text-sub);
         }
 
-        .fb-state pre { font-size: 0.8rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+        .fb-state pre { font-size: 0.75rem; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 420px; overflow: auto; border-top: 1px solid var(--border); }
+
+        /* ---------- Evaluation additions ---------- */
+        .fb-wrap, .fb-done { display: flex; flex-direction: column; gap: 24px; }
+        .fb-form { gap: 0; padding: 0; }
+        .fb-form > .pe-actions { padding: 20px 24px 24px; border-top: 1px solid var(--border); }
+
+        .fb-progress {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 14px 24px;
+            background: rgba(15, 23, 42, 0.96);
+            border-bottom: 1px solid var(--border);
+            border-radius: var(--radius-sub) var(--radius-sub) 0 0;
+        }
+        .fb-progress-top { display: flex; justify-content: space-between; font-size: var(--fs-xs); color: var(--text-sub); }
+        .fb-progress-top strong { color: var(--text-main); }
+
+        .fb-bar { display: block; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); overflow: hidden; min-width: 60px; }
+        .fb-bar > span { display: block; height: 100%; border-radius: inherit; background: var(--blue); transition: width 0.2s; }
+        .fb-bar.is-good > span { background: var(--emerald); }
+        .fb-bar.is-mid > span { background: var(--amber); }
+        .fb-bar.is-low > span { background: var(--rose); }
+
+        .fb-section { display: flex; flex-direction: column; gap: 18px; padding: 22px 24px; }
+        .fb-section + .fb-section { border-top: 1px solid var(--border); }
+        .fb-section-head { display: flex; gap: 12px; align-items: flex-start; }
+        .fb-section-head h3 { font-size: var(--fs-lg); }
+        .fb-section-head p { font-size: var(--fs-xs); color: var(--text-dim); margin-top: 2px; }
+        .fb-section-num {
+            flex: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            color: var(--emerald);
+            background: var(--emerald-soft);
+            border: 1px solid var(--emerald-line);
+        }
+
+        .fb-anon {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--bg-inset);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+        }
+        .fb-anon:hover { border-color: var(--emerald-line); }
+        .fb-anon input { flex: none; width: 18px; height: 18px; margin-top: 2px; accent-color: #10b981; cursor: pointer; }
+        .fb-anon strong { display: block; font-size: var(--fs-sm); }
+        .fb-anon span { font-size: var(--fs-xs); color: var(--text-sub); }
+
+        .pe-years.fb-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .pe-years .pe-year span { white-space: nowrap; }
+
+        /* Likert matrix */
+        .fb-likert { display: flex; flex-direction: column; }
+        .fb-likert-scale, .fb-likert-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 260px;
+            gap: 8px 18px;
+            align-items: center;
+        }
+        .fb-likert-scale { padding-bottom: 6px; }
+        .fb-likert-ends { display: flex; justify-content: space-between; font-size: var(--fs-xs); color: var(--text-dim); padding: 0 6px; }
+        .fb-likert-row { padding: 12px 0; margin: 0; min-width: 0; border: 0; border-top: 1px solid var(--border); }
+        .fb-likert-q { display: flex; flex-direction: column; gap: 2px; padding: 0; float: left; }
+        .fb-likert-q strong { font-size: var(--fs-sm); }
+        .fb-likert-q span { font-size: var(--fs-xs); color: var(--text-sub); }
+        .fb-likert-opts { display: flex; flex-direction: column; gap: 4px; }
+        .fb-scale { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+        .fb-scale .pe-year span { padding: 7px 4px; }
+        .fb-likert-row.is-invalid .fb-scale { border-color: var(--rose); }
+        .fb-likert-pick { font-size: var(--fs-xs); color: var(--text-dim); text-align: center; min-height: 1.2em; }
+
+        /* Difficulty slider */
+        .fb-range {
+            width: 100%;
+            height: 6px;
+            margin: 10px 0 4px;
+            appearance: none;
+            -webkit-appearance: none;
+            border-radius: 999px;
+            background: linear-gradient(to right, var(--emerald) var(--fill), rgba(255, 255, 255, 0.08) var(--fill));
+            cursor: pointer;
+        }
+        .fb-range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; border: 3px solid #10b981; }
+        .fb-range::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #ffffff; border: 3px solid #10b981; }
+        .fb-range:focus-visible { outline: 2px solid var(--blue); outline-offset: 6px; }
+        .fb-range-labels { display: flex; justify-content: space-between; font-size: var(--fs-xs); color: var(--text-dim); }
+
+        textarea.pe-input.fb-textarea { min-height: 90px; }
+
+        /* Results summary */
+        .fb-results {
+            background: var(--bg-card-sub);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sub);
+            padding: 22px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .fb-results-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+        .fb-results-head h3 { font-size: var(--fs-lg); }
+        .fb-results-head p { font-size: var(--fs-xs); color: var(--text-dim); margin-top: 2px; }
+        .fb-results-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-sm { min-height: 34px; padding: 0 12px; font-size: var(--fs-xs); }
+        .btn-danger { background: var(--rose-soft); border-color: var(--rose-line); color: var(--rose); }
+        .btn-danger:hover { background: rgba(244, 63, 94, 0.22); }
+
+        .fb-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+        .fb-kpi {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 14px 16px;
+            background: var(--bg-inset);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+        }
+        .fb-kpi > span { font-size: var(--fs-xs); color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+        .fb-kpi strong { font-family: var(--font-heading); font-size: 1.75rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+        .fb-kpi small { font-size: var(--fs-sm); color: var(--text-dim); font-weight: 500; }
+        .fb-kpi em { font-style: normal; font-size: var(--fs-xs); color: var(--text-sub); }
+
+        .fb-cat-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+        .fb-cat-table thead th { font-size: var(--fs-xs); color: var(--text-dim); font-weight: 700; text-align: left; padding: 0 0 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+        .fb-cat-table tbody th { font-weight: 600; text-align: left; padding: 8px 12px 8px 0; white-space: nowrap; }
+        .fb-cat-table td { padding: 8px 0; }
+        .fb-cat-table tbody tr + tr { border-top: 1px solid var(--border); }
+        .fb-cat-table td:last-child { width: 55%; }
+        .fb-cat-table td.fb-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; padding-right: 12px; width: 60px; }
+
+        .fb-insights { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-sm); color: var(--text-sub); }
+        .fb-insights:empty { display: none; }
+        .fb-insights strong { color: var(--text-main); }
 
         .fb-state-checks {
             list-style: none;
@@ -842,6 +1064,182 @@
         .fb-state-checks li { display: flex; align-items: center; gap: 8px; color: var(--text-dim); }
         .fb-state-checks li.is-ok { color: var(--emerald); }
         .fb-state-checks li.is-bad { color: var(--rose); }
+
+        /* ---------- Evaluation polish ---------- */
+        .fb-form .pe-label {
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .fb-form .pe-optional { font-size: var(--fs-xs); }
+
+        .fb-section { gap: 16px; padding: 26px 24px; }
+        .fb-section-head h3 { font-size: 1.2rem; letter-spacing: -0.01em; }
+        .fb-section-head p { font-size: var(--fs-sm); color: var(--text-sub); margin-top: 3px; }
+        .fb-section-num { width: 28px; height: 28px; font-size: var(--fs-sm); }
+        .fb-section-body { display: flex; flex-direction: column; gap: 18px; padding-left: 40px; }
+
+        .fb-progress-pct { font-family: var(--font-mono); color: var(--emerald); font-weight: 600; }
+
+        /* Anonymous switch */
+        .fb-switch {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: var(--bg-inset);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .fb-switch:hover { border-color: var(--emerald-line); }
+        .fb-switch:has(input:checked) { border-color: var(--emerald-line); background: var(--emerald-soft); }
+        .fb-switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+        .fb-switch-track {
+            position: relative;
+            flex: none;
+            width: 42px;
+            height: 24px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            transition: background 0.2s;
+        }
+        .fb-switch-track span {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s;
+        }
+        .fb-switch input:checked ~ .fb-switch-track { background: #10b981; }
+        .fb-switch input:checked ~ .fb-switch-track span { transform: translateX(18px); }
+        .fb-switch input:focus-visible ~ .fb-switch-track { outline: 2px solid var(--blue); outline-offset: 2px; }
+        .fb-switch-text strong { display: block; font-size: var(--fs-sm); }
+        .fb-switch-text span { font-size: var(--fs-xs); color: var(--text-sub); }
+
+        /* Overall rating cards */
+        .fb-ratings { gap: 8px; }
+        .fb-rating-card { padding: 16px 6px; gap: 6px; }
+        .fb-stars { font-size: 0.95rem; }
+
+        /* Likert rows as cards */
+        .fb-likert { gap: 8px; }
+        .fb-likert-scale, .fb-likert-row { grid-template-columns: minmax(0, 1fr) 280px; }
+        .fb-likert-scale { padding: 0 16px; }
+        .fb-likert-ends { padding: 0 2px; }
+        .fb-likert-row {
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-inset);
+            transition: border-color 0.15s;
+        }
+        .fb-likert-row.is-done { border-color: rgba(16, 185, 129, 0.25); }
+        .fb-likert-row.is-invalid { border-color: var(--rose-line); }
+        .fb-likert-q strong { font-size: 0.95rem; }
+        .fb-likert-pick { color: var(--text-dim); }
+        .fb-likert-row.is-done .fb-likert-pick { color: var(--text-sub); }
+
+        .fb-scale { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+        .fb-scale-opt, .fb-pill { position: relative; }
+        .fb-scale-opt input, .fb-pill input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+        .fb-scale-opt span, .fb-pill span {
+            display: grid;
+            place-items: center;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border-strong);
+            background: rgba(255, 255, 255, 0.02);
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            color: var(--text-sub);
+            transition: color 0.15s, background 0.15s, border-color 0.15s;
+        }
+        .fb-scale-opt:hover span, .fb-pill:hover span { color: #ffffff; border-color: rgba(255, 255, 255, 0.3); }
+        .fb-scale-opt input:focus-visible + span, .fb-pill input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 2px; }
+        .fb-scale-opt.v1 input:checked + span { color: var(--rose); background: var(--rose-soft); border-color: var(--rose); }
+        .fb-scale-opt.v2 input:checked + span { color: var(--amber); background: var(--amber-soft); border-color: var(--amber); }
+        .fb-scale-opt.v3 input:checked + span { color: var(--blue); background: var(--blue-soft); border-color: var(--blue); }
+        .fb-scale-opt.v4 input:checked + span,
+        .fb-scale-opt.v5 input:checked + span { color: var(--emerald); background: var(--emerald-soft); border-color: var(--emerald); }
+        .fb-scale-opt.v5 input:checked + span { background: rgba(16, 185, 129, 0.28); color: #ffffff; }
+
+        /* Pills (Yes / Maybe / No) */
+        .fb-pills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+        .fb-pill span { height: 44px; }
+        .fb-pill input:checked + span { color: var(--emerald); background: var(--emerald-soft); border-color: var(--emerald); }
+        .fb-pills.is-invalid .fb-pill span { border-color: var(--rose-line); }
+
+        /* Custom dropdown */
+        .fb-select { position: relative; }
+        .fb-select-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            text-align: left;
+            font-family: inherit;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+        .fb-select-btn:hover { border-color: rgba(255, 255, 255, 0.3); }
+        .fb-select-btn .is-placeholder { color: var(--text-dim); }
+        .fb-select-btn svg { flex: none; color: var(--text-sub); transition: transform 0.2s; }
+        .fb-select.is-open .fb-select-btn { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+        .fb-select.is-open .fb-select-btn svg { transform: rotate(180deg); }
+        .fb-select-list {
+            position: absolute;
+            z-index: 20;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            list-style: none;
+            padding: 6px;
+            background: #0f172a;
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+            max-height: 260px;
+            overflow: auto;
+        }
+        .fb-select-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: var(--fs-sm);
+            color: var(--text-sub);
+            cursor: pointer;
+        }
+        .fb-select-list li.is-active { background: rgba(255, 255, 255, 0.06); color: #ffffff; }
+        .fb-select-list li[aria-selected="true"] { color: var(--emerald); font-weight: 600; }
+
+        /* Difficulty */
+        .fb-badge {
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+            color: var(--emerald);
+            background: var(--emerald-soft);
+            border: 1px solid var(--emerald-line);
+        }
+        .fb-range-labels span { transition: color 0.15s; }
+        .fb-range-labels span.is-on { color: var(--emerald); font-weight: 600; }
+
+        textarea.pe-input.fb-textarea { min-height: 100px; }
+
+        .fb-form > .fb-actions { background: rgba(255, 255, 255, 0.02); border-radius: 0 0 var(--radius-sub) var(--radius-sub); }
 
         /* ---------- Code viewer ---------- */
         .code-tabs-header {
@@ -945,12 +1343,27 @@
             .hero-title { font-size: 1.8rem; }
             .section-box { padding: 20px 16px; }
             .section-head > .pill { display: none; }
-            .pe-form { padding: 18px; }
+            .pe-form:not(.fb-form) { padding: 18px; }
             .pe-row { grid-template-columns: 1fr; }
             .fb-ratings { grid-template-columns: 1fr; }
+            .fb-section, .fb-results { padding: 18px 16px; }
+            .fb-progress, .fb-form > .pe-actions { padding-left: 16px; padding-right: 16px; }
+            .fb-likert-scale { display: none; }
+            .fb-likert-row { grid-template-columns: 1fr; }
+            .fb-section-body { padding-left: 0; }
+            .fb-likert-row { padding: 12px; }
+            .fb-topics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .fb-kpis { grid-template-columns: 1fr; }
+            .fb-range-labels span:nth-child(2), .fb-range-labels span:nth-child(4) { visibility: hidden; }
+            .fb-cat-table td:last-child { width: 40%; }
             .fb-rating-card { flex-direction: row; justify-content: space-between; padding: 12px 14px; }
-            .fb-receipt { grid-template-columns: 1fr; gap: 2px; }
-            .fb-receipt dd + dt { margin-top: 8px; }
+            .fb-receipt-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .fb-stat:nth-child(3) { border-left: 0; }
+            .fb-stat:nth-child(n+3) { border-top: 1px solid var(--border); }
+            .fb-receipt-cats { grid-template-columns: 1fr; }
+            .fb-receipt-cat { white-space: normal; }
+            .fb-dots i { width: 9px; }
+            .fb-receipt-block, .fb-stat { padding-left: 14px; padding-right: 14px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -989,9 +1402,9 @@
 
         <!-- Hero Header -->
         <header class="hero-card">
-            <h1 class="hero-title">Course Feedback Form</h1>
+            <h1 class="hero-title">Course Evaluation Form</h1>
             <p class="hero-desc">
-                A feedback form with every common input type: text, an 8-digit student ID, star-rating radio buttons, topic checkboxes and a comments box with a live 300-character counter. Submitting validates the form and then thanks the student by name. Bonus: the submit button stays disabled while any required field is empty.
+                A full end-of-course evaluation built from every common input type: name and an 8-digit student ID (or an anonymous switch that skips both), a 1–5 star overall rating, a 1–5 agreement scale for six parts of the course, a difficulty slider, a custom study-time dropdown, a recommend question, topic checkboxes and three text boxes with live 300-character counters. Submitting validates the form and thanks the student by name. Responses are saved in this browser and added up into a results summary that can be exported as CSV. Bonus: Submit stays disabled until every required question is answered.
             </p>
         </header>
 
@@ -1005,9 +1418,9 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 id="live-app-heading" class="section-heading">Live Feedback Form</h2>
+                        <h2 id="live-app-heading" class="section-heading">Live Course Evaluation</h2>
                         <p class="section-sub">
-                            Fill it in and watch the form state update on the right. Try a 7-digit ID to see the format check.
+                            Fill it in and watch the form state update on the right. Try a 7-digit ID to see the format check, or turn on anonymous to skip it.
                         </p>
                     </div>
                 </div>
@@ -1033,7 +1446,7 @@
                     <div>
                         <h2 id="code-heading" class="section-heading">Component Source Implementation</h2>
                         <p class="section-sub">
-                            The form as a single React component (styling markup trimmed for readability).
+                            The form component and the small storage / summary module behind the results panel (styling markup trimmed for readability).
                         </p>
                     </div>
                 </div>
@@ -1041,16 +1454,27 @@
             </div>
 
             <div class="code-tabs-header" role="tablist" aria-label="Source files">
-                <button type="button" class="tab-btn" role="tab" id="btn-form" aria-selected="true" aria-controls="tab-form">CourseFeedbackForm.jsx</button>
+                <button type="button" class="tab-btn" role="tab" id="btn-form" aria-selected="true" aria-controls="tab-form">CourseEvaluationForm.jsx</button>
+                <button type="button" class="tab-btn" role="tab" id="btn-store" aria-selected="false" aria-controls="tab-store" tabindex="-1">evaluationStore.js</button>
             </div>
 
             <div class="tab-pane" id="tab-form" role="tabpanel" aria-labelledby="btn-form">
                 <div class="code-block-wrap">
                     <div class="code-titlebar">
-                        <span>src/components/CourseFeedbackForm.jsx</span>
+                        <span>src/components/CourseEvaluationForm.jsx</span>
                         <span>Controlled inputs, validation and the thank-you message</span>
                     </div>
                     <pre><code data-src="src-form"></code></pre>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab-store" role="tabpanel" aria-labelledby="btn-store" hidden>
+                <div class="code-block-wrap">
+                    <div class="code-titlebar">
+                        <span>src/evaluationStore.js</span>
+                        <span>Saving responses, averages for the summary, CSV export</span>
+                    </div>
+                    <pre><code data-src="src-store"></code></pre>
                 </div>
             </div>
         </section>
@@ -1059,81 +1483,107 @@
     <!-- ================= Source shown in the code viewer (plain text, highlighted at load) ================= -->
     <script type="text/plain" id="src-form">
 import { useState } from 'react';
+import { saveResponse } from '../evaluationStore';
 
-const RATINGS = [5, 4, 3];
-const TOPICS = ['HTML', 'CSS', 'JavaScript', 'Git', 'React'];
-const COMMENTS_MAX = 300;
-const INITIAL = { name: '', studentId: '', rating: '', topics: [], comments: '' };
+export const CATEGORIES = [
+  { key: 'content', label: 'Course Content', question: 'Topics were relevant and well organised.' },
+  { key: 'instructor', label: 'Instructor', question: 'Explanations were clear and easy to follow.' },
+  { key: 'pace', label: 'Pace', question: 'The pace let me keep up.' },
+  { key: 'materials', label: 'Materials', question: 'Slides, examples and the course site helped me.' },
+  { key: 'assignments', label: 'Assignments', question: 'Homework helped me practise what we learned.' },
+  { key: 'support', label: 'Feedback & Support', question: 'I got useful help when I was stuck.' },
+];
+const LIKERT = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'];
+const TOPICS = ['HTML', 'CSS', 'JavaScript', 'DOM & Events', 'Git & GitHub', 'React', 'Forms', 'Fetch & APIs'];
+const TEXT_MAX = 300;
+
+const INITIAL = {
+  anonymous: false, name: '', studentId: '',
+  rating: '', scores: {}, difficulty: 3, hours: '', recommend: '',
+  topicsWell: [], topicsMore: [], best: '', improve: '', comments: '',
+};
 
 function validate(data) {
   const errors = {};
-  if (!data.name.trim()) errors.name = 'Student name is required.';
-  if (!data.studentId) errors.studentId = 'Student ID is required.';
-  else if (!/^\d{8}$/.test(data.studentId)) errors.studentId = 'Student ID must be exactly 8 digits.';
-  if (!data.rating) errors.rating = 'Choose a rating.';
-  if (data.comments.length > COMMENTS_MAX) errors.comments = `Comments must be ${COMMENTS_MAX} characters or fewer.`;
+  // Name and ID are only required when the student is not anonymous
+  if (!data.anonymous) {
+    if (!data.name.trim()) errors.name = 'Student name is required.';
+    if (!data.studentId) errors.studentId = 'Student ID is required.';
+    else if (!/^\d{8}$/.test(data.studentId)) errors.studentId = 'Student ID must be exactly 8 digits.';
+  }
+  if (!data.rating) errors.rating = 'Choose an overall rating.';
+  CATEGORIES.forEach((c) => {
+    if (!data.scores[c.key]) errors[c.key] = `Rate “${c.label}”.`;
+  });
+  if (!data.hours) errors.hours = 'Choose your weekly study time.';
+  if (!data.recommend) errors.recommend = 'Would you recommend the course?';
+  ['best', 'improve', 'comments'].forEach((f) => {
+    if (data[f].length > TEXT_MAX) errors[f] = `Keep it under ${TEXT_MAX} characters.`;
+  });
   return errors;
 }
 
-function CourseFeedbackForm() {
+function CourseEvaluationForm() {
   const [formData, setFormData] = useState(INITIAL);
-  const [touched, setTouched] = useState({});
-  const [submitAttempted, setSubmitAttempted] = useState(false);
-  const [submittedName, setSubmittedName] = useState(null);
+  const [submitted, setSubmitted] = useState(null);
 
   const errors = validate(formData);
-  const showError = (field) => (touched[field] || submitAttempted) && errors[field];
-
-  // Bonus: the button is disabled while any required field is still empty
-  const requiredEmpty = !formData.name.trim() || !formData.studentId || !formData.rating;
+  // Bonus: Submit stays disabled while any required answer is missing
+  const requiredEmpty = Object.keys(errors).length > 0;
 
   const update = (field, value) => setFormData((d) => ({ ...d, [field]: value }));
-  const touch = (field) => setTouched((t) => ({ ...t, [field]: true }));
-
-  function toggleTopic(topic) {
-    setFormData((d) => ({
-      ...d,
-      topics: d.topics.includes(topic)
-        ? d.topics.filter((t) => t !== topic)
-        : [...d.topics, topic],
-    }));
-  }
+  const setScore = (key, value) => setFormData((d) => ({ ...d, scores: { ...d.scores, [key]: value } }));
+  const toggle = (field, topic) => setFormData((d) => ({
+    ...d,
+    [field]: d[field].includes(topic) ? d[field].filter((t) => t !== topic) : [...d[field], topic],
+  }));
 
   function handleSubmit(e) {
     e.preventDefault();
-    setSubmitAttempted(true);
-    if (Object.keys(errors).length > 0) return; // e.g. a 7-digit ID
-    setSubmittedName(formData.name.trim());
+    if (requiredEmpty) return;
+    const response = {
+      ...formData,
+      // Anonymous responses never store who sent them
+      name: formData.anonymous ? null : formData.name.trim(),
+      studentId: formData.anonymous ? null : formData.studentId,
+      submittedAt: new Date().toISOString(),
+    };
+    saveResponse(response);
+    setSubmitted(response);
   }
 
-  if (submittedName) {
+  if (submitted) {
     return (
       <div className="fb-thanks">
-        <h3>Thank you, {submittedName}!</h3>
-        <p>Your feedback has been recorded.</p>
-        <button onClick={() => { setFormData(INITIAL); setTouched({}); setSubmitAttempted(false); setSubmittedName(null); }}>
-          Send another response
-        </button>
+        <h3>{submitted.anonymous ? 'Thank you!' : `Thank you, ${submitted.name}!`}</h3>
+        <p>Your course evaluation has been recorded.</p>
+        <ResultsSummary />
       </div>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <label htmlFor="name">Student Name</label>
-      <input id="name" type="text" value={formData.name}
-        onChange={(e) => update('name', e.target.value)} onBlur={() => touch('name')} />
-      {showError('name') && <p className="pe-error">{errors.name}</p>}
+      <label>
+        <input type="checkbox" checked={formData.anonymous}
+          onChange={(e) => update('anonymous', e.target.checked)} />
+        Submit Anonymously
+      </label>
 
-      <label htmlFor="studentId">Student ID</label>
-      <input id="studentId" inputMode="numeric" maxLength={8} value={formData.studentId}
-        onChange={(e) => update('studentId', e.target.value.replace(/\D/g, ''))}  // digits only
-        onBlur={() => touch('studentId')} />
-      {showError('studentId') && <p className="pe-error">{errors.studentId}</p>}
+      {!formData.anonymous && (
+        <>
+          <label htmlFor="name">Student Name</label>
+          <input id="name" value={formData.name} onChange={(e) => update('name', e.target.value)} />
+          <label htmlFor="studentId">Student ID</label>
+          <input id="studentId" inputMode="numeric" maxLength={8} value={formData.studentId}
+            onChange={(e) => update('studentId', e.target.value.replace(/\D/g, ''))} />  {/* digits only */}
+        </>
+      )}
 
       <fieldset>
-        <legend>Rating</legend>
-        {RATINGS.map((stars) => (
+        <legend>Overall Rating</legend>
+        {/* Worst on the left, best on the right */}
+        {[1, 2, 3, 4, 5].map((stars) => (
           <label key={stars}>
             <input type="radio" name="rating" value={stars}
               checked={formData.rating === String(stars)}
@@ -1142,58 +1592,248 @@ function CourseFeedbackForm() {
           </label>
         ))}
       </fieldset>
-      {showError('rating') && <p className="pe-error">{errors.rating}</p>}
 
-      <fieldset>
-        <legend>Topics Covered Well (optional)</legend>
-        {TOPICS.map((topic) => (
-          <label key={topic}>
-            <input type="checkbox" checked={formData.topics.includes(topic)}
-              onChange={() => toggleTopic(topic)} />
-            {topic}
-          </label>
-        ))}
-      </fieldset>
+      {/* One 1–5 agreement scale per category */}
+      {CATEGORIES.map((c) => (
+        <fieldset key={c.key}>
+          <legend>{c.label}: {c.question}</legend>
+          {LIKERT.map((label, i) => (
+            <label key={label}>
+              <input type="radio" name={c.key} value={i + 1}
+                checked={formData.scores[c.key] === i + 1}
+                onChange={() => setScore(c.key, i + 1)} />
+              {i + 1}
+            </label>
+          ))}
+        </fieldset>
+      ))}
 
-      <label htmlFor="comments">Comments</label>
-      <textarea id="comments" maxLength={COMMENTS_MAX} value={formData.comments}
-        onChange={(e) => update('comments', e.target.value)} />
-      <p>{formData.comments.length} / {COMMENTS_MAX}</p>  {/* live char count */}
+      <label htmlFor="difficulty">Difficulty</label>
+      <input id="difficulty" type="range" min={1} max={5} value={formData.difficulty}
+        onChange={(e) => update('difficulty', Number(e.target.value))} />
 
-      <button type="submit" disabled={requiredEmpty}>Submit feedback</button>
+      {TOPICS.map((topic) => (
+        <label key={topic}>
+          <input type="checkbox" checked={formData.topicsWell.includes(topic)}
+            onChange={() => toggle('topicsWell', topic)} />
+          {topic}
+        </label>
+      ))}
+
+      <label htmlFor="improve">What Should Be Improved?</label>
+      <textarea id="improve" maxLength={TEXT_MAX} value={formData.improve}
+        onChange={(e) => update('improve', e.target.value)} />
+      <p>{formData.improve.length} / {TEXT_MAX}</p>  {/* live char count */}
+
+      <button type="submit" disabled={requiredEmpty}>Submit Evaluation</button>
     </form>
   );
 }
 
-export default CourseFeedbackForm;
+export default CourseEvaluationForm;
+</script>
+
+    <script type="text/plain" id="src-store">
+import { CATEGORIES } from './components/CourseEvaluationForm';
+
+const KEY = 'course-evaluations';
+
+// localStorage can be blocked (private mode), so every call is guarded
+export function loadResponses() {
+  try {
+    return JSON.parse(localStorage.getItem(KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveResponse(response) {
+  const all = [...loadResponses(), response];
+  try {
+    localStorage.setItem(KEY, JSON.stringify(all));
+  } catch {
+    // Storage unavailable: the response still shows on screen
+  }
+  return all;
+}
+
+const average = (nums) => (nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0);
+
+// Turns raw responses into the numbers the results panel shows
+export function summarize(responses) {
+  return {
+    count: responses.length,
+    overall: average(responses.map((r) => Number(r.rating))),
+    difficulty: average(responses.map((r) => r.difficulty)),
+    categories: CATEGORIES.map((c) => ({
+      ...c,
+      average: average(responses.map((r) => r.scores[c.key])),
+    })),
+    recommend: ['Yes', 'Maybe', 'No'].map((answer) => ({
+      answer,
+      count: responses.filter((r) => r.recommend === answer).length,
+    })),
+  };
+}
+
+// One row per response, ready to open in Excel or Google Sheets
+export function toCSV(responses) {
+  const head = ['submittedAt', 'name', 'studentId', 'rating',
+    ...CATEGORIES.map((c) => c.key), 'difficulty', 'hours', 'recommend', 'improve'];
+  const cell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const rows = responses.map((r) => [
+    r.submittedAt, r.name, r.studentId, r.rating,
+    ...CATEGORIES.map((c) => r.scores[c.key]), r.difficulty, r.hours, r.recommend, r.improve,
+  ].map(cell).join(','));
+  return [head.join(','), ...rows].join('\n');
+}
 </script>
 
     <!-- ================= Live React app ================= -->
     <script type="text/babel">
         const { useState, useRef, useEffect } = React;
 
-        // ---------- Rules ----------
+        // ---------- Questions ----------
+        const COURSE = 'Web Programming';
+        // Worst on the left, best on the right
         const RATINGS = [
-            { stars: 5, label: 'Excellent', sub: 'Loved it' },
-            { stars: 4, label: 'Good', sub: 'Mostly great' },
-            { stars: 3, label: 'Okay', sub: 'Room to improve' },
+            { stars: 1, label: 'Very Poor' },
+            { stars: 2, label: 'Poor' },
+            { stars: 3, label: 'Okay' },
+            { stars: 4, label: 'Good' },
+            { stars: 5, label: 'Excellent' },
         ];
-        const TOPICS = ['HTML', 'CSS', 'JavaScript', 'Git', 'React'];
+        const CATEGORIES = [
+            { key: 'content', label: 'Course Content', question: 'Topics were relevant and well organised.' },
+            { key: 'instructor', label: 'Instructor', question: 'Explanations were clear and easy to follow.' },
+            { key: 'pace', label: 'Pace', question: 'The pace let me keep up.' },
+            { key: 'materials', label: 'Materials', question: 'Slides, examples and the course site helped me.' },
+            { key: 'assignments', label: 'Assignments', question: 'Homework helped me practise what we learned.' },
+            { key: 'support', label: 'Feedback & Support', question: 'I got useful help when I was stuck.' },
+        ];
+        const LIKERT = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'];
+        const DIFFICULTY = ['Too Easy', 'Easy', 'Just Right', 'Hard', 'Too Hard'];
+        const HOURS = [
+            { value: 'Under 2 hours', label: 'Under 2 hours' },
+            { value: '2–4 hours', label: '2–4 hours' },
+            { value: '4–6 hours', label: '4–6 hours' },
+            { value: '6–8 hours', label: '6–8 hours' },
+            { value: 'More than 8 hours', label: 'More than 8 hours' },
+        ];
+        const RECOMMEND = [
+            { value: 'Yes', label: 'Yes' },
+            { value: 'Maybe', label: 'Maybe' },
+            { value: 'No', label: 'No' },
+        ];
+        const TOPICS = ['HTML', 'CSS', 'JavaScript', 'DOM & Events', 'Git & GitHub', 'React', 'Forms', 'Fetch & APIs'];
+        const TEXT_FIELDS = [
+            { field: 'best', label: 'What Worked Best?', placeholder: 'A lecture, an exercise or a habit of the class that really helped…' },
+            { field: 'improve', label: 'What Should Be Improved?', placeholder: 'Be specific: what would you change, and how?' },
+            { field: 'comments', label: 'Anything Else?', placeholder: 'Other comments for the instructor' },
+        ];
         const ID_LENGTH = 8;
-        const COMMENTS_MAX = 300;
-        const COMMENTS_WARN = 270;
-        const FIELD_ORDER = ['name', 'studentId', 'rating', 'comments'];
-        const FOCUS_ID = { name: 'fb-name', studentId: 'fb-studentId', rating: 'fb-rating-5', comments: 'fb-comments' };
-        const INITIAL = { name: '', studentId: '', rating: '', topics: [], comments: '' };
+        const TEXT_MAX = 300;
+        const TEXT_WARN = 270;
+        const STORE_KEY = 'week13-course-evaluations';
+
+        // Order used for focusing the first problem and for the progress count
+        const REQUIRED = ['name', 'studentId', 'rating', ...CATEGORIES.map((c) => c.key), 'hours', 'recommend'];
+        const FIELD_ORDER = [...REQUIRED, 'best', 'improve', 'comments'];
+        const FOCUS_ID = {
+            name: 'fb-name', studentId: 'fb-studentId', rating: 'fb-rating-1', hours: 'fb-hours', recommend: 'fb-recommend-0',
+            best: 'fb-best', improve: 'fb-improve', comments: 'fb-comments',
+            ...Object.fromEntries(CATEGORIES.map((c) => [c.key, `fb-${c.key}-1`])),
+        };
+
+        const INITIAL = {
+            anonymous: false, name: '', studentId: '',
+            rating: '', scores: {}, difficulty: 3, hours: '', recommend: '',
+            topicsWell: [], topicsMore: [], best: '', improve: '', comments: '',
+        };
 
         function validate(data) {
             const errors = {};
-            if (!data.name.trim()) errors.name = 'Student name is required.';
-            if (!data.studentId) errors.studentId = 'Student ID is required.';
-            else if (!/^\d{8}$/.test(data.studentId)) errors.studentId = `Student ID must be exactly ${ID_LENGTH} digits (you have ${data.studentId.length}).`;
-            if (!data.rating) errors.rating = 'Choose a rating.';
-            if (data.comments.length > COMMENTS_MAX) errors.comments = `Comments must be ${COMMENTS_MAX} characters or fewer.`;
+            if (!data.anonymous) {
+                if (!data.name.trim()) errors.name = 'Student name is required (or turn on “Submit Anonymously”).';
+                if (!data.studentId) errors.studentId = 'Student ID is required.';
+                else if (!/^\d{8}$/.test(data.studentId)) errors.studentId = `Student ID must be exactly ${ID_LENGTH} digits (you have ${data.studentId.length}).`;
+            }
+            if (!data.rating) errors.rating = 'Choose an overall rating.';
+            CATEGORIES.forEach((c) => {
+                if (!data.scores[c.key]) errors[c.key] = `Rate “${c.label}”.`;
+            });
+            if (!data.hours) errors.hours = 'Choose your weekly study time.';
+            if (!data.recommend) errors.recommend = 'Tell us whether you would recommend the course.';
+            TEXT_FIELDS.forEach(({ field }) => {
+                if (data[field].length > TEXT_MAX) errors[field] = `Keep it to ${TEXT_MAX} characters or fewer.`;
+            });
             return errors;
+        }
+
+        // ---------- Storage (this browser only) ----------
+        function loadResponses() {
+            try {
+                const raw = JSON.parse(localStorage.getItem(STORE_KEY));
+                return Array.isArray(raw) ? raw : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveResponses(list) {
+            try {
+                localStorage.setItem(STORE_KEY, JSON.stringify(list));
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        const average = (nums) => {
+            const valid = nums.filter((n) => typeof n === 'number' && !Number.isNaN(n));
+            return valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : 0;
+        };
+
+        function summarize(responses) {
+            const topicCount = (field) => TOPICS
+                .map((t) => ({ topic: t, count: responses.filter((r) => (r[field] || []).includes(t)).length }))
+                .filter((t) => t.count > 0)
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 3);
+            return {
+                count: responses.length,
+                overall: average(responses.map((r) => Number(r.rating))),
+                difficulty: average(responses.map((r) => r.difficulty)),
+                categories: CATEGORIES.map((c) => ({ ...c, average: average(responses.map((r) => r.scores && r.scores[c.key])) })),
+                recommend: RECOMMEND.map((o) => ({ answer: o.value, count: responses.filter((r) => r.recommend === o.value).length })),
+                topWell: topicCount('topicsWell'),
+                topMore: topicCount('topicsMore'),
+            };
+        }
+
+        function toCSV(responses) {
+            const head = ['submittedAt', 'anonymous', 'name', 'studentId', 'overallRating',
+                ...CATEGORIES.map((c) => c.key), 'difficulty', 'hoursPerWeek', 'recommend', 'topicsWell', 'topicsMore', 'best', 'improve', 'comments'];
+            const cell = (v) => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+            const rows = responses.map((r) => [
+                r.submittedAt, r.anonymous ? 'yes' : 'no', r.name, r.studentId, r.rating,
+                ...CATEGORIES.map((c) => r.scores && r.scores[c.key]), r.difficulty, r.hours, r.recommend,
+                (r.topicsWell || []).join('; '), (r.topicsMore || []).join('; '), r.best, r.improve, r.comments,
+            ].map(cell).join(','));
+            return [head.map(cell).join(','), ...rows].join('\r\n');
+        }
+
+        function downloadCSV(responses) {
+            // BOM so Excel opens Korean / special characters correctly
+            const blob = new Blob(['﻿' + toCSV(responses)], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `course-evaluations-${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
         }
 
         const describedBy = (id, error, hint) => (error ? `${id}-error` : hint ? `${id}-hint` : undefined);
@@ -1217,6 +1857,14 @@ export default CourseFeedbackForm;
             );
         }
 
+        function ChevronIcon() {
+            return (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            );
+        }
+
         function FieldMessage({ id, error, hint }) {
             if (error) return <p className="pe-error" id={`${id}-error`}><AlertIcon />{error}</p>;
             if (hint) return <p className="pe-hint" id={`${id}-hint`}>{hint}</p>;
@@ -1231,23 +1879,277 @@ export default CourseFeedbackForm;
             );
         }
 
+        function Section({ num, title, sub, children }) {
+            return (
+                <section className="fb-section" aria-labelledby={`fb-sec-${num}`}>
+                    <div className="fb-section-head">
+                        <span className="fb-section-num" aria-hidden="true">{num}</span>
+                        <div>
+                            <h3 id={`fb-sec-${num}`}>{title}</h3>
+                            {sub && <p>{sub}</p>}
+                        </div>
+                    </div>
+                    <div className="fb-section-body">{children}</div>
+                </section>
+            );
+        }
+
+        // Custom dropdown (select-only combobox): styled list, full keyboard support
+        function Select({ id, labelId, value, options, placeholder, onChange, onBlur, error }) {
+            const [open, setOpen] = useState(false);
+            const [active, setActive] = useState(0);
+            const wrapRef = useRef(null);
+            const btnRef = useRef(null);
+            const selectedIndex = options.findIndex((o) => o.value === value);
+
+            useEffect(() => {
+                if (!open) return undefined;
+                const close = (e) => {
+                    if (!wrapRef.current.contains(e.target)) { setOpen(false); onBlur(); }
+                };
+                document.addEventListener('mousedown', close);
+                return () => document.removeEventListener('mousedown', close);
+            }, [open]);
+
+            function openList() {
+                setActive(selectedIndex >= 0 ? selectedIndex : 0);
+                setOpen(true);
+            }
+
+            function choose(i) {
+                onChange(options[i].value);
+                setOpen(false);
+                btnRef.current.focus();
+            }
+
+            function onKeyDown(e) {
+                if (!open) {
+                    if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) { e.preventDefault(); openList(); }
+                    return;
+                }
+                const last = options.length - 1;
+                const moves = { ArrowDown: Math.min(active + 1, last), ArrowUp: Math.max(active - 1, 0), Home: 0, End: last };
+                if (e.key in moves) { e.preventDefault(); setActive(moves[e.key]); }
+                else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(active); }
+                else if (e.key === 'Escape') { e.preventDefault(); setOpen(false); }
+                else if (e.key === 'Tab') { setOpen(false); onBlur(); }
+            }
+
+            return (
+                <div className={`fb-select ${open ? 'is-open' : ''}`} ref={wrapRef}>
+                    <button
+                        type="button"
+                        id={id}
+                        ref={btnRef}
+                        role="combobox"
+                        className="pe-input fb-select-btn"
+                        aria-haspopup="listbox"
+                        aria-expanded={open}
+                        aria-controls={`${id}-list`}
+                        aria-labelledby={`${labelId} ${id}`}
+                        aria-activedescendant={open ? `${id}-opt-${active}` : undefined}
+                        aria-required="true"
+                        aria-invalid={!!error}
+                        aria-describedby={describedBy(id, error)}
+                        onClick={() => (open ? setOpen(false) : openList())}
+                        onKeyDown={onKeyDown}
+                        onBlur={() => { if (!open) onBlur(); }}
+                    >
+                        <span className={selectedIndex < 0 ? 'is-placeholder' : ''}>
+                            {selectedIndex < 0 ? placeholder : options[selectedIndex].label}
+                        </span>
+                        <ChevronIcon />
+                    </button>
+                    {open && (
+                        <ul className="fb-select-list" role="listbox" id={`${id}-list`} aria-labelledby={labelId}>
+                            {options.map((o, i) => (
+                                <li
+                                    key={o.value}
+                                    id={`${id}-opt-${i}`}
+                                    role="option"
+                                    aria-selected={o.value === value}
+                                    className={i === active ? 'is-active' : ''}
+                                    onMouseEnter={() => setActive(i)}
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    onClick={() => choose(i)}
+                                >
+                                    <span>{o.label}</span>
+                                    {o.value === value && <CheckIcon size={14} />}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            );
+        }
+
+        // Radio group drawn as bordered pills
+        function Pills({ name, label, options, value, onChange, error, idPrefix }) {
+            const id = `fb-${name}`;
+            return (
+                <fieldset className="pe-field" aria-describedby={describedBy(id, error)}>
+                    <legend className="pe-label" style={{ marginBottom: 7 }}>{label}<span className="pe-req" aria-hidden="true">*</span></legend>
+                    <div className={`fb-pills ${error ? 'is-invalid' : ''}`}>
+                        {options.map((o, i) => (
+                            <label className="fb-pill" key={o.value}>
+                                <input
+                                    type="radio"
+                                    id={`${idPrefix}-${i}`}
+                                    name={name}
+                                    value={o.value}
+                                    checked={value === o.value}
+                                    onChange={() => onChange(o.value)}
+                                    aria-invalid={!!error}
+                                />
+                                <span>{o.label}</span>
+                            </label>
+                        ))}
+                    </div>
+                    <FieldMessage id={id} error={error} />
+                </fieldset>
+            );
+        }
+
+        function TopicChips({ legend, field, formData, toggle }) {
+            return (
+                <fieldset className="pe-field">
+                    <legend className="pe-label" style={{ marginBottom: 7 }}>{legend}<span className="pe-optional">optional</span></legend>
+                    <div className="fb-topics">
+                        {TOPICS.map((topic) => (
+                            <label className="fb-topic" key={topic}>
+                                <input type="checkbox" checked={formData[field].includes(topic)} onChange={() => toggle(field, topic)} />
+                                <span><CheckIcon size={14} />{topic}</span>
+                            </label>
+                        ))}
+                    </div>
+                </fieldset>
+            );
+        }
+
+        function TextArea({ field, label, placeholder, value, onChange, error }) {
+            const id = `fb-${field}`;
+            const len = value.length;
+            const state = len >= TEXT_MAX ? 'is-over' : len >= TEXT_WARN ? 'is-near' : len > 0 ? 'is-ok' : '';
+            return (
+                <div className="pe-field">
+                    <div className="pe-label-row">
+                        <label htmlFor={id} className="pe-label">{label}<span className="pe-optional">optional</span></label>
+                        <span className={`pe-counter ${state}`} aria-hidden="true">{len} / {TEXT_MAX}</span>
+                    </div>
+                    <textarea
+                        id={id}
+                        className="pe-input fb-textarea"
+                        maxLength={TEXT_MAX}
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        placeholder={placeholder}
+                        aria-invalid={!!error}
+                        aria-describedby={`${id}-count${error ? ` ${id}-error` : ''}`}
+                    />
+                    <span className="sr-only" id={`${id}-count`}>{len} of {TEXT_MAX} characters used</span>
+                    <FieldMessage id={id} error={error} />
+                </div>
+            );
+        }
+
+        // ---------- Results (aggregated from every response saved in this browser) ----------
+        function Bar({ value, max = 5, tone = '' }) {
+            return <span className={`fb-bar ${tone}`} aria-hidden="true"><span style={{ width: `${(value / max) * 100}%` }}></span></span>;
+        }
+
+        function ResultsSummary({ responses, onClear }) {
+            const [confirming, setConfirming] = useState(false);
+            if (!responses.length) return null;
+            const s = summarize(responses);
+            const fmt = (n) => n.toFixed(1);
+            const tone = (n) => (n >= 4 ? 'is-good' : n >= 3 ? 'is-mid' : 'is-low');
+            const lowest = [...s.categories].sort((a, b) => a.average - b.average)[0];
+            const yes = s.recommend.find((r) => r.answer === 'Yes').count;
+
+            return (
+                <section className="fb-results" aria-labelledby="fb-results-title">
+                    <div className="fb-results-head">
+                        <div>
+                            <h3 id="fb-results-title">Results Summary</h3>
+                            <p>{s.count} {s.count === 1 ? 'response' : 'responses'} saved in this browser</p>
+                        </div>
+                        <div className="fb-results-actions">
+                            <button type="button" className="btn btn-ghost btn-sm" onClick={() => downloadCSV(responses)}>Export CSV</button>
+                            {confirming ? (
+                                <>
+                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => { onClear(); setConfirming(false); }}>Delete All</button>
+                                    <button type="button" className="btn btn-ghost btn-sm" onClick={() => setConfirming(false)}>Cancel</button>
+                                </>
+                            ) : (
+                                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setConfirming(true)}>Clear…</button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="fb-kpis">
+                        <div className="fb-kpi">
+                            <span>Overall</span>
+                            <strong>{fmt(s.overall)}<small> / 5</small></strong>
+                            <Stars count={Math.round(s.overall)} />
+                        </div>
+                        <div className="fb-kpi">
+                            <span>Would Recommend</span>
+                            <strong>{Math.round((yes / s.count) * 100)}<small>%</small></strong>
+                            <em>{s.recommend.map((r) => `${r.answer} ${r.count}`).join(' · ')}</em>
+                        </div>
+                        <div className="fb-kpi">
+                            <span>Difficulty</span>
+                            <strong>{fmt(s.difficulty)}<small> / 5</small></strong>
+                            <em>{DIFFICULTY[Math.round(s.difficulty) - 1]}</em>
+                        </div>
+                    </div>
+
+                    <table className="fb-cat-table">
+                        <caption className="sr-only">Average agreement per category, 1 to 5</caption>
+                        <thead><tr><th scope="col">Category</th><th scope="col">Average</th><th scope="col"><span className="sr-only">Bar</span></th></tr></thead>
+                        <tbody>
+                            {s.categories.map((c) => (
+                                <tr key={c.key}>
+                                    <th scope="row">{c.label}</th>
+                                    <td className="fb-num">{fmt(c.average)}</td>
+                                    <td><Bar value={c.average} tone={tone(c.average)} /></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    <ul className="fb-insights">
+                        {s.count > 1 && <li>Lowest-rated area: <strong>{lowest.label}</strong> ({fmt(lowest.average)})</li>}
+                        {s.topWell.length > 0 && <li>Taught well: {s.topWell.map((t) => `${t.topic} (${t.count})`).join(', ')}</li>}
+                        {s.topMore.length > 0 && <li>Needs more time: {s.topMore.map((t) => `${t.topic} (${t.count})`).join(', ')}</li>}
+                    </ul>
+                </section>
+            );
+        }
+
         // ---------- Live state panel ----------
-        function StatePanel({ formData, errors, requiredEmpty }) {
+        function StatePanel({ formData, errors, answered, total }) {
             const checks = [
-                { label: 'Name filled in', ok: !errors.name },
-                { label: 'Student ID is 8 digits', ok: !errors.studentId, bad: formData.studentId !== '' && !!errors.studentId },
-                { label: 'Rating chosen', ok: !errors.rating },
-                { label: `Comments ≤ ${COMMENTS_MAX} chars`, ok: !errors.comments },
+                ...(formData.anonymous
+                    ? [{ label: 'Anonymous: name & ID skipped', ok: true }]
+                    : [
+                        { label: 'Name filled in', ok: !errors.name },
+                        { label: 'Student ID is 8 digits', ok: !errors.studentId, bad: formData.studentId !== '' && !!errors.studentId },
+                    ]),
+                { label: 'Overall rating', ok: !errors.rating },
+                { label: `Category ratings (${CATEGORIES.filter((c) => formData.scores[c.key]).length}/${CATEGORIES.length})`, ok: CATEGORIES.every((c) => !errors[c.key]) },
+                { label: 'Study time & recommendation', ok: !errors.hours && !errors.recommend },
+                { label: `Text answers ≤ ${TEXT_MAX} chars`, ok: TEXT_FIELDS.every(({ field }) => !errors[field]) },
             ];
+            const done = answered === total;
             return (
                 <aside className="fb-state" aria-label="Live form state">
                     <div className="fb-state-bar">
                         <span>formData</span>
-                        <span className={`pill ${requiredEmpty ? 'pill--amber' : 'pill--emerald'}`}>
-                            {requiredEmpty ? 'Submit disabled' : 'Submit enabled'}
+                        <span className={`pill ${done ? 'pill--emerald' : 'pill--amber'}`}>
+                            {done ? 'Submit enabled' : 'Submit disabled'}
                         </span>
                     </div>
-                    <pre>{JSON.stringify(formData, null, 2)}</pre>
                     <ul className="fb-state-checks">
                         {checks.map((c) => (
                             <li key={c.label} className={c.ok ? 'is-ok' : c.bad ? 'is-bad' : ''}>
@@ -1256,49 +2158,79 @@ export default CourseFeedbackForm;
                             </li>
                         ))}
                     </ul>
+                    <pre>{JSON.stringify(formData, null, 2)}</pre>
                 </aside>
             );
         }
 
         // ---------- Form ----------
-        function CourseFeedbackForm() {
+        function CourseEvaluationForm() {
             const [formData, setFormData] = useState(INITIAL);
             const [touched, setTouched] = useState({});
             const [submitAttempted, setSubmitAttempted] = useState(false);
             const [submitted, setSubmitted] = useState(null);
+            const [responses, setResponses] = useState(loadResponses);
+            const [stored, setStored] = useState(true);
             const thanksRef = useRef(null);
 
             const errors = validate(formData);
             const show = (field) => ((touched[field] || submitAttempted) ? errors[field] : undefined);
 
-            // Bonus: disabled while any required field is empty
-            const requiredEmpty = !formData.name.trim() || !formData.studentId || !formData.rating;
+            // Progress over the required questions (name & ID drop out when anonymous)
+            const required = formData.anonymous ? REQUIRED.filter((f) => f !== 'name' && f !== 'studentId') : REQUIRED;
+            const answered = required.filter((f) => !errors[f]).length;
+            const textOk = TEXT_FIELDS.every(({ field }) => !errors[field]);
+            // Bonus: Submit stays disabled while any required answer is missing
+            const requiredEmpty = answered < required.length || !textOk;
 
             const update = (field, value) => setFormData((d) => ({ ...d, [field]: value }));
             const touch = (field) => setTouched((t) => (t[field] ? t : { ...t, [field]: true }));
+            const pick = (field) => (value) => { update(field, value); touch(field); };
+            const setScore = (key, value) => {
+                setFormData((d) => ({ ...d, scores: { ...d.scores, [key]: value } }));
+                touch(key);
+            };
+            const toggle = (field, topic) => setFormData((d) => ({
+                ...d,
+                [field]: d[field].includes(topic) ? d[field].filter((t) => t !== topic) : [...d[field], topic],
+            }));
 
             useEffect(() => {
                 if (submitted && thanksRef.current) thanksRef.current.focus();
             }, [submitted]);
-
-            function toggleTopic(topic) {
-                setFormData((d) => ({
-                    ...d,
-                    topics: d.topics.includes(topic) ? d.topics.filter((t) => t !== topic) : [...d.topics, topic],
-                }));
-            }
 
             function handleSubmit(e) {
                 e.preventDefault();
                 setSubmitAttempted(true);
                 const firstInvalid = FIELD_ORDER.find((field) => errors[field]);
                 if (firstInvalid) {
-                    document.getElementById(FOCUS_ID[firstInvalid]).focus();
+                    const el = document.getElementById(FOCUS_ID[firstInvalid]);
+                    if (el) el.focus();
                     return;
                 }
-                // Keep topics in the order they are listed, not the order they were clicked
-                const topics = TOPICS.filter((t) => formData.topics.includes(t));
-                setSubmitted({ ...formData, name: formData.name.trim(), comments: formData.comments.trim(), topics });
+                const order = (list) => TOPICS.filter((t) => list.includes(t));
+                const response = {
+                    course: COURSE,
+                    submittedAt: new Date().toISOString(),
+                    anonymous: formData.anonymous,
+                    // Anonymous responses never store who sent them
+                    name: formData.anonymous ? null : formData.name.trim(),
+                    studentId: formData.anonymous ? null : formData.studentId,
+                    rating: formData.rating,
+                    scores: { ...formData.scores },
+                    difficulty: formData.difficulty,
+                    hours: formData.hours,
+                    recommend: formData.recommend,
+                    topicsWell: order(formData.topicsWell),
+                    topicsMore: order(formData.topicsMore),
+                    best: formData.best.trim(),
+                    improve: formData.improve.trim(),
+                    comments: formData.comments.trim(),
+                };
+                const next = [...responses, response];
+                setStored(saveResponses(next));
+                setResponses(next);
+                setSubmitted(response);
             }
 
             function reset() {
@@ -1308,163 +2240,353 @@ export default CourseFeedbackForm;
                 setSubmitted(null);
             }
 
-            const commentsLength = formData.comments.length;
-            const commentsState = commentsLength >= COMMENTS_MAX ? 'is-over' : commentsLength >= COMMENTS_WARN ? 'is-near' : commentsLength > 0 ? 'is-ok' : '';
+            function clearResults() {
+                saveResponses([]);
+                setResponses([]);
+            }
+
             const idState = formData.studentId.length === ID_LENGTH ? 'is-ok' : '';
+            const percent = Math.round((answered / required.length) * 100);
             const ratingError = show('rating');
+            const chosenRating = RATINGS.find((r) => String(r.stars) === formData.rating);
 
             if (submitted) {
                 const rating = RATINGS.find((r) => String(r.stars) === submitted.rating);
                 return (
-                    <div className="fb-layout">
+                    <div className="fb-done">
                         <div className="pe-form">
                             <div className="fb-thanks" role="status">
                                 <span className="fb-thanks-icon"><CheckIcon size={30} width={2.5} /></span>
-                                <h3 className="fb-thanks-title" ref={thanksRef} tabIndex={-1}>Thank you, {submitted.name}!</h3>
-                                <p>Your course feedback has been recorded. Here is what you sent:</p>
-                                <dl className="fb-receipt">
-                                    <dt>Student ID</dt><dd style={{ fontFamily: 'var(--font-mono)' }}>{submitted.studentId}</dd>
-                                    <dt>Rating</dt><dd><Stars count={rating.stars} /> {rating.label}</dd>
-                                    <dt>Topics</dt><dd>{submitted.topics.length ? submitted.topics.join(', ') : <span style={{ color: 'var(--text-dim)' }}>None selected</span>}</dd>
-                                    <dt>Comments</dt><dd>{submitted.comments || <span style={{ color: 'var(--text-dim)' }}>No comments</span>}</dd>
-                                </dl>
-                                <button type="button" className="btn btn-ghost" onClick={reset}>Send another response</button>
+                                <h3 className="fb-thanks-title" ref={thanksRef} tabIndex={-1}>
+                                    {submitted.anonymous ? 'Thank You!' : `Thank You, ${submitted.name}!`}
+                                </h3>
+                                <p>
+                                    Your {submitted.anonymous ? 'anonymous ' : ''}evaluation of {COURSE} has been recorded.
+                                    {!stored && ' Note: this browser blocks storage, so it will not be kept after you leave the page.'}
+                                </p>
+
+                                <div className="fb-receipt">
+                                    <div className="fb-receipt-head">
+                                        <span>Your Response</span>
+                                        <span className="fb-receipt-meta">
+                                            {submitted.anonymous ? 'Anonymous' : <>ID <span className="is-mono">{submitted.studentId}</span></>}
+                                            {' · '}{new Date(submitted.submittedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
+                                        </span>
+                                    </div>
+
+                                    <div className="fb-receipt-stats">
+                                        <div className="fb-stat">
+                                            <span>Overall</span>
+                                            <strong><Stars count={rating.stars} /></strong>
+                                            <em>{rating.label}</em>
+                                        </div>
+                                        <div className="fb-stat">
+                                            <span>Difficulty</span>
+                                            <strong>{DIFFICULTY[submitted.difficulty - 1]}</strong>
+                                            <em>{submitted.difficulty} of 5</em>
+                                        </div>
+                                        <div className="fb-stat">
+                                            <span>Study Time</span>
+                                            <strong>{submitted.hours.replace(' hours', 'h').replace('Under ', '< ').replace('More than ', '> ')}</strong>
+                                            <em>per week</em>
+                                        </div>
+                                        <div className="fb-stat">
+                                            <span>Recommend</span>
+                                            <strong className={`is-${submitted.recommend.toLowerCase()}`}>{submitted.recommend}</strong>
+                                            <em>to a friend</em>
+                                        </div>
+                                    </div>
+
+                                    <div className="fb-receipt-block">
+                                        <h4>Category Ratings</h4>
+                                        <ul className="fb-receipt-cats">
+                                            {CATEGORIES.map((c) => {
+                                                const v = submitted.scores[c.key];
+                                                return (
+                                                    <li key={c.key}>
+                                                        <span className="fb-receipt-cat">{c.label}</span>
+                                                        <span className="fb-dots" aria-hidden="true">
+                                                            {[1, 2, 3, 4, 5].map((n) => <i key={n} className={n <= v ? `on v${v}` : ''}></i>)}
+                                                        </span>
+                                                        <span className="fb-receipt-score">{v}<small>/5</small><span className="sr-only">, {LIKERT[v - 1]}</span></span>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    </div>
+
+                                    {(submitted.topicsWell.length > 0 || submitted.topicsMore.length > 0) && (
+                                        <div className="fb-receipt-block fb-receipt-topics">
+                                            {submitted.topicsWell.length > 0 && (
+                                                <div>
+                                                    <h4>Taught Well</h4>
+                                                    <div className="fb-tags">{submitted.topicsWell.map((t) => <span key={t} className="fb-tag is-good">{t}</span>)}</div>
+                                                </div>
+                                            )}
+                                            {submitted.topicsMore.length > 0 && (
+                                                <div>
+                                                    <h4>Needs More Time</h4>
+                                                    <div className="fb-tags">{submitted.topicsMore.map((t) => <span key={t} className="fb-tag is-more">{t}</span>)}</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {TEXT_FIELDS.some(({ field }) => submitted[field]) && (
+                                        <div className="fb-receipt-block">
+                                            <h4>Your Comments</h4>
+                                            <div className="fb-quotes">
+                                                {TEXT_FIELDS.filter(({ field }) => submitted[field]).map(({ field, label }) => (
+                                                    <figure className="fb-quote" key={field}>
+                                                        <figcaption>{label}</figcaption>
+                                                        <blockquote>{submitted[field]}</blockquote>
+                                                    </figure>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <button type="button" className="btn btn-ghost" onClick={reset}>Send Another Response</button>
                             </div>
                         </div>
-                        <StatePanel formData={formData} errors={errors} requiredEmpty={requiredEmpty} />
+                        <ResultsSummary responses={responses} onClear={clearResults} />
                     </div>
                 );
             }
 
             return (
-                <div className="fb-layout">
-                    <form className="pe-form" noValidate onSubmit={handleSubmit} aria-label="Course feedback">
-                        <div className="pe-row">
-                            <div className="pe-field">
-                                <label htmlFor="fb-name" className="pe-label">Student Name<span className="pe-req" aria-hidden="true">*</span></label>
-                                <input
-                                    id="fb-name"
-                                    className="pe-input"
-                                    type="text"
-                                    value={formData.name}
-                                    onChange={(e) => update('name', e.target.value)}
-                                    onBlur={() => touch('name')}
-                                    placeholder="e.g. Kim Minho"
-                                    autoComplete="name"
-                                    aria-required="true"
-                                    aria-invalid={!!show('name')}
-                                    aria-describedby={describedBy('fb-name', show('name'))}
-                                />
-                                <FieldMessage id="fb-name" error={show('name')} />
-                            </div>
-
-                            <div className="pe-field">
-                                <div className="pe-label-row">
-                                    <label htmlFor="fb-studentId" className="pe-label">Student ID<span className="pe-req" aria-hidden="true">*</span></label>
-                                    <span className={`pe-counter ${idState}`} aria-hidden="true">{formData.studentId.length} / {ID_LENGTH}</span>
+                <div className="fb-wrap">
+                    <div className="fb-layout">
+                        <form className="pe-form fb-form" noValidate onSubmit={handleSubmit} aria-label="Course evaluation">
+                            <div className="fb-progress" aria-live="polite">
+                                <div className="fb-progress-top">
+                                    <span><strong>{answered}</strong> of {required.length} required answered</span>
+                                    <span className="fb-progress-pct">{percent}%</span>
                                 </div>
-                                <input
-                                    id="fb-studentId"
-                                    className="pe-input pe-input--mono"
-                                    type="text"
-                                    inputMode="numeric"
-                                    pattern="[0-9]*"
-                                    maxLength={ID_LENGTH}
-                                    value={formData.studentId}
-                                    onChange={(e) => update('studentId', e.target.value.replace(/\D/g, ''))}
-                                    onBlur={() => touch('studentId')}
-                                    placeholder="20241234"
-                                    autoComplete="off"
-                                    aria-required="true"
-                                    aria-invalid={!!show('studentId')}
-                                    aria-describedby={describedBy('fb-studentId', show('studentId'), true)}
-                                />
-                                <FieldMessage id="fb-studentId" error={show('studentId')} hint="Exactly 8 digits (numbers only)" />
+                                <span className="fb-bar is-good" aria-hidden="true"><span style={{ width: `${percent}%` }}></span></span>
                             </div>
-                        </div>
 
-                        <fieldset className="pe-field" aria-describedby={describedBy('fb-rating', ratingError)}>
-                            <legend className="pe-label" style={{ marginBottom: 7 }}>Rating<span className="pe-req" aria-hidden="true">*</span></legend>
-                            <div className={`fb-ratings ${ratingError ? 'is-invalid' : ''}`}>
-                                {RATINGS.map((r) => (
-                                    <label className="fb-rating" key={r.stars}>
-                                        <input
-                                            type="radio"
-                                            id={`fb-rating-${r.stars}`}
-                                            name="rating"
-                                            value={r.stars}
-                                            checked={formData.rating === String(r.stars)}
-                                            onChange={(e) => { update('rating', e.target.value); touch('rating'); }}
-                                            aria-label={`${r.stars} stars, ${r.label}`}
-                                            aria-invalid={!!ratingError}
+                            <Section num={1} title="About You" sub="Your name is only used to thank you. Turn on anonymous to leave it out completely.">
+                                <label className="fb-switch">
+                                    <input type="checkbox" role="switch" checked={formData.anonymous} onChange={(e) => update('anonymous', e.target.checked)} />
+                                    <span className="fb-switch-track" aria-hidden="true"><span></span></span>
+                                    <span className="fb-switch-text">
+                                        <strong>Submit Anonymously</strong>
+                                        <span>Name and student ID are not asked for or saved.</span>
+                                    </span>
+                                </label>
+
+                                {!formData.anonymous && (
+                                    <div className="pe-row">
+                                        <div className="pe-field">
+                                            <label htmlFor="fb-name" className="pe-label">Student Name<span className="pe-req" aria-hidden="true">*</span></label>
+                                            <input
+                                                id="fb-name"
+                                                className="pe-input"
+                                                type="text"
+                                                value={formData.name}
+                                                onChange={(e) => update('name', e.target.value)}
+                                                onBlur={() => touch('name')}
+                                                placeholder="e.g. Jane Doe"
+                                                autoComplete="name"
+                                                aria-required="true"
+                                                aria-invalid={!!show('name')}
+                                                aria-describedby={describedBy('fb-name', show('name'))}
+                                            />
+                                            <FieldMessage id="fb-name" error={show('name')} />
+                                        </div>
+
+                                        <div className="pe-field">
+                                            <div className="pe-label-row">
+                                                <label htmlFor="fb-studentId" className="pe-label">Student ID<span className="pe-req" aria-hidden="true">*</span></label>
+                                                <span className={`pe-counter ${idState}`} aria-hidden="true">{formData.studentId.length} / {ID_LENGTH}</span>
+                                            </div>
+                                            <input
+                                                id="fb-studentId"
+                                                className="pe-input pe-input--mono"
+                                                type="text"
+                                                inputMode="numeric"
+                                                pattern="[0-9]*"
+                                                maxLength={ID_LENGTH}
+                                                value={formData.studentId}
+                                                onChange={(e) => update('studentId', e.target.value.replace(/\D/g, '').slice(0, ID_LENGTH))}
+                                                onBlur={() => touch('studentId')}
+                                                placeholder="20241234"
+                                                autoComplete="off"
+                                                aria-required="true"
+                                                aria-invalid={!!show('studentId')}
+                                                aria-describedby={describedBy('fb-studentId', show('studentId'), true)}
+                                            />
+                                            <FieldMessage id="fb-studentId" error={show('studentId')} hint="Exactly 8 digits (numbers only)" />
+                                        </div>
+                                    </div>
+                                )}
+                            </Section>
+
+                            <Section num={2} title="Overall Rating" sub="How would you rate the course as a whole?">
+                                <fieldset className="pe-field" aria-describedby={describedBy('fb-rating', ratingError)}>
+                                    <legend className="sr-only">Overall rating, from very poor to excellent</legend>
+                                    <div className={`fb-ratings ${ratingError ? 'is-invalid' : ''}`}>
+                                        {RATINGS.map((r) => (
+                                            <label className="fb-rating" key={r.stars}>
+                                                <input
+                                                    type="radio"
+                                                    id={`fb-rating-${r.stars}`}
+                                                    name="rating"
+                                                    value={r.stars}
+                                                    checked={formData.rating === String(r.stars)}
+                                                    onChange={(e) => pick('rating')(e.target.value)}
+                                                    aria-label={`${r.stars} ${r.stars === 1 ? 'star' : 'stars'}, ${r.label}`}
+                                                    aria-invalid={!!ratingError}
+                                                />
+                                                <span className="fb-rating-card">
+                                                    <Stars count={r.stars} />
+                                                    <span className="fb-rating-label">{r.label}</span>
+                                                </span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                    <FieldMessage id="fb-rating" error={ratingError} hint={chosenRating ? `You chose ${chosenRating.stars} of 5: ${chosenRating.label}` : undefined} />
+                                </fieldset>
+                            </Section>
+
+                            <Section num={3} title="Rate Each Part of the Course" sub="How much do you agree with each statement?">
+                                <div className="fb-likert">
+                                    <div className="fb-likert-scale" aria-hidden="true">
+                                        <span></span>
+                                        <span className="fb-likert-ends"><span>Strongly Disagree</span><span>Strongly Agree</span></span>
+                                    </div>
+                                    {CATEGORIES.map((c) => {
+                                        const error = show(c.key);
+                                        const value = formData.scores[c.key];
+                                        return (
+                                            <fieldset className={`fb-likert-row ${error ? 'is-invalid' : ''} ${value ? 'is-done' : ''}`} key={c.key} aria-describedby={describedBy(`fb-${c.key}`, error)}>
+                                                <legend className="fb-likert-q">
+                                                    <strong>{c.label}<span className="pe-req" aria-hidden="true">*</span></strong>
+                                                    <span>{c.question}</span>
+                                                </legend>
+                                                <div className="fb-likert-opts">
+                                                    <div className="fb-scale">
+                                                        {LIKERT.map((label, i) => (
+                                                            <label className={`fb-scale-opt v${i + 1}`} key={label} title={label}>
+                                                                <input
+                                                                    type="radio"
+                                                                    id={`fb-${c.key}-${i + 1}`}
+                                                                    name={c.key}
+                                                                    value={i + 1}
+                                                                    checked={value === i + 1}
+                                                                    onChange={() => setScore(c.key, i + 1)}
+                                                                    aria-label={`${i + 1}, ${label}`}
+                                                                    aria-invalid={!!error}
+                                                                />
+                                                                <span>{i + 1}</span>
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                    <span className="fb-likert-pick">{value ? LIKERT[value - 1] : 'Not rated yet'}</span>
+                                                    <FieldMessage id={`fb-${c.key}`} error={error} />
+                                                </div>
+                                            </fieldset>
+                                        );
+                                    })}
+                                </div>
+                            </Section>
+
+                            <Section num={4} title="Workload" sub="Helps the instructor tune the pace for the next class.">
+                                <div className="pe-field fb-difficulty">
+                                    <div className="pe-label-row">
+                                        <label htmlFor="fb-difficulty" className="pe-label">Difficulty</label>
+                                        <span className="fb-badge">{DIFFICULTY[formData.difficulty - 1]}</span>
+                                    </div>
+                                    <input
+                                        id="fb-difficulty"
+                                        className="fb-range"
+                                        type="range"
+                                        min={1}
+                                        max={5}
+                                        step={1}
+                                        value={formData.difficulty}
+                                        onChange={(e) => update('difficulty', Number(e.target.value))}
+                                        aria-valuetext={DIFFICULTY[formData.difficulty - 1]}
+                                        style={{ '--fill': `${((formData.difficulty - 1) / 4) * 100}%` }}
+                                    />
+                                    <div className="fb-range-labels" aria-hidden="true">
+                                        {DIFFICULTY.map((d, i) => (
+                                            <span key={d} className={i + 1 === formData.difficulty ? 'is-on' : ''}>{d}</span>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="pe-row">
+                                    <div className="pe-field">
+                                        <span className="pe-label" id="fb-hours-label">Study Time Outside Class<span className="pe-req" aria-hidden="true">*</span></span>
+                                        <Select
+                                            id="fb-hours"
+                                            labelId="fb-hours-label"
+                                            value={formData.hours}
+                                            options={HOURS}
+                                            placeholder="Hours per week…"
+                                            onChange={pick('hours')}
+                                            onBlur={() => touch('hours')}
+                                            error={show('hours')}
                                         />
-                                        <span className="fb-rating-card">
-                                            <Stars count={r.stars} />
-                                            <span className="fb-rating-label">{r.label}</span>
-                                            <span className="fb-rating-sub">{r.sub}</span>
-                                        </span>
-                                    </label>
+                                        <FieldMessage id="fb-hours" error={show('hours')} />
+                                    </div>
+                                    <Pills
+                                        name="recommend"
+                                        label="Recommend to a Friend?"
+                                        options={RECOMMEND}
+                                        value={formData.recommend}
+                                        onChange={pick('recommend')}
+                                        error={show('recommend')}
+                                        idPrefix="fb-recommend"
+                                    />
+                                </div>
+                            </Section>
+
+                            <Section num={5} title="Topics" sub="Pick any that apply.">
+                                <TopicChips legend="Taught Well" field="topicsWell" formData={formData} toggle={toggle} />
+                                <TopicChips legend="Needs More Time" field="topicsMore" formData={formData} toggle={toggle} />
+                            </Section>
+
+                            <Section num={6} title="In Your Own Words" sub="Specific comments are the most useful part of an evaluation.">
+                                {TEXT_FIELDS.map((t) => (
+                                    <TextArea
+                                        key={t.field}
+                                        field={t.field}
+                                        label={t.label}
+                                        placeholder={t.placeholder}
+                                        value={formData[t.field]}
+                                        onChange={(v) => update(t.field, v)}
+                                        error={show(t.field)}
+                                    />
                                 ))}
-                            </div>
-                            <FieldMessage id="fb-rating" error={ratingError} />
-                        </fieldset>
+                            </Section>
 
-                        <fieldset className="pe-field">
-                            <legend className="pe-label" style={{ marginBottom: 7 }}>Topics Covered Well<span className="pe-optional">optional</span></legend>
-                            <div className="fb-topics">
-                                {TOPICS.map((topic) => (
-                                    <label className="fb-topic" key={topic}>
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.topics.includes(topic)}
-                                            onChange={() => toggleTopic(topic)}
-                                        />
-                                        <span><CheckIcon size={14} />{topic}</span>
-                                    </label>
-                                ))}
+                            <div className="pe-actions fb-actions">
+                                <button type="submit" className="btn btn-green" disabled={requiredEmpty} aria-describedby={requiredEmpty ? 'fb-submit-note' : undefined}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                    Submit Evaluation
+                                </button>
+                                {requiredEmpty && (
+                                    <span className="fb-submit-note" id="fb-submit-note">
+                                        {required.length - answered} required {required.length - answered === 1 ? 'answer' : 'answers'} left before you can submit.
+                                    </span>
+                                )}
                             </div>
-                        </fieldset>
+                        </form>
 
-                        <div className="pe-field">
-                            <div className="pe-label-row">
-                                <label htmlFor="fb-comments" className="pe-label">Comments<span className="pe-optional">optional</span></label>
-                                <span className={`pe-counter ${commentsState}`} aria-hidden="true">{commentsLength} / {COMMENTS_MAX}</span>
-                            </div>
-                            <textarea
-                                id="fb-comments"
-                                className="pe-input"
-                                maxLength={COMMENTS_MAX}
-                                value={formData.comments}
-                                onChange={(e) => update('comments', e.target.value)}
-                                placeholder="What worked well? What could be better?"
-                                aria-describedby="fb-comments-count"
-                            />
-                            <div className={`pe-meter ${commentsState}`} aria-hidden="true">
-                                <span style={{ width: `${Math.min(commentsLength / COMMENTS_MAX, 1) * 100}%` }}></span>
-                            </div>
-                            <span className="sr-only" id="fb-comments-count">{commentsLength} of {COMMENTS_MAX} characters used</span>
-                            <FieldMessage id="fb-comments" error={show('comments')} />
-                        </div>
-
-                        <div className="pe-actions">
-                            <button type="submit" className="btn btn-green" disabled={requiredEmpty} aria-describedby={requiredEmpty ? 'fb-submit-note' : undefined}>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                                Submit feedback
-                            </button>
-                            {requiredEmpty && (
-                                <span className="fb-submit-note" id="fb-submit-note">Fill in name, student ID and rating to enable Submit.</span>
-                            )}
-                        </div>
-                    </form>
-
-                    <StatePanel formData={formData} errors={errors} requiredEmpty={requiredEmpty} />
+                        <StatePanel formData={formData} errors={errors} answered={answered} total={required.length} />
+                    </div>
+                    <ResultsSummary responses={responses} onClear={clearResults} />
                 </div>
             );
         }
 
         const rootElement = document.getElementById('feedback-root');
         if (rootElement) {
-            ReactDOM.createRoot(rootElement).render(<CourseFeedbackForm />);
+            ReactDOM.createRoot(rootElement).render(<CourseEvaluationForm />);
         }
     </script>
 

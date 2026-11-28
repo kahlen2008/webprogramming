@@ -1104,7 +1104,7 @@ function StudentProfileEditor() {
 
         <label htmlFor="pe-studentId">Student ID</label>
         <input id="pe-studentId" inputMode="numeric" maxLength={10} value={values.studentId}
-          onChange={(e) => update('studentId', e.target.value)}
+          onChange={(e) => update('studentId', e.target.value.replace(/\D/g, ''))}
           onBlur={() => touch('studentId')} />
         {showError('studentId') && <p className="pe-error">{errors.studentId}</p>}
 
@@ -1606,7 +1606,7 @@ export function validate(values) {
                                     value={values.name}
                                     onChange={(e) => update('name', e.target.value)}
                                     onBlur={() => touch('name')}
-                                    placeholder="e.g. Kim Minho"
+                                    placeholder="e.g. Jane Doe"
                                     autoComplete="name"
                                     aria-required="true"
                                     aria-invalid={!!show('name')}
@@ -1625,10 +1625,11 @@ export function validate(values) {
                                     id="pe-studentId"
                                     className="pe-input pe-input--mono"
                                     value={values.studentId}
-                                    onChange={(e) => update('studentId', e.target.value)}
+                                    onChange={(e) => update('studentId', e.target.value.replace(/\D/g, '').slice(0, ID_LENGTH))}
                                     onBlur={() => touch('studentId')}
                                     inputMode="numeric"
-                                    maxLength={ID_LENGTH + 2}
+                                    pattern="[0-9]*"
+                                    maxLength={ID_LENGTH}
                                     placeholder="2024123456"
                                     autoComplete="off"
                                     aria-required="true"
